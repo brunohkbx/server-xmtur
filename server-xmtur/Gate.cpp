@@ -261,12 +261,7 @@ BOOL CGate::IsInGate(int aIndex, int GateNumber)
 		}
 	}
 
-	if ( lpObj->Level < level )
-	{
-		return FALSE;
-	}
-
-	if ( lpObj->MapNumber != this->m_MapNumber[GateNumber] )
+	if ( lpObj->Level < level || lpObj->MapNumber != this->m_MapNumber[GateNumber] )
 	{
 		return FALSE;
 	}
