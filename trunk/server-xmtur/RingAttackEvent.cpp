@@ -30,82 +30,65 @@ BOOL CRingMonsterHerd::Start()
 
 BOOL CRingMonsterHerd::MonsterHerdItemDrop(LPOBJ lpObj)
 {
-	if ( lpObj->Class == 135 )
+	switch(lpObj->Class)
 	{
-		int iIndex = gObjMonsterTopHitDamageUser(lpObj);
-		int itemnumber = ItemGetNumberMake(Configs.WW_Group, Configs.WW_ID);
+		case 135:
+			{
+				int iIndex = gObjMonsterTopHitDamageUser(lpObj);
+				int itemnumber = ItemGetNumberMake(Configs.WW_Group, Configs.WW_ID);
 
-		ItemSerialCreateSend(lpObj->m_Index, lpObj->MapNumber, lpObj->X, lpObj->Y, itemnumber, 
-			Configs.WW_Level, Configs.WW_Dur, Configs.WW_Luck, Configs.WW_Skill, Configs.WW_Opt, iIndex, Configs.WW_Exc, Configs.WW_Anc);
+				ItemSerialCreateSend(lpObj->m_Index, lpObj->MapNumber, lpObj->X, lpObj->Y, itemnumber, 
+					Configs.WW_Level, Configs.WW_Dur, Configs.WW_Luck, Configs.WW_Skill, Configs.WW_Opt, iIndex, Configs.WW_Exc, Configs.WW_Anc);
 
-		char szTemp[256];
-		wsprintf(szTemp, lMsg.Get(MSGGET(4, 181)), gObj[iIndex].Name, Configs.MapName[lpObj->MapNumber]);
+				char szTemp[256];
+				wsprintf(szTemp, lMsg.Get(MSGGET(4, 181)), gObj[iIndex].Name, Configs.MapName[lpObj->MapNumber]);
 
-		AllSendServerMsg( szTemp );
+				AllSendServerMsg( szTemp );
 
-		LogAddTD("[Ring Event] White Wizard Killed by [%s][%s], MapNumber:%d", gObj[iIndex].AccountID, gObj[iIndex].Name, gObj[iIndex].MapNumber);
-		return TRUE;
+				LogAddTD("[Ring Event] White Wizard Killed by [%s][%s], MapNumber:%d", gObj[iIndex].AccountID, gObj[iIndex].Name, gObj[iIndex].MapNumber);
+				return TRUE;
+			}
+			break;
+		case 136:
+		case 137:
+			{
+				if ( (rand()%100) < 30 )
+				{
+					int iIndex = gObjMonsterTopHitDamageUser(lpObj);
+					int itemnumber = ItemGetNumberMake(13, 20);
+					ItemSerialCreateSend(lpObj->m_Index, lpObj->MapNumber, lpObj->X, lpObj->Y, itemnumber, 0, 30, 0, 0, 0, iIndex, 0, 0);
+					return TRUE;
+				}
+
+				if ( (rand() % Configs.RingOrcKillGiftRate) == 0 )
+				{
+					int iIndex = gObjMonsterTopHitDamageUser(lpObj);
+					this->SendEventGiftWinner(iIndex, 1);
+					return TRUE;
+				}
+
+				MapC[lpObj->MapNumber].MoneyItemDrop(10000, (BYTE)lpObj->X, (BYTE)lpObj->Y);
+				return TRUE;
+			}
+			break;
+		default:
+			return FALSE;
+			break;
 	}
-	
-	if ( lpObj->Class == 136 || lpObj->Class == 137)
-	{
-		if ( (rand()%100) < 30 )
-		{
-			int iIndex = gObjMonsterTopHitDamageUser(lpObj);
-			int itemnumber = ItemGetNumberMake(13, 20);
-			ItemSerialCreateSend(lpObj->m_Index, lpObj->MapNumber, lpObj->X, lpObj->Y, itemnumber, 0, 30, 0, 0, 0, iIndex, 0, 0);
-			return TRUE;
-		}
 
-		if ( (rand() % Configs.RingOrcKillGiftRate) == 0 )
-		{
-			int iIndex = gObjMonsterTopHitDamageUser(lpObj);
-			this->SendEventGiftWinner(iIndex, 1);
-			return TRUE;
-		}
 
-		MapC[lpObj->MapNumber].MoneyItemDrop(10000, (BYTE)lpObj->X, (BYTE)lpObj->Y);
-		return TRUE;
-	}
-
-	return FALSE;
 
 }
 
 
 void CRingMonsterHerd::MonsterAttackAction(LPOBJ lpObj, LPOBJ lpTargetObj)
 {
-	if(gObjSearchActiveEffect(lpObj, AT_ICE_ARROW) == 1)
-	{
-		return;
-	}
-
-	if(gObjSearchActiveEffect(lpObj, AT_STUN) == 1)
-	{
-		return;
-	}
-
-	if(gObjSearchActiveEffect(lpObj, AT_SLEEP) == 1)
-	{
-		return;
-	}
-
-	if ( lpObj == NULL )
-	{
-		return;
-	}
-
-	if ( lpTargetObj == NULL )
-	{
-		return;
-	}
-
-	if ( lpObj->Connected < PLAYER_PLAYING || lpObj->Type != OBJ_MONSTER )
-	{
-		return;
-	}
-
-	if ( lpTargetObj->Connected < PLAYER_PLAYING )
+	if(gObjSearchActiveEffect(lpObj, AT_ICE_ARROW) == 1
+		|| gObjSearchActiveEffect(lpObj, AT_STUN) == 1
+		|| gObjSearchActiveEffect(lpObj, AT_SLEEP) == 1
+		|| lpObj == NULL || lpTargetObj == NULL
+		|| lpObj->Connected < PLAYER_PLAYING || lpObj->Type != OBJ_MONSTER
+		||  lpTargetObj->Connected < PLAYER_PLAYING )
 	{
 		return;
 	}
@@ -126,12 +109,7 @@ struct PMSG_REQ_REG_RINGGIFT
 
 void CRingMonsterHerd::SendEventGiftWinner(int iIndex, int iGiftKind)
 {
-	if ( gObjIsConnected(iIndex) == FALSE )
-	{
-		return;
-	}
-
-	if ( gObj[iIndex].UseEventServer != FALSE )
+	if ( gObjIsConnected(iIndex) == FALSE  ||gObj[iIndex].UseEventServer != FALSE  )
 	{
 		return;
 	}
@@ -220,11 +198,7 @@ void CRingAttackEvent::StartEvent()
 			}
 		}
 
-		if ( iCount == 0 )
-		{
-
-		}
-		else
+		if ( iCount != 0 )
 		{
 			if ( this->m_vtMonsterAddData.empty() != false )
 			{
@@ -775,7 +749,7 @@ void CRingAttackEvent::Start_Menual()
 	this->SetMenualStart(TRUE);
 	this->StopEvent();
 
-	LogAddTD("¡Û¡Ü[Event Management] [Start] RingAttack Event!");
+	LogAddTD("[Event Management] [Start] RingAttack Event!");
 	this->m_iTIME_MIN_PLAY = 30;
 
 	char szTemp[256];
