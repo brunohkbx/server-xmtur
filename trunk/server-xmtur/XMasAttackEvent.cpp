@@ -30,67 +30,70 @@ BOOL CXMasMonsterHerd::Start() //identical
 
 BOOL CXMasMonsterHerd::MonsterHerdItemDrop(LPOBJ lpObj) //004B3660 identical
 {
-	if ( lpObj->Class != 476 && lpObj->Class != 466 )
+	/*if ( lpObj->Class != 476 && lpObj->Class != 466 )
 	{
 		return FALSE;
-	}
+	}*/
 
-	if ( lpObj->Class == 476 )
+	switch (lpObj->Class)
 	{
-		int count = 0;
-
-		int irandreward = rand()%3; //loc3
-
-		switch(irandreward)
-		{
-		case 0:
+		case 476:
 			{
-				int iAttack = 0; //4
-				int iDefense = 0; //5
+				int count = 0;
 
-				if(lpObj->Level <= 180)
-				{
-					iAttack = lpObj->Level / 3 + 45;
-					iDefense = lpObj->Level / 5 + 50;
-				}
-				else
-				{
-					iAttack = 105;
-					iDefense = 86;
-				}
+				int irandreward = rand()%3; //loc3
 
-				gObjGiveRewardBuff(lpObj, 10, &count, AT_XMASS_REWARD, 2, iAttack, 3, iDefense, 1800);
+				switch(irandreward)
+				{
+				case 0:
+					{
+						int iAttack = 0; //4
+						int iDefense = 0; //5
+
+						if(lpObj->Level <= 180)
+						{
+							iAttack = lpObj->Level / 3 + 45;
+							iDefense = lpObj->Level / 5 + 50;
+						}
+						else
+						{
+							iAttack = 105;
+							iDefense = 86;
+						}
+
+						gObjGiveRewardBuff(lpObj, 10, &count, AT_XMASS_REWARD, 2, iAttack, 3, iDefense, 1800);
+					}
+					break;
+				case 1:
+					gObjGiveRewardBuff(lpObj, 10, &count, AT_XMASS_HEALTH, 4, 500, 0, 0, 1800);
+					break;
+				case 2:
+					gObjGiveRewardBuff(lpObj, 10, &count, AT_XMASS_MANA, 5, 500, 0, 0, 1800);
+					break;
+				};
+
+				LogAddTD("[XMasAttackEvent] White Wizard Killed, MapNumber:%d", lpObj->MapNumber);
+				return TRUE;
 			}
 			break;
-		case 1:
-			gObjGiveRewardBuff(lpObj, 10, &count, AT_XMASS_HEALTH, 4, 500, 0, 0, 1800);
-			break;
-		case 2:
-			gObjGiveRewardBuff(lpObj, 10, &count, AT_XMASS_MANA, 5, 500, 0, 0, 1800);
-			break;
-		};
+		case 466:
+			{
+				if ( (rand()%100) < Configs.XMasAttackEventDropRate )
+				{
+					int iIndex = gObjMonsterTopHitDamageUser(lpObj);
+					int itemnumber = ItemGetNumberMake(13, 66);
 
-		LogAddTD("[XMasAttackEvent] White Wizard Killed, MapNumber:%d", lpObj->MapNumber);
-		return TRUE;
+					ItemSerialCreateSend(lpObj->m_Index, lpObj->MapNumber, lpObj->X, lpObj->Y, itemnumber, 0, 10, 0, 0, 0, iIndex, 0, 0);
+					return TRUE;
+				}
+
+				MapC[lpObj->MapNumber].MoneyItemDrop(Configs.XMasAttackEventDropZen, (BYTE)lpObj->X, (BYTE)lpObj->Y);
+				return TRUE;
+			}
+		default: 
+			return false;
+		break;
 	}
-	
-	if ( lpObj->Class == 466 )
-	{
-		if ( (rand()%100) < Configs.XMasAttackEventDropRate )
-		{
-			int iIndex = gObjMonsterTopHitDamageUser(lpObj);
-			int itemnumber = ItemGetNumberMake(13, 66);
-
-			ItemSerialCreateSend(lpObj->m_Index, lpObj->MapNumber, lpObj->X, lpObj->Y, itemnumber, 0, 10, 0, 0, 0, iIndex, 0, 0);
-			return TRUE;
-		}
-
-		MapC[lpObj->MapNumber].MoneyItemDrop(Configs.XMasAttackEventDropZen, (BYTE)lpObj->X, (BYTE)lpObj->Y);
-		return TRUE;
-	}
-
-	return FALSE;
-
 }
 
 //static int g_XMasEventMapNum[3] = {MAP_INDEX_RORENCIA,MAP_INDEX_DEVIAS,MAP_INDEX_NORIA};
@@ -255,20 +258,11 @@ BOOL CXMasAttackEvent::Load(char * lpszFileName) //004B3B40 identical
 
 void CXMasAttackEvent::StartEvent() //004B43E0 identical
 {
-	if ( this->m_bDoEvent == FALSE )
+	if ( this->m_bDoEvent == FALSE  ||  this->m_bHasData == FALSE || this->m_vtMonsterAddData.empty() != FALSE)
 	{
 		return;
 	}
 
-	if ( this->m_bHasData == FALSE )
-	{
-		return;
-	}
-
-	if( this->m_vtMonsterAddData.empty() != FALSE )
-	{
-		return;
-	}
 
 	this->ClearMonsterHerd();
 	this->CreateMonsterHerd();
@@ -294,11 +288,7 @@ void CXMasAttackEvent::StartEvent() //004B43E0 identical
 			}
 		}
 
-		if ( iCount == 0 )
-		{
-
-		}
-		else
+		if ( iCount != 0 )
 		{
 			if ( this->m_vtMonsterAddData.empty() != FALSE )
 			{
