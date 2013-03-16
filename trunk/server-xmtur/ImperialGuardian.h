@@ -107,7 +107,7 @@ struct CImperialGuardian {
 	void SuccessMessage(int GainExp);
 	void FailMessage();
 	void MessageSend(char* Msg, int Type);
-	void PDataSend(unsigned char * aRecv, int Size);
+	void PDataSend(LPBYTE aRecv, int Size);
 	void SendTimeInfo(int Type);
 	void CheckPartyStatus();
 	void SetState(int SetState);
