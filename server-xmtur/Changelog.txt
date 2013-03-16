@@ -8,7 +8,7 @@
  - Party Zen Bug Fixed
  - Kanturu Event Working
  - SafeMap System Fixed
-
+ - Fixed Blood Castle 8 Master
 
 //////////////////////////////////////////////////////////////////////////////
 //  Bugs Pendientes
