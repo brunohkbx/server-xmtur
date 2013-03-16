@@ -35,7 +35,7 @@ CNewsSystem::CNewsSystem(){
 			GetPrivateProfileString("NewsSystem",News_Line,"",this->NewsName[i],256,NEWS_FILE);
 		}
 
-		//_beginthread(NewsSystem_StartCore,0,NULL);
+		_beginthread(NewsSystem_StartCore,0,NULL);
 	}
 }
 

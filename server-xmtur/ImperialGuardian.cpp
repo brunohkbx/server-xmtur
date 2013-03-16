@@ -6,6 +6,7 @@
 #include "DSProtocol.h"
 #include "BuffManager.h"
 #include "GameMain.h"
+#include "BloodCastle.h"
 
 CImperialGuardian ImperialGuardian;
 
@@ -98,12 +99,12 @@ void CImperialGuardian::EnterEvent(int aIndex){
 	}
 
 	//If not in Party
-	if(lpObj->PartyNumber == -1){
+	/*if(lpObj->PartyNumber == -1){
 		pMsg.Result = 6;
 		DataSend(aIndex,(LPBYTE)&pMsg,pMsg.h.size);
 		LogAddTD("[ImperialGuardian][%s][%s] User is not in Party",lpObj->AccountID,lpObj->Name);
 		return;
-	}
+	}*/
 
 	if(this->EventDay == 0){ //Domingo
 		GateNumber = 322;
@@ -119,13 +120,15 @@ void CImperialGuardian::EnterEvent(int aIndex){
 		this->EventMap = 71;
 	}
 
+	this->PlayersCount = 0;
+
 	//Setea al Primer Player dentro de la Estructura
 	this->Player[0] = aIndex;
 	this->PlayersCount++;
 
 	gObjMoveGate(aIndex,GateNumber);
 	LogAddTD("[ImperialGuardian][%s][%s] Player 1 Enter: %d",lpObj->AccountID,lpObj->Name,aIndex);
-
+	/*
 	this->PartyNumber = lpObj->PartyNumber;
 
 	if(PartyNumber != -1){	
@@ -149,7 +152,7 @@ void CImperialGuardian::EnterEvent(int aIndex){
 	gObjInventoryDeleteItem(aIndex,TicketPos);
 	GCInventoryItemDeleteSend(aIndex,TicketPos,1);
 	LogAddTD("[ImperialGuardian][%s][%s] Ticket Deleted %d",lpObj->AccountID,lpObj->Name,TicketPos);
-
+	*/
 	//Clear Event Monsters
 	this->ClearMonsters();
 
@@ -177,11 +180,7 @@ void CImperialGuardian::EnterEvent(int aIndex){
 void CImperialGuardian::OpenCloseGate(BYTE Status){ //0x02: OPEN - 0x03: CLOSED
 	
 	PMSG_FORT_OPENCLOSE_GATE pMsg;
-	
-	pMsg.C = 0xC1;
-	pMsg.Size = 0x06;
-	pMsg.Headcode = 0xBF;
-	pMsg.Subcode = 0x09;
+	pMsg.h.set((LPBYTE)&pMsg,0xBF,0x09,sizeof(pMsg));
 	pMsg.Status = 0x01;
 
 	pMsg.Result = Status;
@@ -191,7 +190,7 @@ void CImperialGuardian::OpenCloseGate(BYTE Status){ //0x02: OPEN - 0x03: CLOSED
 		if(this->Player[X] >= OBJ_STARTUSERINDEX) this->DoorState[X] = DOOR_OPEN;
 	}
 
-	this->PDataSend((LPBYTE)&pMsg,pMsg.Size);
+	this->PDataSend((LPBYTE)&pMsg,pMsg.h.size);
 }
 
 void CImperialGuardian::SendTimer(){
@@ -228,23 +227,27 @@ void CImperialGuardian::SendTimer(){
 		}
 	}
 
-	if(this->PlayersCount < 2){
+	/*if(this->PlayersCount < 2){
 		LogAddTD("[ImperialGuardian] Not enought Users for Battle");
 		this->SetState(IMPERIAL_FAILED);
 		return;
-	}
+	}*/
 
 	//Check for Traps!
 	this->CheckTraps();
 
 	//Check the Party Members, if not in Party Move to Devias and Delete from Event
-	this->CheckPartyStatus();
+	//this->CheckPartyStatus();
 
+	int PlayerIndex = 0;
 	//Check for Players
 	for(int X=0; X < 5;X++){
-		if(this->Player[X] >= OBJ_STARTUSERINDEX && (gObjIsConnected(this->Player[X]) != TRUE || gObj[this->Player[X]].MapNumber != this->EventMap)){
+		PlayerIndex = this->Player[X];
+		if(PlayerIndex >= OBJ_STARTUSERINDEX 
+		&& (gObjIsConnected(this->Player[X]) != TRUE 
+		|| gObj[PlayerIndex].MapNumber != this->EventMap)){
 		
-			LogAddTD("[ImperialGuardian] Delete User Index: %d %d",X,this->Player[X]);
+			LogAddTD("[ImperialGuardian] Delete User Index: %d %d",X,PlayerIndex);
 			this->Player[X] = -1;
 			if(X == 0){
 				LogAddTD("[ImperialGuardian] Party Leader was Out");
@@ -279,36 +282,54 @@ void CImperialGuardian::SendTimer(){
 
 void CImperialGuardian::MessageSend(char* Msg, int Type){
 
+	int PlayerIndex = 0;
 	for(int X=0; X < 5;X++){
-		if(this->Player[X] >= OBJ_STARTUSERINDEX && gObj[this->Player[X]].MapNumber == this->EventMap){
-			GCServerMsgStringSend(Msg,this->Player[X],Type);
+		if(this->Player[X] >= OBJ_STARTUSERINDEX){
+			PlayerIndex = this->Player[X];
+			LPOBJ lpObj = &gObj[PlayerIndex];
+
+			if(lpObj->MapNumber == this->EventMap){
+				GCServerMsgStringSend(Msg,lpObj->m_Index,Type);
+			}
 		}
 	}
 }
 
 void CImperialGuardian::PDataSend(unsigned char* aRecv, int Size){
 
+	int PlayerIndex = 0;
 	for(int X=0; X < 5;X++){
-		if(this->Player[X] >= OBJ_STARTUSERINDEX && gObj[this->Player[X]].MapNumber == this->EventMap){
-			DataSend(this->Player[X],aRecv,Size);
+		if(this->Player[X] >= OBJ_STARTUSERINDEX){
+			PlayerIndex = this->Player[X];
+			LPOBJ lpObj = &gObj[PlayerIndex];
+
+			if(lpObj->MapNumber == this->EventMap){
+				DataSend(lpObj->m_Index,(LPBYTE)&aRecv,Size);
+			}
 		}
 	}
 }
 
 void CImperialGuardian::CheckPartyStatus(){
 
+	int PlayerIndex = 0;
 	for(int X=0; X < 5;X++){
-		if(this->Player[X] >= OBJ_STARTUSERINDEX && gObj[this->Player[X]].MapNumber == this->EventMap){
-			LPOBJ gTargetObj = &gObj[this->Player[X]];
+		if(this->Player[X] >= OBJ_STARTUSERINDEX){
 
-			if(gTargetObj->PartyNumber != PartyNumber){	
-				gObjMoveGate(this->Player[X],22);
-				this->Player[X] = -1;
+			PlayerIndex = this->Player[X];
+			LPOBJ gTargetObj = &gObj[PlayerIndex];
 
-				if(X==0){
-					LogAddTD("[ImperialGuardian] Party Leader has no Party");
-					this->SetState(IMPERIAL_FAILED);
-					return;
+			if(gTargetObj->MapNumber == this->EventMap){
+			
+				if(gTargetObj->PartyNumber != PartyNumber){	
+					gObjMoveGate(this->Player[X],22);
+					this->Player[X] = -1;
+
+					if(X==0){
+						LogAddTD("[ImperialGuardian] Event Leader has no Party");
+						this->SetState(IMPERIAL_FAILED);
+						return;
+					}
 				}
 			}
 		}
@@ -318,7 +339,7 @@ void CImperialGuardian::CheckPartyStatus(){
 void CImperialGuardian::SendStage(){
 
 	PMSG_FORT_ENTER_RESULT pMsg;
-	pMsg.h.set((LPBYTE)&pMsg, 0xF7, 0x02, sizeof(pMsg));
+	pMsg.h.set((LPBYTE)&pMsg,0xF7,0x02,sizeof(pMsg));
 
 	int Day = this->EventDay;
 	if(Day == 0) Day = 7;
@@ -372,7 +393,7 @@ void CImperialGuardian::SetState(int SetState){
 			this->Step++;
 
 			//Open Gate
-			this->OpenCloseGate(2);
+			this->OpenCloseGate(0x02);
 
 			//Set Timer and Status
 			this->BattleStatus = IMPERIAL_GATEKILL; //Monster Kill
@@ -407,11 +428,17 @@ void CImperialGuardian::SetState(int SetState){
 
 void CImperialGuardian::MovePlayers(){
 
+	int PlayerIndex = 0;
 	//Check for Players
 	for(int X=0; X < 5;X++){
-		if(gObjIsConnected(this->Player[X]) == TRUE && this->Player[X] >= OBJ_STARTUSERINDEX && gObj[this->Player[X]].MapNumber == this->EventMap){
-			gObjMoveGate(this->Player[X],22);
-			this->Player[X] = -1;
+		if(gObjIsConnected(this->Player[X]) == TRUE && this->Player[X] >= OBJ_STARTUSERINDEX){
+			PlayerIndex = this->Player[X];
+			LPOBJ lpObj = &gObj[PlayerIndex];
+
+			if(lpObj->MapNumber == this->EventMap){
+				gObjMoveGate(lpObj->m_Index,22);
+				this->Player[X] = -1;
+			}
 		}
 	}
 }
@@ -530,10 +557,7 @@ void CImperialGuardian::CheckPassGates(int aIndex, WORD Gate){
 	if(this->BattleStatus == IMPERIAL_NONE) return;
 
 	PMSG_FORT_OPENCLOSE_GATE pMsg;
-	pMsg.C = 0xC1;
-	pMsg.Size = 0x06;
-	pMsg.Headcode = 0xBF;
-	pMsg.Subcode = 0x09;
+	pMsg.h.set((LPBYTE)&pMsg,0xBF,0x09,sizeof(pMsg));
 	pMsg.Status = 0x01;
 	pMsg.Result = 0x03;
 	
@@ -543,11 +567,8 @@ void CImperialGuardian::CheckPassGates(int aIndex, WORD Gate){
 	
 	for(int X=0; X < 5;X++){
 		if(this->Player[X] == aIndex){
-			
-			LPOBJ lpObj = &gObj[aIndex];
-			
 			if(this->DoorState[X] == DOOR_OPEN){
-				DataSend(aIndex,(LPBYTE)&pMsg,pMsg.Size);
+				DataSend(aIndex,(LPBYTE)&pMsg,pMsg.h.size);
 			}
 		}
 	}
@@ -558,10 +579,7 @@ void CImperialGuardian::CheckGates(){
 	if(this->BattleStatus == IMPERIAL_NONE) return;
 
 	PMSG_FORT_OPENCLOSE_GATE pMsg;
-	pMsg.C = 0xC1;
-	pMsg.Size = 0x06;
-	pMsg.Headcode = 0xBF;
-	pMsg.Subcode = 0x09;
+	pMsg.h.set((LPBYTE)&pMsg,0xBF,0x09,sizeof(pMsg));
 	pMsg.Status = 0x01;
 	pMsg.Result = 0x03;
 	
@@ -627,7 +645,7 @@ void CImperialGuardian::CheckGates(){
 				}
 
 				if(this->DoorState[Index] == DOOR_CLOSED){
-					DataSend(lpObj->m_Index,(LPBYTE)&pMsg,pMsg.Size);
+					DataSend(lpObj->m_Index,(LPBYTE)&pMsg,pMsg.h.size);
 					LogAddTD("[ImperialGuardian][%s][%s] Close Gates %d",lpObj->AccountID,lpObj->Name,this->Step);
 				}
 			}
@@ -689,13 +707,13 @@ void CImperialGuardian::CreateDoor(int GateType, int X, int Y, int Direction){
 
 		lpObj->X = X; lpObj->TX = X; lpObj->MTX = X; lpObj->m_OldX = X; lpObj->StartX = X;
 		lpObj->Y = Y; lpObj->TY = Y; lpObj->MTY = Y; lpObj->m_OldY = Y; lpObj->StartY = Y;
-		
+		lpObj->Level = 50;
+
 		gObjSetMonster(DoorIndex,GateType);
 
 		lpObj->MapNumber = this->EventMap;	
 		lpObj->MaxRegenTime = 0;
 		lpObj->Dir = Direction;
-		lpObj->Level = 70;
 
 		this->Door[this->TotalDoors] = DoorIndex;
 		this->TotalDoors++;
@@ -785,6 +803,7 @@ void CImperialGuardian::SetMonsters(){
 	
 				LPOBJ lpObj = &gObj[MonsterIndex];
 
+				lpObj->Level = 70;
 				gObjSetMonster(MonsterIndex,this->Monsters[Day][i].ID);
 
 				lpObj->X = this->Monsters[Day][i].X; lpObj->TX = lpObj->X; lpObj->MTX = lpObj->X; lpObj->m_OldX = lpObj->X; lpObj->StartX = lpObj->X;
