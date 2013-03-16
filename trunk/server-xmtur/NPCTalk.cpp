@@ -637,7 +637,7 @@ BOOL NpcGuildMasterTalk(LPOBJ lpNpc, LPOBJ lpObj)
 {
 	if ( Configs.GuildCreate == FALSE )
 	{
-		ChatTargetSend(lpNpc, "서버분할 기간에는 길드를 생성할수가 없습니다", lpObj->m_Index);
+		ChatTargetSend(lpNpc, "Guild Creation Disabled", lpObj->m_Index);
 		return TRUE;
 	}
 
@@ -649,17 +649,17 @@ BOOL NpcGuildMasterTalk(LPOBJ lpNpc, LPOBJ lpObj)
 
 	int capacity = gObjGuildMasterCapacityTest(lpObj);
 
-	if ( capacity == 0 )
+	switch (capacity)
 	{
-		ChatTargetSend(lpNpc, lMsg.Get(MSGGET(4, 117)), lpObj->m_Index);
-	}
-	else if ( capacity == 2 )
-	{
-		ChatTargetSend(lpNpc, lMsg.Get(MSGGET(4, 118)), lpObj->m_Index);
-	}
-	else
-	{
-		GCGuildMasterQuestionSend(lpObj->m_Index);
+		case 0:
+				ChatTargetSend(lpNpc, lMsg.Get(MSGGET(4, 117)), lpObj->m_Index);
+		break;
+		case 2: 
+				ChatTargetSend(lpNpc, lMsg.Get(MSGGET(4, 118)), lpObj->m_Index);
+		break;
+		default:
+				GCGuildMasterQuestionSend(lpObj->m_Index);
+		break;
 	}
 
 	return TRUE;
@@ -667,10 +667,6 @@ BOOL NpcGuildMasterTalk(LPOBJ lpNpc, LPOBJ lpObj)
 
 BOOL NpcRolensiaGuard(LPOBJ lpNpc, LPOBJ lpObj)
 {
-	if ( Configs.Language != 0 )
-	{
-	
-	}
 	else if ( Configs.EnableEventNPCTalk != FALSE )
 	{
 		GCServerCmd(lpObj->m_Index, 4, 0, 0);
@@ -809,11 +805,7 @@ BOOL NpcWarehouse(LPOBJ lpNpc, LPOBJ lpObj)
 
 BOOL NpcNoriaRara(LPOBJ lpNpc, LPOBJ lpObj)
 {
-	if ( Configs.Language != 0 )
-	{
-	
-	}
-	else if ( Configs.EnableEventNPCTalk != FALSE )
+	if ( Configs.EnableEventNPCTalk != FALSE )
 	{
 		GCServerCmd(lpObj->m_Index, 4, 2, 0);
 	}
@@ -823,11 +815,7 @@ BOOL NpcNoriaRara(LPOBJ lpNpc, LPOBJ lpObj)
 
 BOOL NpcDeviasMadam(LPOBJ lpNpc, LPOBJ lpObj)
 {
-	if ( Configs.Language != 0 )
-	{
-	
-	}
-	else if ( Configs.EnableEventNPCTalk != FALSE )
+	if ( Configs.EnableEventNPCTalk != FALSE )
 	{
 		GCServerCmd(lpObj->m_Index, 4, 1, 0);
 	}
@@ -849,38 +837,45 @@ BOOL NpcEventChipNPC(LPOBJ lpNpc, LPOBJ lpObj)
 		return TRUE;
 	}
 	
-	if ( lpNpc->MapNumber == 0 )
+	switch (lpNpc->MapNumber)
 	{
-		PMSG_REQ_VIEW_EC_MN pMsgTha;
+		case 0:
+			{
+				PMSG_REQ_VIEW_EC_MN pMsgTha;
 
-		PHeadSetB((LPBYTE)&pMsgTha, 0x01, sizeof(pMsgTha));
-		pMsgTha.iINDEX = lpObj->m_Index;
-		strcpy(pMsgTha.szUID, lpObj->AccountID);
-		pEventObj = lpNpc;
+				PHeadSetB((LPBYTE)&pMsgTha, 0x01, sizeof(pMsgTha));
+				pMsgTha.iINDEX = lpObj->m_Index;
+				strcpy(pMsgTha.szUID, lpObj->AccountID);
+				pEventObj = lpNpc;
 
-		DataSendEventChip((char*)&pMsgTha, sizeof(pMsgTha));
+				DataSendEventChip((char*)&pMsgTha, sizeof(pMsgTha));
 		
-		lpObj->m_IfState.type = 9;
-		lpObj->m_IfState.state = 0;
-		lpObj->m_IfState.use = 1;
+				lpObj->m_IfState.type = 9;
+				lpObj->m_IfState.state = 0;
+				lpObj->m_IfState.use = 1;
 
-		return TRUE;
-	}
+				return TRUE;
+			}
+		break;
+		case 2: 
+			{
+				PMSG_EVENTCHIPINFO Result;
 
-	if ( lpNpc->MapNumber == 2 )
-	{
-		PMSG_EVENTCHIPINFO Result;
-
-		PHeadSetB((LPBYTE)&Result, 0x94, sizeof(Result));
-		Result.Type = 2;
+				PHeadSetB((LPBYTE)&Result, 0x94, sizeof(Result));
+				Result.Type = 2;
 		
-		DataSend(lpObj->m_Index, (LPBYTE)&Result, Result.h.size);
+				DataSend(lpObj->m_Index, (LPBYTE)&Result, Result.h.size);
 
-		lpObj->m_IfState.type = 9;
-		lpObj->m_IfState.state = 0;
-		lpObj->m_IfState.use = 1;
+				lpObj->m_IfState.type = 9;
+				lpObj->m_IfState.state = 0;
+				lpObj->m_IfState.use = 1;
 
-		return TRUE;
+				return TRUE;
+			}
+		break;
+		default:
+			return false;
+		break;
 	}
 
 	return FALSE;
@@ -1165,7 +1160,7 @@ BOOL NpcDarkSpiritTrainer(LPOBJ lpNpc, LPOBJ lpObj)
 		GCAnsCsMapSvrTaxInfo(lpObj->m_Index, 1, g_CastleSiegeSync.GetTaxRateChaos(lpObj->m_Index));
 		gObjInventoryTrans(lpObj->m_Index);
 
-		LogAddTD("[%s][%s] Open Chaos Box", lpObj->AccountID, lpObj->Name);
+		LogAddTD("[NpcDarkSpiritTrainer][%s][%s] Open Chaos Box", lpObj->AccountID, lpObj->Name);
 		gObjItemTextSave(lpObj);
 		gObjWarehouseTextSave(lpObj);
 	}
@@ -1476,35 +1471,18 @@ BOOL NpcCastleGateLever(LPOBJ lpNpc, LPOBJ lpObj)
 BOOL NpcCastleCrown(LPOBJ lpNpc, LPOBJ lpObj)
 {
 	
-	if ( gObjIsConnected(lpObj->m_Index) == FALSE )
+	if ( gObjIsConnected(lpObj->m_Index) == FALSE 
+		|| g_CastleSiege.GetCastleState() != CASTLESIEGE_STATE_STARTSIEGE
+		|| g_CastleSiege.CheckUnionGuildMaster(lpObj->m_Index) == FALSE 
+		|| lpObj->m_btCsJoinSide < 2 || lpObj->m_bCsGuildInvolved == FALSE 
+		|| (abs(lpObj->Y - lpNpc->Y)) > 3 || (abs(lpObj->X - lpNpc->X)) > 3
+		|| g_CastleSiege.GetRegCrownAvailable() == FALSE 
+		)
 	{
 		return TRUE;
 	}
 
-	if(g_CastleSiege.GetCastleState() != CASTLESIEGE_STATE_STARTSIEGE)
-	{
-		return TRUE;
-	}
-	
-	if(lpObj->m_btCsJoinSide < 2 || lpObj->m_bCsGuildInvolved == FALSE )
-	{
-		return TRUE;
-	}
 
-	if(g_CastleSiege.CheckUnionGuildMaster(lpObj->m_Index) == FALSE )
-	{
-		return TRUE;
-	}
-
-	if( (abs(lpObj->Y - lpNpc->Y)) > 3 || (abs(lpObj->X - lpNpc->X)) > 3)
-	{
-		return TRUE;
-	}
-
-	if(g_CastleSiege.GetRegCrownAvailable() == FALSE )
-	{
-		return TRUE;
-	}
 
 	int iUserIndex = g_CastleSiege.GetCrownUserIndex();
 
@@ -1548,22 +1526,10 @@ BOOL NpcCastleCrown(LPOBJ lpNpc, LPOBJ lpObj)
 BOOL NpcCastleSwitch(LPOBJ lpNpc, LPOBJ lpObj)
 {
 	
-	if(gObjIsConnected(lpObj->m_Index) == FALSE )
-	{
-		return TRUE;
-	}
-
-	if(g_CastleSiege.GetCastleState() != CASTLESIEGE_STATE_STARTSIEGE)
-	{
-		return TRUE;
-	}
-	
-	if(lpObj->m_btCsJoinSide < 2)
-	{
-		return TRUE;
-	}
-
-	if( (abs(lpObj->Y - lpNpc->Y)) > 3 || (abs(lpObj->X - lpNpc->X)) > 3)
+	if(gObjIsConnected(lpObj->m_Index) == FALSE 
+		|| g_CastleSiege.GetCastleState() != CASTLESIEGE_STATE_STARTSIEGE
+		|| lpObj->m_btCsJoinSide < 2
+		|| (abs(lpObj->Y - lpNpc->Y)) > 3 || (abs(lpObj->X - lpNpc->X)) > 3)
 	{
 		return TRUE;
 	}
@@ -1603,12 +1569,8 @@ struct PMSG_ANS_GUARD_IN_CASTLE_HUNTZONE {
 
 BOOL NpcCastleHuntZoneGuard(LPOBJ lpNpc, LPOBJ lpObj)
 {
-	if(gObjIsConnected(lpObj->m_Index) == FALSE )
-	{
-		return TRUE;
-	}
-
-	if ( (lpObj->m_IfState.use ) > 0 )
+	if(gObjIsConnected(lpObj->m_Index) == FALSE 
+		|| (lpObj->m_IfState.use ) > 0 )
 	{
 		return TRUE;
 	}
