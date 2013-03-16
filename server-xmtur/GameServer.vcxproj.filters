@@ -1420,4 +1420,7 @@
   <ItemGroup>
     <CustomBuild Include="GameServer.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Changelog.txt" />
+  </ItemGroup>
 </Project>

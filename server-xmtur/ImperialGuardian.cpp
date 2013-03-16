@@ -182,9 +182,8 @@ void CImperialGuardian::OpenCloseGate(BYTE Status){ //0x02: OPEN - 0x03: CLOSED
 	PMSG_FORT_OPENCLOSE_GATE pMsg;
 	pMsg.h.set((LPBYTE)&pMsg,0xBF,0x09,sizeof(pMsg));
 	pMsg.Status = 0x01;
-
 	pMsg.Result = Status;
-	
+
 	//Set All Doors Opened!
 	for(int X=0; X < 5;X++){
 		if(this->Player[X] >= OBJ_STARTUSERINDEX) this->DoorState[X] = DOOR_OPEN;
