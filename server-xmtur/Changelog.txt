@@ -16,4 +16,4 @@
  - MapAttr del ImperialGuardian no abren el Paso al matar los Gates
  (Packets Bien, pero no Abre)
 
- mierdaaaaaaaaaa
+ 
