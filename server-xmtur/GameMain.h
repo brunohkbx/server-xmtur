@@ -10,7 +10,7 @@
 #include "DirPath.h"
 #include "MapClass.h"
 #include "NSerialCheck.h"
-#include "..\common\classdef.h"
+#include "ClassDef.h"
 #include "CLoginCount.h"
 #include "DragonEvent.h"
 #include "AttackEvent.h"

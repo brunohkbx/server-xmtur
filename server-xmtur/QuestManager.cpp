@@ -2,12 +2,12 @@
 #include "User.h"
 #include "QuestManager.h"
 #include "LogProc.h"
-#include "..\include\readscript.h"
+#include "Readscript.h"
 #include "DSProtocol.h"
 #include "BuffManager.h"
 #include "GameMain.h"
 #include "GensSystem.h"
-#include "..\include\Prodef.h"
+#include "Prodef.h"
 
 CQuestManager QuestManager;
 

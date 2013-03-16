@@ -10,9 +10,9 @@
 #include "KanturuUtil.h"
 #include "KanturuMonsterMng.h"
 #include "LogProc.h"
-#include "..\include\Readscript.h"
+#include "Readscript.h"
 #include "Gamemain.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 #include "BuffManager.h"
 
 static CKanturuUtil KANTURU_UTIL;

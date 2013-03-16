@@ -4,7 +4,7 @@
 
 #include "Stdafx.h"
 #include "MasterSkillSystem.h"
-#include "..\include\readscript.h"
+#include "Readscript.h"
 #include "Gamemain.h"
 #include "LogProc.h"
 #include "MagicDamage.h"
@@ -12,7 +12,7 @@
 #include "User.h"
 #include "Protocol.h"
 #include "MasterLevelSystem.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 #include "SkillAdditionInfo.h"
 #include "BuffManager.h"
 #include "ChaosCastle.h"

@@ -4,9 +4,9 @@
 
 #include "Stdafx.h"
 #include "RaklionUtil.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 #include "TNotice.h"
-#include "..\include\Prodef.h"
+#include "Prodef.h"
 #include "RaklionBattleUserMng.h"
 
 //////////////////////////////////////////////////////////////////////

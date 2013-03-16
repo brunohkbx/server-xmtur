@@ -1,6 +1,6 @@
 #include "Stdafx.h"
 #include "WzMultiCastSock.h"
-#include "..\include\Prodef.h"
+#include "Prodef.h"
 #include <Ws2tcpip.h>
 
 CWzMultiCastSock::CWzMultiCastSock()

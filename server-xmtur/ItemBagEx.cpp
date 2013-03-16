@@ -5,8 +5,8 @@
 #include "gObjMonster.h"
 #include "DSProtocol.h"
 #include "GameMain.h"
-#include "..\include\readscript.h"
-#include "..\common\Winutil.h"
+#include "Readscript.h"
+#include "Winutil.h"
 #include "LogProc.h"
 
 CItemBagEx::CItemBagEx()

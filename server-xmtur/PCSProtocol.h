@@ -1,7 +1,7 @@
 #ifndef PCSPROTOCOL_H__
 #define PCSPROTOCOL_H__
 
-//#include "..\common\Item.h"
+//#include "Item.h"
 
 #define MAX_NTF_TRANSACTIONS	16
 

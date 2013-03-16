@@ -9,7 +9,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 
 struct PMSG_ANS_RAKLION_STATE_CHANGE
 {

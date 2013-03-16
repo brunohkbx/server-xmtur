@@ -7,7 +7,7 @@
 
 #include "User.h"
 #include "MagicInf.h"
-#include "..\\common\\Item.h"
+#include "Item.h"
 #include "ObjBaseAttack.h"
 
 

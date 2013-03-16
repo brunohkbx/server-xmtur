@@ -5,8 +5,8 @@
 #ifndef __PCBANGPOINTSYSTEM_H__
 #define __PCBANGPOINTSYSTEM_H__
 
-#include "..\include\Prodef.h"
-#include "..\common\Item.h"
+#include "Prodef.h"
+#include "Item.h"
 
 struct PCBANG_POINT_SYSTEM
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../common/TSync.h"
+#include "TSync.h"
 #include "TMonsterSkillInfo.h"
 #include "TMonsterSkillUnit.h"
 #include "User.h"

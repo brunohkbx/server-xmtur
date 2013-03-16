@@ -492,9 +492,6 @@
     <ClCompile Include="ItemSystemFor380.cpp">
       <Filter>Items\380 System</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\SetItemOption.cpp">
-      <Filter>Items\Ancient</Filter>
-    </ClCompile>
     <ClCompile Include="SetItemMacro.cpp">
       <Filter>Items\Ancient</Filter>
     </ClCompile>
@@ -512,9 +509,6 @@
     </ClCompile>
     <ClCompile Include="ItemAddOption.cpp">
       <Filter>Items\Add Option System</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Item.cpp">
-      <Filter>Items</Filter>
     </ClCompile>
     <ClCompile Include="MapItem.cpp">
       <Filter>Map</Filter>
@@ -563,15 +557,6 @@
     </ClCompile>
     <ClCompile Include="wsGameServer.cpp">
       <Filter>GameServer\Socket</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\MyWinsockBase.cpp">
-      <Filter>GameServer\Socket</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\WzMemScript.cpp">
-      <Filter>GameServer\Scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\WZScriptEncode.cpp">
-      <Filter>GameServer\Scripts</Filter>
     </ClCompile>
     <ClCompile Include="IOCP.cpp">
       <Filter>GameServer\Socket</Filter>
@@ -678,9 +663,6 @@
     <ClCompile Include="DbSave.cpp">
       <Filter>GameServer\Socket</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\TSync.cpp">
-      <Filter>GameServer\Others</Filter>
-    </ClCompile>
     <ClCompile Include="TServerInfoDisplayer.cpp">
       <Filter>GameServer\Others</Filter>
     </ClCompile>
@@ -710,9 +692,6 @@
     </ClCompile>
     <ClCompile Include="BuffEffect.cpp">
       <Filter>GameServer\Buff Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\classdef.cpp">
-      <Filter>Player</Filter>
     </ClCompile>
     <ClCompile Include="PacketCheckSum.cpp">
       <Filter>GameServer\CheckSum</Filter>
@@ -769,9 +748,6 @@
     <ClCompile Include="Protocol.cpp">
       <Filter>GameServer\Protocols</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\Winutil.cpp">
-      <Filter>GameServer\Protocols</Filter>
-    </ClCompile>
     <ClCompile Include="NewsSystem.cpp">
       <Filter>News System</Filter>
     </ClCompile>
@@ -796,10 +772,34 @@
     <ClCompile Include="GamblingSystem.cpp">
       <Filter>Gambling System</Filter>
     </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="SetItemOption.cpp">
+      <Filter>Items\Ancient</Filter>
+    </ClCompile>
+    <ClCompile Include="WzMemScript.cpp">
+      <Filter>GameServer\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="WZScriptEncode.cpp">
+      <Filter>GameServer\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="Winutil.cpp">
+      <Filter>GameServer\Protocols</Filter>
+    </ClCompile>
+    <ClCompile Include="TSync.cpp">
+      <Filter>GameServer\Others</Filter>
+    </ClCompile>
+    <ClCompile Include="MyWinsockBase.cpp">
+      <Filter>GameServer\Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="ClassDef.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="..\GGSvr\Release\GGSvr.lib" />
     <Library Include="SimpleModulus.lib" />
+    <Library Include="GGSvr.lib" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="QuestManager.h">
@@ -1093,9 +1093,6 @@
     <ClInclude Include="ItemSystemFor380.h">
       <Filter>Items\380 System</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\SetItemOption.h">
-      <Filter>Items\Ancient</Filter>
-    </ClInclude>
     <ClInclude Include="SetItemMacro.h">
       <Filter>Items\Ancient</Filter>
     </ClInclude>
@@ -1113,9 +1110,6 @@
     </ClInclude>
     <ClInclude Include="ItemAddOption.h">
       <Filter>Items\Add Option System</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Item.h">
-      <Filter>Items</Filter>
     </ClInclude>
     <ClInclude Include="MapItem.h">
       <Filter>Map</Filter>
@@ -1147,12 +1141,6 @@
     <ClInclude Include="ComboAttack.h">
       <Filter>Skills &amp; Attack</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\WzMemScript.h">
-      <Filter>GameServer\Scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\WZScriptEncode.h">
-      <Filter>GameServer\Socket</Filter>
-    </ClInclude>
     <ClInclude Include="WzQueue.h">
       <Filter>GameServer\Socket</Filter>
     </ClInclude>
@@ -1166,9 +1154,6 @@
       <Filter>GameServer\Socket</Filter>
     </ClInclude>
     <ClInclude Include="wsGameServer.h">
-      <Filter>GameServer\Socket</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\MyWinsockBase.h">
       <Filter>GameServer\Socket</Filter>
     </ClInclude>
     <ClInclude Include="IOCP.h">
@@ -1279,13 +1264,7 @@
     <ClInclude Include="DBSockMng.h">
       <Filter>GameServer\Socket</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\TSync.h">
-      <Filter>GameServer\Others</Filter>
-    </ClInclude>
     <ClInclude Include="TServerInfoDisplayer.h">
-      <Filter>GameServer\Others</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Readscript.h">
       <Filter>GameServer\Others</Filter>
     </ClInclude>
     <ClInclude Include="LargeRand.h">
@@ -1311,9 +1290,6 @@
     </ClInclude>
     <ClInclude Include="CWhatsUpDummyServer.h">
       <Filter>GameServer\Others</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\classdef.h">
-      <Filter>Player</Filter>
     </ClInclude>
     <ClInclude Include="PacketCheckSum.h">
       <Filter>GameServer\CheckSum</Filter>
@@ -1368,9 +1344,6 @@
     <ClInclude Include="MathLib.h">
       <Filter>GameServer\Others</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\Path.h">
-      <Filter>GameServer\Others</Filter>
-    </ClInclude>
     <ClInclude Include="LogProc.h">
       <Filter>GameServer\Logs</Filter>
     </ClInclude>
@@ -1384,12 +1357,6 @@
       <Filter>Extreme Points</Filter>
     </ClInclude>
     <ClInclude Include="Protocol.h">
-      <Filter>GameServer\Protocols</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Prodef.h">
-      <Filter>GameServer\Protocols</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Winutil.h">
       <Filter>GameServer\Protocols</Filter>
     </ClInclude>
     <ClInclude Include="NewsSystem.h">
@@ -1412,6 +1379,39 @@
     </ClInclude>
     <ClInclude Include="GamblingSystem.h">
       <Filter>Gambling System</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="SetItemOption.h">
+      <Filter>Items\Ancient</Filter>
+    </ClInclude>
+    <ClInclude Include="WZScriptEncode.h">
+      <Filter>GameServer\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="WzMemScript.h">
+      <Filter>GameServer\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Winutil.h">
+      <Filter>GameServer\Protocols</Filter>
+    </ClInclude>
+    <ClInclude Include="Prodef.h">
+      <Filter>GameServer\Protocols</Filter>
+    </ClInclude>
+    <ClInclude Include="Path.h">
+      <Filter>GameServer\Others</Filter>
+    </ClInclude>
+    <ClInclude Include="ReadScript.h">
+      <Filter>GameServer\Others</Filter>
+    </ClInclude>
+    <ClInclude Include="TSync.h">
+      <Filter>GameServer\Others</Filter>
+    </ClInclude>
+    <ClInclude Include="MyWinsockBase.h">
+      <Filter>GameServer\Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassDef.h">
+      <Filter>Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -7,8 +7,8 @@
 #include "GameMain.h"
 #include "LogProc.h"
 #include "DSProtocol.h"
-#include "..\include\Readscript.h"
-#include "..\common\Winutil.h"
+#include "Readscript.h"
+#include "Winutil.h"
 
 BOOL g_bUseCashShop = FALSE;
 BOOL g_bConnectShopServer = FALSE;

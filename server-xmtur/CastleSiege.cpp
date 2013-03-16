@@ -17,7 +17,7 @@
 #include "DBSockMng.h"
 #include "LogToFile.h"
 #include "LogProc.h"
-#include "..\include\readscript.h"
+#include "Readscript.h"
 #include "BuffManager.h"
 
 CCastleSiege g_CastleSiege;

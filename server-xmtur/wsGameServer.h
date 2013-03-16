@@ -5,7 +5,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "..\common\MyWinsockBase.h"
+#include "MyWinsockBase.h"
 #include "IpCache.h"
 
 class CwsGameServer : public MyWinsockBase

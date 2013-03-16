@@ -9,7 +9,7 @@
 
 
 
-#include "..\common\TSync.h"
+#include "TSync.h"
 #include "TUnionInfo.h"
 
 class TUnion

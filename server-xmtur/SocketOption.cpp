@@ -4,7 +4,7 @@
 
 #include "Stdafx.h"
 #include "SocketOption.h"
-#include "..\\Include\\ReadScript.h"
+#include "Readscript.h"
 #include "LogProc.h"
 #include "GameMain.h"
 #include "LargeRand.h"

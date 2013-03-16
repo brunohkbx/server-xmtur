@@ -5,7 +5,7 @@
 #include "GameServer.h"
 #include "CannonTower.h"
 #include "User.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 #include "ObjUseSkill.h"
 
 

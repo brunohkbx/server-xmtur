@@ -4,12 +4,12 @@
 
 #include "Stdafx.h"
 #include "ProbabilityItemBag.h"
-#include "..\common\SetItemOption.h"
+#include "SetItemOption.h"
 #include "gObjMonster.h"
 #include "DSProtocol.h"
 #include "GameMain.h"
-#include "..\include\readscript.h"
-#include "..\common\Winutil.h"
+#include "Readscript.h"
+#include "Winutil.h"
 #include "LogProc.h"
 
 CProbabilityItemBag::CProbabilityItemBag()

@@ -1,7 +1,7 @@
 //GameServer 1.00.77 JPN - Completed
 #include "Stdafx.h"
 #include "SendHackLog.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 #include "GameMain.h"
 #include "User.h"
 

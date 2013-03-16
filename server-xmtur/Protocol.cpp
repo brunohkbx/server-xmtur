@@ -6,7 +6,7 @@
 #include "Event.h"
 #include "LogProc.h"
 #include "GameMain.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 #include "TNotice.h"
 #include "QuestInfo.h"
 #include "ConMember.h"

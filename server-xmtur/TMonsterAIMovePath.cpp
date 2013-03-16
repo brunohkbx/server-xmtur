@@ -7,7 +7,7 @@
 #include "TMonsterAIMovePath.h"
 
 
-#include "..\include\ReadScript.h"
+#include "Readscript.h"
 #include "LogProc.h"
 
 

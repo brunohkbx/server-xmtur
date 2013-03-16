@@ -2,7 +2,7 @@
 #include "ConMember.h"
 #include "LogProc.h"
 #include "GameMain.h"
-#include "..\include\readscript.h"
+#include "Readscript.h"
 
 CConMember ConMember;
 

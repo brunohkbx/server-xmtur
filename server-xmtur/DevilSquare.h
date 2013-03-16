@@ -8,7 +8,7 @@
 
 #include "DevilSquareGround.h"
 #include "User.h"
-#include "..\common\classdef.h"
+#include "ClassDef.h"
 #include <list>
 #include "MasterLevelSystem.h"
 

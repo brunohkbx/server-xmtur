@@ -10,7 +10,7 @@
 #include "Event.h"
 
 #include "LogProc.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 
 CKanturuUtil g_KanturuUtil; 
 //////////////////////////////////////////////////////////////////////

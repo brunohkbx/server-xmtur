@@ -16,8 +16,8 @@
 #include "MasterLevelSystem.h"
 #include "BuffManager.h"
 
-#include "..\include\readscript.h"
-#include "..\common\Winutil.h"
+#include "Readscript.h"
+#include "Winutil.h"
 
 int g_iChaosCastle_OffLineGiftRate = 2;
 

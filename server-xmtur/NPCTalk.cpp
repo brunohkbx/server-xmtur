@@ -4,7 +4,7 @@
 #include "User.h"
 #include "NpcTalk.h"
 #include "gObjMonster.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 #include "Protocol.h"
 #include "GameMain.h"
 #include "BloodCastle.h"

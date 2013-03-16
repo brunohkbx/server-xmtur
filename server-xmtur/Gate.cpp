@@ -5,8 +5,8 @@
 #include "LogProc.h"
 #include "GameMain.h"
 #include "GameServer.h"
-#include "..\common\WzMemScript.h"
-#include "..\include\readscript.h"
+#include "WzMemScript.h"
+#include "Readscript.h"
 #include "GameServerAuth.h"
 
 CGate gGateC;

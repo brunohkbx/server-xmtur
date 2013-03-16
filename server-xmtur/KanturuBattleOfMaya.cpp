@@ -11,7 +11,7 @@
 #include "KanturuMonsterMng.h"
 #include "KanturuBattleUserMng.h"
 #include "LogProc.h"
-#include "..\include\ReadScript.h"
+#include "Readscript.h"
 #include "KanturuUtil.h"
 
 static CKanturuUtil KANTURU_UTIL;

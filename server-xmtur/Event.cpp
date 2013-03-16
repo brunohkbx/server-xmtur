@@ -8,7 +8,7 @@
 #include "DSProtocol.h"
 #include "GameServer.h"
 #include "GameMain.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 #include "ProbabilityItemBag.h"
 #include "EventManagement.h"
 #include "GamblingSystem.h"

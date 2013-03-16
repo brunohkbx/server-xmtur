@@ -15,8 +15,8 @@
 #include "MapServerManager.h"
 #include "DSProtocol.h"
 
-#include "..\include\ReadScript.h"
-#include "..\common\Winutil.h"
+#include "Readscript.h"
+#include "Winutil.h"
 #include "LogProc.h"
 #include "BuffManager.h"
 #include "MasterLevelSystem.h"

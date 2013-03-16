@@ -10,7 +10,7 @@
 
 #include "MapClass.h"
 #include "User.h"
-#include "..\common\Item.h"
+#include "Item.h"
 #include "ItemBagEx.h"
 
 #define MAX_PROBABILITY_ITEMBAG_ATTR 150

@@ -25,7 +25,7 @@
 #include "SendHackLog.h"
 #include "SimpleModulus.h"
 #include "MapServerManager.h"
-#include "..\ggsvr\ggsvr.h"
+#include "GGSvr.h"
 #include "QuestInfo.h"
 #include "SkillHitBox.h"
 #include "EventManagement.h"
@@ -81,10 +81,10 @@
 #include "GamblingSystem.h"
 
 #include "CrywolfAltar.h"
-#include "..\common\Winutil.h"
-#include "..\common\SetItemOption.h"
-#include "..\common\classdef.h"
-#include "..\include\Prodef.h"
+#include "Winutil.h"
+#include "SetItemOption.h"
+#include "ClassDef.h"
+#include "Prodef.h"
 
 CConfigs Configs;
 

@@ -2,7 +2,7 @@
 #include "Stdafx.h"
 #include "MapServerManager.h"
 #include "MapClass.h"
-#include "..\include\readscript.h"
+#include "Readscript.h"
 #include "GameMain.h"
 #include "LogProc.h"
 #include "User.h"

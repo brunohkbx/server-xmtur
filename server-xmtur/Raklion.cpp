@@ -6,7 +6,7 @@
 #include "Raklion.h"
 #include "GameMain.h"
 #include "LogProc.h"
-#include "..\include\readscript.h"
+#include "Readscript.h"
 #include "User.h"
 #include "RaklionUtil.h"
 #include "RaklionBattleUserMng.h"

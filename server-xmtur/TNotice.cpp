@@ -3,7 +3,7 @@
 #include "TNotice.h"
 #include "User.h"
 #include "IOCP.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 
 void TNotice::MakeNoticeMsg(void * lpNotice, BYTE btType, char * szNoticeMsg)
 {

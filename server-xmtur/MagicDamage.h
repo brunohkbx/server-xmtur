@@ -8,7 +8,7 @@
 #define MAX_SKILL			600
 #define MAX_REQ_SKILL_STATUS	3
 
-#include "..\common\classdef.h"
+#include "ClassDef.h"
 
 
 enum eSkillType

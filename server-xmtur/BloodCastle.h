@@ -5,7 +5,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "..\common\Item.h"
+#include "Item.h"
 #include "User.h"
 #include "MasterLevelSystem.h"
 #include <list>

@@ -7,7 +7,7 @@
 #include "TMonsterAIUtil.h"
 
 #include "Gamemain.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 #include "BuffManager.h"
 
 //////////////////////////////////////////////////////////////////////

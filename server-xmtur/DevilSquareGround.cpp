@@ -5,7 +5,7 @@
 #include "DevilSquare.h"
 #include "GameMain.h"
 #include "LogProc.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 #include "CrywolfSync.h"
 #include "BuffManager.h"
 

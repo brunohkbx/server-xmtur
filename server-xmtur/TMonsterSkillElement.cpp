@@ -9,9 +9,9 @@
 #include "Protocol.h"
 #include "gObjMonster.h"
 #include "Gamemain.h"
-#include "..\include\ReadScript.h"
+#include "Readscript.h"
 #include "LogProc.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 #include "BuffManager.h"
 
 BOOL TMonsterSkillElement::s_bDataLoad = FALSE;

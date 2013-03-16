@@ -10,7 +10,7 @@
 #endif // _MSC_VER > 1000
 
 
-#include "..\common\Item.h"
+#include "Item.h"
 
 #define ITEMOPTION_FOR380ITEM_EFFECT_NONE							0
 #define ITEMOPTION_FOR380ITEM_EFFECT_OPADDATTACKSUCCESSRATEPVP		1

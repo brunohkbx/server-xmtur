@@ -14,7 +14,7 @@
 #include "MasterSkillSystem.h"
 #include "BuffManager.h"
 #include "LogProc.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 #include "Raklion.h"
 #include "RaklionBattleUserMng.h"
 

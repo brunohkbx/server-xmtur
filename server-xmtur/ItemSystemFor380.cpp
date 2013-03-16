@@ -7,10 +7,10 @@
 #include "Gamemain.h"
 #include "CastleSiegeSync.h"
 #include "LogProc.h"
-#include "..\include\ReadScript.h"
+#include "Readscript.h"
 
 #include "MixSystem.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 
 CItemSystemFor380 g_kItemSystemFor380;
 //////////////////////////////////////////////////////////////////////

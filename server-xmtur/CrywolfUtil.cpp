@@ -7,7 +7,7 @@
 #include "DSProtocol.h"
 #include "MapServerManager.h"
 #include "TNotice.h"
-#include "..\common\classdef.h"
+#include "ClassDef.h"
 #include "LogProc.h"
 #include "Gamemain.h"
 #include "MasterLevelSystem.h"

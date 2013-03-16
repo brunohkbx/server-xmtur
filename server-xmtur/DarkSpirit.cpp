@@ -9,7 +9,7 @@
 #include "ObjAttack.h"
 #include "ChaosCastle.h"
 #include "IllusionTempleEvent.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 #include "BuffManager.h"
 #include "ItemAddOption.h"
 #include "SafeMapSystem.h"

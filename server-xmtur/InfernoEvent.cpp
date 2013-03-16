@@ -2,7 +2,7 @@
 #include "InfernoEvent.h"
 #include "LogProc.h"
 #include "GameMain.h"
-#include "..\include\Readscript.h"
+#include "Readscript.h"
 #include "User.h"
 #include "DSProtocol.h"
 
