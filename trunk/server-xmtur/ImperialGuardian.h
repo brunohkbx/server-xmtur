@@ -17,10 +17,7 @@ struct PMSG_FORT_ENTER_RESULT
 //Result : 2 - Open, 3 - Close
 struct PMSG_FORT_OPENCLOSE_GATE 
 {
-	BYTE C;
-	BYTE Size;
-	BYTE Headcode;
-	BYTE Subcode;
+	PBMSG_HEAD2 h;
 	BYTE Status;
 	BYTE Result;
 };

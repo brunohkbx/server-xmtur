@@ -41,7 +41,7 @@ BOOL CSafeMapSystem::SafeCheck(int aIndex, int tIndex)
 	LPOBJ lpTargetObj = &gObj[tIndex];
 
 	if((lpObj->Type == 1 && lpTargetObj->Type == 1) && (lpTargetObj->MapNumber == lpObj->MapNumber)){ //Check para ver si es de Usuario a Usuario 
-		if(this->SafeMap[gObj->MapNumber] == 1){
+		if(this->SafeMap[lpObj->MapNumber] == 1){
 			GCServerMsgStringSend("[Safe] No se permite el PvP en este Mapa",aIndex,1);
 			return FALSE;
 		} 

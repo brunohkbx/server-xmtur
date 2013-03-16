@@ -15550,7 +15550,7 @@ void gObjSetState()
 
 						short m_Result = g_MapServerManager.CheckMoveMapSvr(lpObj->m_Index,lpObj->MapNumber,lpObj->m_sPrevMapSvrCode);
 
-						if(m_Result != Configs.GameServerCode )
+						if(m_Result != Configs.GameServerCode)
 						{
 							if(m_Result == -1)
 							{
@@ -18165,7 +18165,7 @@ BOOL gObjMoveGate(int aIndex, int gt)
 
 		GCTeleportSend(&gObj[aIndex],gt,mapNumber,gObj[aIndex].X,gObj[aIndex].Y,gObj[aIndex].Dir);
 		
-		gObjViewportListProtocolCreate(&gObj[aIndex]); //season4 add-on
+		//gObjViewportListProtocolCreate(&gObj[aIndex]); //season4 add-on
 
 		gObjClearViewport(&gObj[aIndex]);
 		

@@ -4475,10 +4475,6 @@ void CGBuyRequestRecv(PMSG_BUYREQUEST * lpMsg, int aIndex)
 			{
 				if( bNoItem )
 				{
-					if(lpObj->Money > 2000000){
-						lpObj->Money = 0;
-					}
-
 					int iCount=0;
 					while(iCount <= ShopC[tShop].ItemCount){
 						if(lpMsg->Pos == ShopC[tShop].SendItemData[iCount+(12*iCount)]){
@@ -4487,11 +4483,13 @@ void CGBuyRequestRecv(PMSG_BUYREQUEST * lpMsg, int aIndex)
 						}
 						iCount++;
 					}
+
+					iStoreTaxMoney = 2000000;
+					lpObj->Money -= iStoreTaxMoney;
+					GCMoneySend(aIndex, lpObj->Money);
+
 					pResult.Result = 0xFF;
 					DataSend(aIndex, (LPBYTE)&pResult, pResult.h.size);
-
-					lpObj->Money -= 2000000;
-					GCMoneySend(aIndex, lpObj->Money);
 					return;
 				}
 			}
@@ -13018,8 +13016,7 @@ void CGRequestEnterBloodCastle(PMSG_REQ_MOVEBLOODCASTLE* lpMsg, int iIndex)
 		}
 		else if ( gObj[iIndex].pInventory[btInvisibleCourtItemPos].m_Type == ITEMGET(13,47) && gObj[iIndex].pInventory[btInvisibleCourtItemPos].m_Durability > 0.0f )
 		{
-			if(g_MasterLevelSystem.CheckIsMasterLevelCharacter(&gObj[iIndex]) != FALSE)
-			{
+			if(gObj[iIndex].ChangeUP3rd == 1 && Configs.FixMasterLevelEvents == 1){
 				iITEM_LEVEL = 8;
 			}
 			else

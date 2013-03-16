@@ -977,6 +977,8 @@ int  CBloodCastle::CheckEnterLevel(int iIndex, int iLevel)
 		return 2;
 	}
 
+	if(gObj[iIndex].ChangeUP3rd == 1 && iLevel == 8 && Configs.FixMasterLevelEvents == 1) return 0;
+
 	if ( gObj[iIndex].Class == CLASS_DARKLORD || gObj[iIndex].Class == CLASS_MAGUMSA )
 	{
 		if ( gObj[iIndex].Level >= g_sttBLOODCASTLE_LEVEL[iLevel-1].iLOWER_BOUND_MAGUMSA && gObj[iIndex].Level <= g_sttBLOODCASTLE_LEVEL[iLevel-1].iUPPER_BOUND_MAGUMSA )

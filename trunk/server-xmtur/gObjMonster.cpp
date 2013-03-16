@@ -3656,6 +3656,15 @@ void gObjMonsterDieGiveItem(LPOBJ lpObj, LPOBJ lpTargetObj)
 			NOption=0;
 		}
 
+		if(type == ITEMGET(13,52))	//Flame of Condor
+		{
+			Option1=0;
+			Option2=0;
+			Option3=0;
+			NOption=0;
+			level = 0;
+		}
+
 		int MaxHitUser = gObjMonsterTopHitDamageUser(lpObj);
 
 		if ( DropItem->m_serial )
@@ -3690,6 +3699,10 @@ void gObjMonsterDieGiveItem(LPOBJ lpObj, LPOBJ lpTargetObj)
 		if ( money < 1.0f )
 		{
            money = 1.0f;
+		}
+
+		if(lpTargetObj->PartyNumber != -1){
+			money = money * 500;
 		}
 
 		if ( DS_MAP_RANGE(lpObj->MapNumber) )
