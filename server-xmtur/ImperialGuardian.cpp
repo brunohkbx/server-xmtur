@@ -177,9 +177,25 @@ void CImperialGuardian::EnterEvent(int aIndex){
 	LogAddTD("[ImperialGuardian] Players: %d/5, Map: %d, Party: %d",this->PlayersCount,this->EventMap,PartyNumber);
 }
 
+static const struct KatoMapAttr
+{
+	int StartX;
+	int StartY;
+	int EndX;
+	int EndY;
+} g_KatoMapAttr[9] = {
+	142, 190, 147, 192,
+	115, 191, 120, 193,
+	85, 195, 90, 197,
+	222, 133, 224, 138,
+	222, 159, 224, 164,
+	222, 192, 224, 197,
+	166, 216, 168, 221
+};
+
 void CImperialGuardian::OpenCloseGate(BYTE Status){ //0x02: OPEN - 0x03: CLOSED
 	
-	PMSG_FORT_OPENCLOSE_GATE pMsg;
+	/*PMSG_FORT_OPENCLOSE_GATE pMsg;
 	pMsg.h.set((LPBYTE)&pMsg,0xBF,0x09,sizeof(pMsg));
 	pMsg.Status = 0x01;
 	pMsg.Result = Status;
@@ -187,9 +203,30 @@ void CImperialGuardian::OpenCloseGate(BYTE Status){ //0x02: OPEN - 0x03: CLOSED
 	//Set All Doors Opened!
 	for(int X=0; X < 5;X++){
 		if(this->Player[X] >= OBJ_STARTUSERINDEX) this->DoorState[X] = DOOR_OPEN;
-	}
+	}*/
 
-	this->PDataSend((LPBYTE)&pMsg,pMsg.h.size);
+	char Buff[256];
+	short PacketSize = 0;
+	PMSG_SETMAPATTR_COUNT * lpMsg = (PMSG_SETMAPATTR_COUNT *)(Buff);
+	PMSG_SETMAPATTR * lpMsgBody = (PMSG_SETMAPATTR *)(Buff + sizeof(PMSG_SETMAPATTR_COUNT));
+
+	lpMsgBody[0].btX = 0;
+	lpMsgBody[0].btY = 0;
+	lpMsgBody[1].btX = 255;
+	lpMsgBody[1].btY = 255;
+
+	PacketSize = (sizeof(PMSG_SETMAPATTR_COUNT)+6*sizeof(PMSG_SETMAPATTR));
+
+	lpMsg->btMapAttr = 16;
+	lpMsg->btMapSetType = 1;
+	lpMsg->btCount = 1;
+	lpMsg->btType = 0;
+
+	lpMsg->h.c = 0xC1;
+	lpMsg->h.headcode = 0x46;
+	lpMsg->h.size = PacketSize;
+
+	this->PDataSend((LPBYTE)&lpMsg,lpMsg->h.size);
 }
 
 void CImperialGuardian::SendTimer(){
@@ -294,7 +331,7 @@ void CImperialGuardian::MessageSend(char* Msg, int Type){
 	}
 }
 
-void CImperialGuardian::PDataSend(unsigned char* aRecv, int Size){
+void CImperialGuardian::PDataSend(LPBYTE aRecv, int Size){
 
 	int PlayerIndex = 0;
 	for(int X=0; X < 5;X++){
@@ -552,7 +589,7 @@ void CImperialGuardian::CheckTraps(){
 
 void CImperialGuardian::CheckPassGates(int aIndex, WORD Gate){
 
-	if(Gate < 307 || Gate > 328) return;
+	/*if(Gate < 307 || Gate > 328) return;
 	if(this->BattleStatus == IMPERIAL_NONE) return;
 
 	PMSG_FORT_OPENCLOSE_GATE pMsg;
@@ -570,14 +607,14 @@ void CImperialGuardian::CheckPassGates(int aIndex, WORD Gate){
 				DataSend(aIndex,(LPBYTE)&pMsg,pMsg.h.size);
 			}
 		}
-	}
+	}*/
 }
 
 void CImperialGuardian::CheckGates(){
 
 	if(this->BattleStatus == IMPERIAL_NONE) return;
 
-	PMSG_FORT_OPENCLOSE_GATE pMsg;
+	/*PMSG_FORT_OPENCLOSE_GATE pMsg;
 	pMsg.h.set((LPBYTE)&pMsg,0xBF,0x09,sizeof(pMsg));
 	pMsg.Status = 0x01;
 	pMsg.Result = 0x03;
@@ -649,7 +686,7 @@ void CImperialGuardian::CheckGates(){
 				}
 			}
 		}
-	}
+	}*/
 }
 
 //////////////////////////////////////////////////////////////////

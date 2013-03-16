@@ -27,7 +27,7 @@ MapClass::MapClass()
 	SetRect(&this->gRegenRect[8], 187, 54, 203, 69);
 	SetRect(&this->gRegenRect[33], 82, 8, 87, 14);
 	SetRect(&this->gRegenRect[34], 133, 41, 140, 44);
-	SetRect(&this->gRegenRect[51], 40, 214, 43, 224); //Elbeland??
+	SetRect(&this->gRegenRect[51], 40, 214, 43, 224);
 	this->m_ItemCount=0;
 }
 
