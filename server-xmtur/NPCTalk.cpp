@@ -667,7 +667,7 @@ BOOL NpcGuildMasterTalk(LPOBJ lpNpc, LPOBJ lpObj)
 
 BOOL NpcRolensiaGuard(LPOBJ lpNpc, LPOBJ lpObj)
 {
-	else if ( Configs.EnableEventNPCTalk != FALSE )
+	if ( Configs.EnableEventNPCTalk != FALSE )
 	{
 		GCServerCmd(lpObj->m_Index, 4, 0, 0);
 	}
