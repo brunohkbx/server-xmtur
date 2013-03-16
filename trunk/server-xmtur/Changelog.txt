@@ -1,0 +1,17 @@
+//////////////////////////////////////////////////////////////////////////////
+// Lista de Fixes y Bugs Restantes
+// Ultima Modificacion: 16-03-2013
+// Por: Zero
+
+16/03/2013
+
+ - Party Zen Bug Fixed
+ - Kanturu Event Working
+ - SafeMap System Fixed
+
+
+//////////////////////////////////////////////////////////////////////////////
+//  Bugs Pendientes
+
+ - MapAttr del ImperialGuardian no abren el Paso al matar los Gates
+ (Packets Bien, pero no Abre)
