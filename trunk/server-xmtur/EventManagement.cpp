@@ -7,7 +7,7 @@
 #include "EledoradoEvent.h"
 #include "RingAttackEvent.h"
 #include "XMasAttackEvent.h"
-#include "..\include\readscript.h"
+#include "Readscript.h"
 
 CEventManagement g_EventManager;
 CEventItemList	g_EventItemList; //nice position wz

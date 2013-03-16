@@ -8,7 +8,7 @@
 #include "LogProc.h"
 #include "DBSockMng.h"
 #include "User.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 
 CQuestUtil g_QuestUtil;
 

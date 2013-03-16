@@ -7,7 +7,7 @@
 #include "Gamemain.h"
 
 #include "LogProc.h"
-#include "..\include\ReadScript.h"
+#include "Readscript.h"
 
 
 CKanturuMonsterMng g_KanturuMonsterMng;

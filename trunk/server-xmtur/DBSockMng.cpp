@@ -1,6 +1,6 @@
 //GameServer 1.00.77 JPN - Completed
 #include "Stdafx.h"
-#include "..\common\MyWinsockBase.h"
+#include "MyWinsockBase.h"
 #include "wsJoinServerCli.h"
 #include "GameServer.h"
 #include "GameMain.h"

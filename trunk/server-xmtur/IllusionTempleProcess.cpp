@@ -4,7 +4,7 @@
 #include "IllusionTempleProcess.h"
 #include "GameMain.h"
 #include "LogProc.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 #include "Protocol.h"
 #include "DSProtocol.h"
 #include "ProbabilityItemBag.h"

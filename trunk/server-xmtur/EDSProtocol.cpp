@@ -2,7 +2,7 @@
 #include "Stdafx.h"
 #include "EDSProtocol.h"
 #include "GuildClass.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 #include "LogProc.h"
 #include "TUnion.h"
 #include "GameServer.h"

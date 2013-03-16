@@ -11,7 +11,7 @@
 
 
 #include "PCSProtocol.h"
-#include "..\common\Item.h"
+#include "Item.h"
 #include "Protocol.h"
 #include "wsShopServerCli.h"
 

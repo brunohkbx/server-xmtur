@@ -5,7 +5,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "..\common\MyWinsockBase.h"
+#include "MyWinsockBase.h"
 
 
 #define MAX_WS_BUF_LEN	819200

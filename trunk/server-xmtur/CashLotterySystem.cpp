@@ -4,7 +4,7 @@
 #include "LargeRand.h"
 #include "User.h"
 #include "LogProc.h"
-#include "..\include\readscript.h"
+#include "Readscript.h"
 
 CCashLotterySystem g_CashLotterySystem;
 

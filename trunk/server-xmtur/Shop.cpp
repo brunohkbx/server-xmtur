@@ -5,9 +5,9 @@
 #include "GameServerAuth.h"
 #include "Shop.h"
 #include "LogProc.h"
-#include "..\include\readscript.h"
+#include "Readscript.h"
 #include "GameMain.h"
-#include "..\common\WzMemScript.h"
+#include "WzMemScript.h"
 
 CShop ShopC[MAX_SHOP];
 

@@ -8,7 +8,7 @@
 #include "TMonsterAIGroup.h"
 #include "TMonsterAIUtil.h"
 #include "LogProc.h"
-#include "..\include\ReadScript.h"
+#include "Readscript.h"
 
 BOOL TMonsterAIAutomata::s_bDataLoad = FALSE;
 TMonsterAIAutomata TMonsterAIAutomata::s_MonsterAIAutomataArray[MAX_MONSTER_AI_AUTOMATA];

@@ -3,7 +3,7 @@
 #include "PartyClass.h"
 #include "LogProc.h"
 #include "Protocol.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 
 PartyClass::PartyClass()
 {

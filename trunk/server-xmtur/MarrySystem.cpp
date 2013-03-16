@@ -3,7 +3,7 @@
 #include "User.h"
 #include "GameMain.h"
 #include "LogProc.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 #include "DSProtocol.h"
 
 CMarrySystem MarrySystem;

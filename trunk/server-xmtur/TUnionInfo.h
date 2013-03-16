@@ -6,7 +6,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "..\common\TSync.h"
+#include "TSync.h"
 
 #define MAX_UNION_GUILD 100
 #define MAX_UNION_MEMBER	5

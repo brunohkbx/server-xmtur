@@ -6,7 +6,7 @@
 #endif // _MSC_VER > 1000
 
 #include "User.h"
-#include "..\common\Item.h"
+#include "Item.h"
 
 void gObjCalCharacter(int aIndex);
 void GObjExtItemApply(LPOBJ lpObj);

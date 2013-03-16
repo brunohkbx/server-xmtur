@@ -8,7 +8,7 @@
 #include "ItemBag.h"
 #include "MapClass.h"
 #include "User.h"
-#include "..\common\Item.h"
+#include "Item.h"
 
 class CItemBagDropMapInfo
 {

@@ -9,7 +9,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "..\COMMON\MyWinsockBase.h"
+#include "MyWinsockBase.h"
 
 typedef void(*ShopProtocolCore)(DWORD, LPBYTE, int);
 

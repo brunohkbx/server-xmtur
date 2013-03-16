@@ -4,7 +4,7 @@
 #include "LogProc.h"
 #include "ObjCalCharacter.h"
 #include "CashItemPeriodSystem.h"
-#include "..\include\Readscript.h"
+#include "Readscript.h"
 
 CItemAddOption g_ItemAddOption;
 

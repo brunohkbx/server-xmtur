@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "GamblingSystem.h"
-#include "..\include\readscript.h"
+#include "Readscript.h"
 #include "user.h"
 #include "GameMain.h"
 #include "LogProc.h"

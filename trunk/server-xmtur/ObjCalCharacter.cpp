@@ -7,7 +7,7 @@
 #include "Gamemain.h"
 #include "DarkSpirit.h"
 #include "ItemAddOption.h"
-#include "..\common\SetItemOption.h"
+#include "SetItemOption.h"
 #include "LogProc.h"
 #include "ViewportSkillState.h" //Season 3.0 add-on
 #include "SocketOption.h" //Season 4.0 add-on

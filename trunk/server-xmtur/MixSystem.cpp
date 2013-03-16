@@ -14,8 +14,8 @@
 #include "ChaosCard.h"
 #include "ProbabilityItemBag.h"
 #include "Event.h"
-#include "..\common\Winutil.h"
-#include "..\common\SetItemOption.h"
+#include "Winutil.h"
+#include "SetItemOption.h"
 
 CMixSystem g_MixSystem;
 

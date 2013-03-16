@@ -5,7 +5,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "..\common\Item.h"
+#include "Item.h"
 
 #define MAX_SHOP 20 //15 confirmed season 2.5 (18 max shop)
 #define MAX_ITEM_IN_SHOP 120

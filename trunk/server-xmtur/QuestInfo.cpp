@@ -2,9 +2,9 @@
 //GameServer 1.00.90 JPN - Completed
 #include "Stdafx.h"
 #include "QuestInfo.h"
-#include "..\include\readscript.h"
-#include "..\common\WzMemScript.h"
-#include "..\common\Winutil.h"
+#include "Readscript.h"
+#include "WzMemScript.h"
+#include "Winutil.h"
 #include "LogProc.h"
 #include "GameServer.h"
 #include "GameMain.h"

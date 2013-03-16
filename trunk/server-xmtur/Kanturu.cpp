@@ -9,7 +9,7 @@
 #include "KanturuUtil.h"
 #include "Gamemain.h"
 #include "LogProc.h"
-#include "..\include\ReadScript.h"
+#include "Readscript.h"
 
 static CKanturuUtil KANTURU_UTIL;
 CKanturu g_Kanturu;

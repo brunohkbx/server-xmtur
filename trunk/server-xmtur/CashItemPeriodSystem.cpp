@@ -4,7 +4,7 @@
 #include "DBSockMng.h"
 #include "LogProc.h"
 #include "ItemAddOption.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 #include "BuffManager.h"
 #include "ObjCalCharacter.h"
 

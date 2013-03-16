@@ -9,7 +9,7 @@
 #include "ViewportSkillState.h"
 #include "ItemAddOption.h"
 #include "Protocol.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 #include "MasterLevelSystem.h"
 #include "LogProc.h"
 

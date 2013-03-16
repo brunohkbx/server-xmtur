@@ -3,7 +3,7 @@
 #include "SafeMapSystem.h"
 #include "LogProc.h"
 #include "GameMain.h"
-#include "..\include\Readscript.h"
+#include "Readscript.h"
 
 CSafeMapSystem SafeMap;
 

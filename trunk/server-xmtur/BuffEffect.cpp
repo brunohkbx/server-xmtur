@@ -4,7 +4,7 @@
 
 #include "Stdafx.h"
 #include "BuffEffect.h"
-#include "..\include\readscript.h"
+#include "Readscript.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

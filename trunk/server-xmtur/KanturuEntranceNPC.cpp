@@ -11,7 +11,7 @@
 #include "LogProc.h"
 
 #include "KanturuUtil.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 
 static CKanturuUtil KANTURU_UTIL;
 

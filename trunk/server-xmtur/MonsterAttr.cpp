@@ -5,8 +5,8 @@
 #include "Stdafx.h"
 #include "MonsterAttr.h"
 #include "LogProc.h"
-#include "..\include\readscript.h"
-#include "..\common\WzMemScript.h"
+#include "Readscript.h"
+#include "WzMemScript.h"
 #include "User.h"
 #include "GameMain.h"
 

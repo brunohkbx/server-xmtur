@@ -1,5 +1,5 @@
 #include "Stdafx.h"
-#include "..\common\WzMemScript.h"
+#include "WzMemScript.h"
 #include "logproc.h"
 #include "ExtremePoints.h"
 #include "DSProtocol.h"

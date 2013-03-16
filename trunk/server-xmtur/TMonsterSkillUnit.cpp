@@ -7,7 +7,7 @@
 
 #include "Stdafx.h"
 #include "TMonsterSkillUnit.h"
-#include "..\include\ReadScript.h"
+#include "Readscript.h"
 #include "LogProc.h"
 
 TMonsterSkillUnit TMonsterSkillUnit::s_MonsterSkillUnitArray[MAX_MONSTER_SKILL_UNIT_ARRAY];

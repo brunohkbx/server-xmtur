@@ -19,7 +19,7 @@
 #include "ObjUseSkill.h"
 #include "CashItemPeriodSystem.h"
 #include "BloodCastle.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 #include "ObjCalCharacter.h"
 #include "CrywolfSync.h"
 #include "QuestManager.h"

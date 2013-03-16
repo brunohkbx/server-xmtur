@@ -4,9 +4,9 @@
 
 #include "Stdafx.h"
 #include "SetItemMacro.h"
-#include "..\include\readscript.h"
-#include "..\common\Item.h"
-#include "..\common\SetItemOption.h"
+#include "Readscript.h"
+#include "Item.h"
+#include "SetItemOption.h"
 #include "DSProtocol.h"
 #include "User.h"
 #include "LogProc.h"

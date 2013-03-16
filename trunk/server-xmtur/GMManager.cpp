@@ -2,7 +2,7 @@
 #include "GMManager.h"
 #include "LogProc.h"
 #include "GameMain.h"
-#include "..\include\Readscript.h"
+#include "Readscript.h"
 
 CGMManager GMManager;
 

@@ -1,5 +1,5 @@
 #include "Stdafx.h"
-#include "..\common\WzMemScript.h"
+#include "WzMemScript.h"
 #include "LogProc.h"
 #include "BloodCastleBag.h"
 #include "DSProtocol.h"

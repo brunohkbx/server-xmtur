@@ -5,7 +5,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "..\common\classdef.h"
+#include "ClassDef.h"
 #include "User.h"
 
 #define MAX_QUEST_INFO 200

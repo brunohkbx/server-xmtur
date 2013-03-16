@@ -2,9 +2,9 @@
 //GameServer 1.00.90 JPN - Completed
 #include "Stdafx.h"
 #include "MoveCommand.h"
-#include "..\include\readscript.h"
+#include "Readscript.h"
 #include "LogProc.h"
-#include "..\common\WzMemScript.h"
+#include "WzMemScript.h"
 #include "DevilSquare.h"
 #include "KalimaGate.h"
 #include "ChaosCastle.h"

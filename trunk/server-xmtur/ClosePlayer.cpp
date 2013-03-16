@@ -1,7 +1,7 @@
 #include "Stdafx.h"
 #include "ClosePlayer.h"
 #include "closeplayer.h"
-#include "..\include\readscript.h"
+#include "Readscript.h"
 #include "LogProc.h"
 #include "User.h"
 #include "IOCP.h"

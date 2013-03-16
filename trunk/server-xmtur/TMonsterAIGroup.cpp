@@ -9,7 +9,7 @@
 #include "User.h"
 #include "Gamemain.h"
 
-#include "..\include\ReadScript.h"
+#include "Readscript.h"
 #include "LogProc.h"
 
 

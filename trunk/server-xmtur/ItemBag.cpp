@@ -3,7 +3,7 @@
 #include "DirPath.h"
 #include "ItemBag.h"
 #include "GameMain.h"
-#include "..\include\readscript.h"
+#include "Readscript.h"
 #include "LogProc.h"
 
 CItemBag::CItemBag()

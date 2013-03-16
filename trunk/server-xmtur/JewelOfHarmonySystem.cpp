@@ -7,8 +7,8 @@
 #include "Gamemain.h"
 #include "LogProc.h"
 #include "CastleSiegeSync.h"
-#include "..\include\Readscript.h"
-#include "..\common\Winutil.h"
+#include "Readscript.h"
+#include "Winutil.h"
 #include "DSProtocol.h"
 #include "MixSystem.h"
 

@@ -5,8 +5,8 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "..\common\Item.h"
-#include "..\common\Path.h"
+#include "Item.h"
+#include "Path.h"
 #include "MapItem.h"
 
 #define MAX_NUMBER_MAP 80 //51 Season2.5 57 Season3

@@ -2,7 +2,7 @@
 #include "User.h"
 #include "ImperialGuardian.h"
 #include "LogProc.h"
-#include "..\include\readscript.h"
+#include "Readscript.h"
 #include "DSProtocol.h"
 #include "BuffManager.h"
 #include "GameMain.h"

@@ -12,7 +12,7 @@
 #include "User.h"
 #include "LogProc.h"
 #include "CastleDeepEvent.h"
-#include "..\include\readscript.h"
+#include "Readscript.h"
 #include "GameMain.h"
 
 CCastleDeepEvent g_CastleDeepEvent;

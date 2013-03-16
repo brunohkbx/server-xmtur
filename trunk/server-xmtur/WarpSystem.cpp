@@ -2,7 +2,7 @@
 #include "User.h"
 #include "WarpSystem.h"
 #include "LogProc.h"
-#include "..\include\readscript.h"
+#include "Readscript.h"
 
 CWarpSystem WarpSystem;
 

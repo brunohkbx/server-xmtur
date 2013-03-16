@@ -6,7 +6,7 @@
 #include "LogToFile.h"
 #include "MonsterSetBase.h"
 #include "GameMain.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 #include "BattleSoccerManager.h"
 #include "Mercenary.h"
 #include "Protocol.h"

@@ -59,8 +59,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <SccProjectName />
-    <SccLocalPath />
+    <SccProjectName>Svn</SccProjectName>
+    <SccLocalPath>Svn</SccLocalPath>
+    <SccAuxPath>Svn</SccAuxPath>
+    <SccProvider>SubversionScc</SccProvider>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ENG|Win32'" Label="Configuration">
@@ -883,6 +885,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BloodCastleBag.cpp" />
+    <ClCompile Include="ClassDef.cpp" />
     <ClCompile Include="Commands.cpp" />
     <ClCompile Include="Doppelganger.cpp" />
     <ClCompile Include="DuelManager.cpp" />
@@ -891,6 +894,7 @@
     <ClCompile Include="GMManager.cpp" />
     <ClCompile Include="ImperialGuardian.cpp" />
     <ClCompile Include="InfernoEvent.cpp" />
+    <ClCompile Include="Item.cpp" />
     <ClCompile Include="MarrySystem.cpp" />
     <ClCompile Include="MonsterHerd.cpp" />
     <ClCompile Include="KalimaGate.cpp" />
@@ -901,10 +905,12 @@
     <ClCompile Include="DbSave.cpp" />
     <ClCompile Include="DBSockMng.cpp" />
     <ClCompile Include="DSProtocol.cpp" />
+    <ClCompile Include="MyWinsockBase.cpp" />
     <ClCompile Include="NewsSystem.cpp" />
     <ClCompile Include="PartySystem.cpp" />
     <ClCompile Include="QuestManager.cpp" />
     <ClCompile Include="SafeMapSystem.cpp" />
+    <ClCompile Include="SetItemOption.cpp" />
     <ClCompile Include="SProtocol.cpp" />
     <ClCompile Include="Protocol.cpp" />
     <ClCompile Include="EDSProtocol.cpp" />
@@ -923,10 +929,14 @@
     <ClCompile Include="AttackEvent.cpp" />
     <ClCompile Include="EledoradoEvent.cpp" />
     <ClCompile Include="RingAttackEvent.cpp" />
+    <ClCompile Include="TSync.cpp" />
     <ClCompile Include="WarpSystem.cpp" />
     <ClCompile Include="CastleDeepEvent.cpp" />
     <ClCompile Include="PCBangPointSystem.cpp" />
     <ClCompile Include="GamblingSystem.cpp" />
+    <ClCompile Include="Winutil.cpp" />
+    <ClCompile Include="WzMemScript.cpp" />
+    <ClCompile Include="WZScriptEncode.cpp" />
     <ClCompile Include="XMasAttackEventData.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="EventManagement.cpp" />
@@ -944,7 +954,6 @@
     <ClCompile Include="wsGameServer.cpp" />
     <ClCompile Include="WzMultiCastSock.cpp" />
     <ClCompile Include="IOCP.cpp" />
-    <ClCompile Include="..\common\MyWinsockBase.cpp" />
     <ClCompile Include="wsJoinServerCli.cpp" />
     <ClCompile Include="WzQueue.cpp" />
     <ClCompile Include="WzUdp.cpp" />
@@ -959,10 +968,8 @@
     <ClCompile Include="LogProc.cpp" />
     <ClCompile Include="LogToFile.cpp" />
     <ClCompile Include="MoveCheck.cpp" />
-    <ClCompile Include="..\common\Winutil.cpp" />
     <ClCompile Include="WhisperCash.cpp" />
     <ClCompile Include="MathLib.cpp" />
-    <ClCompile Include="..\common\WZScriptEncode.cpp" />
     <ClCompile Include="CWhatsUpDummyServer.cpp" />
     <ClCompile Include="TNotice.cpp" />
     <ClCompile Include="CallStackTrace.cpp" />
@@ -974,7 +981,6 @@
     <ClCompile Include="ObjAttack.cpp" />
     <ClCompile Include="ObjBaseAttack.cpp" />
     <ClCompile Include="ObjUseSkill.cpp" />
-    <ClCompile Include="..\common\classdef.cpp" />
     <ClCompile Include="StatMng.cpp" />
     <ClCompile Include="ComboAttack.cpp" />
     <ClCompile Include="ObjCalCharacter.cpp" />
@@ -989,8 +995,6 @@
     <ClCompile Include="SocketSphere.cpp" />
     <ClCompile Include="ItemAddOption.cpp" />
     <ClCompile Include="JewelMixSystem.cpp" />
-    <ClCompile Include="..\common\SetItemOption.cpp" />
-    <ClCompile Include="..\common\Item.cpp" />
     <ClCompile Include="Shop.cpp" />
     <ClCompile Include="CCastleEventItemList.cpp" />
     <ClCompile Include="GMMng.cpp" />
@@ -1102,15 +1106,13 @@
     <ClCompile Include="GameServerAuth.cpp" />
     <ClCompile Include="LargeRand.cpp" />
     <ClCompile Include="MultiCheckSum.cpp" />
-    <ClCompile Include="..\common\TSync.cpp" />
-    <ClCompile Include="..\common\WzMemScript.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GameServer.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Library Include="GGSvr.lib" />
     <Library Include="SimpleModulus.lib" />
-    <Library Include="..\GGSvr\Release\GGSvr.lib" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AcceptIp.h" />
@@ -1124,6 +1126,7 @@
     <ClInclude Include="CannonTower.h" />
     <ClInclude Include="CashItemPeriodSystem.h" />
     <ClInclude Include="CashLotterySystem.h" />
+    <ClInclude Include="ClassDef.h" />
     <ClInclude Include="Commands.h" />
     <ClInclude Include="Doppelganger.h" />
     <ClInclude Include="DuelManager.h" />
@@ -1132,11 +1135,18 @@
     <ClInclude Include="GMManager.h" />
     <ClInclude Include="ImperialGuardian.h" />
     <ClInclude Include="InfernoEvent.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="MarrySystem.h" />
+    <ClInclude Include="MyWinsockBase.h" />
     <ClInclude Include="NewsSystem.h" />
     <ClInclude Include="PartySystem.h" />
+    <ClInclude Include="Path.h" />
+    <ClInclude Include="Prodef.h" />
     <ClInclude Include="QuestManager.h" />
+    <ClInclude Include="ReadScript.h" />
     <ClInclude Include="SafeMapSystem.h" />
+    <ClInclude Include="SetItemOption.h" />
+    <ClInclude Include="TSync.h" />
     <ClInclude Include="ViewportSkillState.h" />
     <ClInclude Include="BuffManager.h" />
     <ClInclude Include="BuffEffect.h" />
@@ -1156,7 +1166,6 @@
     <ClInclude Include="MixSystem.h" />
     <ClInclude Include="ChaosCastle.h" />
     <ClInclude Include="ChaosCastleSetItemDrop.h" />
-    <ClInclude Include="..\common\classdef.h" />
     <ClInclude Include="CLoginCount.h" />
     <ClInclude Include="ClosePlayer.h" />
     <ClInclude Include="ComboAttack.h" />
@@ -1220,6 +1229,9 @@
     <ClInclude Include="PCBangPointSystem.h" />
     <ClInclude Include="GamblingSystem.h" />
     <ClInclude Include="WarpSystem.h" />
+    <ClInclude Include="Winutil.h" />
+    <ClInclude Include="WzMemScript.h" />
+    <ClInclude Include="WZScriptEncode.h" />
     <ClInclude Include="XMasAttackEventData.h" />
     <ClInclude Include="ProbabilityItemBag.h" />
     <ClInclude Include="XMasAttackEvent.h" />
@@ -1241,7 +1253,6 @@
     <ClInclude Include="MoveCommand.h" />
     <ClInclude Include="MultiAttackHackCheck.h" />
     <ClInclude Include="MultiCheckSum.h" />
-    <ClInclude Include="..\common\MyWinsockBase.h" />
     <ClInclude Include="NPCTalk.h" />
     <ClInclude Include="NSerialCheck.h" />
     <ClInclude Include="ObjAttack.h" />
@@ -1259,7 +1270,6 @@
     <ClInclude Include="RingAttackEvent.h" />
     <ClInclude Include="SendHackLog.h" />
     <ClInclude Include="SetItemMacro.h" />
-    <ClInclude Include="..\common\SetItemOption.h" />
     <ClInclude Include="Shop.h" />
     <ClInclude Include="SkillAdditionInfo.h" />
     <ClInclude Include="SkillDelay.h" />
@@ -1291,7 +1301,6 @@
     <ClInclude Include="TServerInfoDisplayer.h" />
     <ClInclude Include="MiniDump.h" />
     <ClInclude Include="TSkillElement.h" />
-    <ClInclude Include="..\common\TSync.h" />
     <ClInclude Include="TUnion.h" />
     <ClInclude Include="TUnionInfo.h" />
     <ClInclude Include="MasterLevelSystem.h" />
@@ -1304,20 +1313,13 @@
     <ClInclude Include="ViewportGuild.h" />
     <ClInclude Include="Weapon.h" />
     <ClInclude Include="WhisperCash.h" />
-    <ClInclude Include="..\common\Winutil.h" />
     <ClInclude Include="wsGameServer.h" />
     <ClInclude Include="wsJoinServerCli.h" />
     <ClInclude Include="wsShopServerCli.h" />
-    <ClInclude Include="..\common\WzMemScript.h" />
     <ClInclude Include="WzMultiCastSock.h" />
     <ClInclude Include="WzQueue.h" />
-    <ClInclude Include="..\common\WZScriptEncode.h" />
     <ClInclude Include="WzUdp.h" />
-    <ClInclude Include="..\include\Readscript.h" />
-    <ClInclude Include="..\include\Prodef.h" />
-    <ClInclude Include="..\common\Item.h" />
     <ClInclude Include="MathLib.h" />
-    <ClInclude Include="..\common\Path.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="GameServer.ico" />

@@ -4,7 +4,7 @@
 
 #include "Stdafx.h"
 #include "AcceptIp.h"
-#include "..\\Include\\Readscript.h"
+#include "Readscript.h"
 #include "LogProc.h"
 #include "GameMain.h"
 

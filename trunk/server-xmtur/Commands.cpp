@@ -14,7 +14,7 @@
 #include "MarrySystem.h"
 #include "ObjCalCharacter.h"
 #include "DBSockMng.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 
 CCommands Commands;
 

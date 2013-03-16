@@ -4,7 +4,7 @@
 
 #include "Stdafx.h"
 #include "MasterLevelSystem.h"
-#include "..\include\readscript.h"
+#include "Readscript.h"
 #include "GameMain.h"
 #include "LogProc.h"
 #include "ObjCalCharacter.h"
@@ -12,7 +12,7 @@
 #include "DSProtocol.h"
 #include "User.h"
 #include "DBSockMng.h"
-#include "..\common\Winutil.h"
+#include "Winutil.h"
 
 CMasterLevelSystem g_MasterLevelSystem;
 

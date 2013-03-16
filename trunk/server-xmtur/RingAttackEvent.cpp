@@ -7,8 +7,8 @@
 #include "Protocol.h"
 #include "LogProc.h"
 #include "Event.h"
-#include "..\include\readscript.h"
-#include "..\common\Winutil.h"
+#include "Readscript.h"
+#include "Winutil.h"
 #include "BuffManager.h"
 
 CRingMonsterHerd::CRingMonsterHerd()

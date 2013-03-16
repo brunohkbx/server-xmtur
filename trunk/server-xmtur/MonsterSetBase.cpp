@@ -5,8 +5,8 @@
 #include "MapServerManager.h"
 #include "LogProc.h"
 #include "LargeRand.h"
-#include "..\include\readscript.h"
-#include "..\common\WzMemScript.h"
+#include "Readscript.h"
+#include "WzMemScript.h"
 
 CMonsterSetBase::CMonsterSetBase()
 {
