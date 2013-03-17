@@ -419,7 +419,7 @@ void CCastleDeepEvent::ProcState_Closed() //Identical
 			}
 		}
 
-		LogAddC(3,"[CastleDeep Event] ProcState_Closed() LEFT-MSEC:%d",m_iTIME_MSEC_REMAIN);
+		//LogAddC(3,"[CastleDeep Event] ProcState_Closed() LEFT-MSEC:%d",m_iTIME_MSEC_REMAIN);
 	}
 
 	if(m_iTIME_MSEC_REMAIN <= 0)
@@ -463,7 +463,7 @@ using namespace std;
 			}
 		}
 
-		LogAddC(3,"[CastleDeep Event] ProcState_Playing()	LEFT-MSEC:%d",m_iTIME_MSEC_REMAIN);
+		//LogAddC(3,"[CastleDeep Event] ProcState_Playing()	LEFT-MSEC:%d",m_iTIME_MSEC_REMAIN);
 	}
 
 	if(m_mapRunCheck.size() <= 0)

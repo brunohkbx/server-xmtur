@@ -9034,6 +9034,9 @@ void gObjLifeCheck(LPOBJ lpTargetObj, LPOBJ lpObj, int AttackDamage, int DamageS
 			for(int X=0; X < ImperialGuardian.TotalDoors;X++){
 				if(lpTargetObj->m_Index == ImperialGuardian.Door[X]){
 					ImperialGuardian.Door[X] = -1;
+					
+					//Open Gate
+					ImperialGuardian.OpenCloseGate(lpTargetObj->X,lpTargetObj->Y);
 					ImperialGuardian.SetState(IMPERIAL_GATEKILL);
 				}
 			}

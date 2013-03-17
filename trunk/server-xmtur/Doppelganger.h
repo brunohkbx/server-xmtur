@@ -91,10 +91,9 @@ public:
 	void MonstersProcess();
 	void MoveProc(LPOBJ lpObj);
 	void ClearMonsters();
-	void SetMonsters();
-	void LoadMonsters();
 	void CheckMonsterPassed();
 	void AddMonster(int aIndex, int Class, int X, int Y);
+	void CreateSlaughterer();
 	void CreateIceWalker();
 
 	//Boss Functions
@@ -182,10 +181,7 @@ struct PMSG_DGOER_TIMER_INIT // 0x10
 //Double Goer Set Monster Count
 struct PMSG_DGOER_MONSTER_COUNT // 0x14
 {
-	BYTE C;
-	BYTE Size;
-	BYTE Headcode;
-	BYTE Subcode;
+	PBMSG_HEAD2 h;
 	BYTE Total;
 	BYTE Killed;
 };
