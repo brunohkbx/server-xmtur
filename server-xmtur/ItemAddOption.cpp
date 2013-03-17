@@ -208,7 +208,8 @@ bool CItemAddOption::PrevSetItemLastEffectForCashShop(LPOBJ lpObj)
 	ITEMPERIOD_INFO* lpItemPeriodInfo = NULL;
 	LPITEMEFFECT lpItemEffect = NULL;
 
-	lpItemPeriodInfo = ::g_CashItemPeriodSystem.GetItemPeriodInfo(lpObj);
+	//Cash shop
+	/*lpItemPeriodInfo = ::g_CashItemPeriodSystem.GetItemPeriodInfo(lpObj);
 
 	if( lpItemPeriodInfo == NULL )
 	{
@@ -256,7 +257,7 @@ bool CItemAddOption::PrevSetItemLastEffectForCashShop(LPOBJ lpObj)
 				}
 			}
 		}	
-	}
+	}*/
 	return true;
 }
 
@@ -266,7 +267,8 @@ bool CItemAddOption::NextSetItemLastEffectForCashShop(LPOBJ lpObj)
 	ITEMPERIOD_INFO* lpItemPeriodInfo = NULL;
 	LPITEMEFFECT lpItemEffect = NULL;
 
-	lpItemPeriodInfo = ::g_CashItemPeriodSystem.GetItemPeriodInfo(lpObj);
+	//Cash shop
+	/*lpItemPeriodInfo = ::g_CashItemPeriodSystem.GetItemPeriodInfo(lpObj);
 
 	if( lpItemPeriodInfo == NULL )
 	{
@@ -316,7 +318,7 @@ bool CItemAddOption::NextSetItemLastEffectForCashShop(LPOBJ lpObj)
 				}
 			}
 		}	
-	}
+	}*/
 	return true;
 }
 
@@ -679,7 +681,7 @@ LPITEMEFFECT CItemAddOption::_SearchItemEffect(int iItemNumber)
 	return NULL;
 }
 
-bool CItemAddOption::SearchItemEffectType(int iItemNumber, int * iEffectType1, int * iEffectType2, int *iEffectValidTime)
+bool CItemAddOption::SearchItemEffectType(int iItemNumber, int * iEffectType1, int * iEffectType2, int *iEffectValidTime,int *iOptionType)
 {
 	LPITEMEFFECT lpItemEffect = NULL;
 
@@ -693,6 +695,7 @@ bool CItemAddOption::SearchItemEffectType(int iItemNumber, int * iEffectType1, i
 	*iEffectType1 = lpItemEffect->wEffectType1;
 	*iEffectType2 = lpItemEffect->wEffectType2;
 	*iEffectValidTime = lpItemEffect->iEffectValidTime;
+	*iOptionType = lpItemEffect->wOptionType;
 
 	return true;
 }

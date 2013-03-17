@@ -890,7 +890,8 @@ void gObjCharZeroSet(int aIndex)
 	lpObj->m_iItemEffectValidTime = 0;
 	
 	lpObj->m_wCashPoint = 0;
-	lpObj->m_iPeriodItemEffectIndex = -1;
+	//Cash shop
+	lpObj->m_iPeriodItemEffectIndex[10] = -1;
 
 	gObjClearStandardBuffEffect(lpObj, AT_GENERAL); //Season3 Addition
 
@@ -3870,8 +3871,10 @@ BOOL gObjGameClose(int aIndex)
 			__FILE__, 
 			__LINE__);
 	}
-
-	g_CashItemPeriodSystem.ClearPeriodItemEffect(lpObj,-1);
+	//Cash shop
+	//g_CashItemPeriodSystem.ClearPeriodItemEffect(lpObj,-1);
+	g_CashItemPeriodSystem.GDReqPeriodItemUpdate(lpObj);
+	g_CashItemPeriodSystem.ClearPeriodItemEffect(lpObj);
 
 	gObjClearStandardBuffEffect(lpObj, AT_GENERAL);
 
@@ -3888,9 +3891,14 @@ BOOL gObjGameClose(int aIndex)
 
 	g_CashShop.DeleteUser(lpObj);
 
-	if(lpObj->m_iPeriodItemEffectIndex != -1)
+	//Cash shop
+	for(int i=0;i<10;++i)
 	{
-		g_CashItemPeriodSystem.ClearPeriodItemEffect(lpObj,-1);
+		if(lpObj->m_iPeriodItemEffectIndex[i] != -1)
+		{
+			g_CashItemPeriodSystem.GDReqPeriodItemUpdate(lpObj);
+			g_CashItemPeriodSystem.ClearPeriodItemEffect(lpObj);
+		}
 	}
 
 	memcpy(lpObj->BackName, lpObj->Name, sizeof(lpObj->Name)-1);
@@ -11899,11 +11907,11 @@ BYTE gObjInventoryMoveItem(int aIndex, BYTE source, BYTE target, int& durSsend, 
 					return -1;
 				}
 			}
-
-			if(CanItemTouchCash(sitem->m_Type) == 1) //season4.5 add-on
+			//Cash shop
+			/*if(CanItemTouchCash(sitem->m_Type) == 1) //season4.5 add-on
 			{
 				return -1;
-			}
+			}*/
 
 			if(sitem->m_Type == ITEMGET(13,38))
 			{
@@ -13100,10 +13108,11 @@ BYTE gObjInventoryTradeMove(LPOBJ lpObj, BYTE source, BYTE target)
 		}
 	}
 
-	if(CanItemTouchCash(lpObj->pInventory[source].m_Type) == 1) //season4.5 add-on
+	//Cash shop
+	/*if(CanItemTouchCash(lpObj->pInventory[source].m_Type) == 1) //season4.5 add-on
 	{
 		return -1;
-	}
+	}*/
 
 	if(g_PCBangPointSystem.GetItemIndex(lpObj->pInventory[source].m_Type) != FALSE) //season4.5 add-on
 	{

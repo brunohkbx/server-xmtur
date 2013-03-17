@@ -232,6 +232,7 @@ public:
 	BYTE m_SocketOptionIndex; //B3
 	BYTE m_SocketOption[5]; // B4
 	BYTE m_SocketBonus; //B9
+	bool m_ExpirationItem;
 };
 
 class CPetItemExp

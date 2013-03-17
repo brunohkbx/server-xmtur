@@ -267,6 +267,82 @@ void DGAnsCrywolfInfoLoad(LPBYTE lpRecv);
 void GDReqCrywolfInfoSave(int iMapSvrGroup, int iCrywolfState, int iOccupationState);
 void DGAnsCrywolfInfoSave(LPBYTE lpRecv);
 
+//Cash shop
+struct ISHOP_REQ_ITEMLIST
+{
+	PBMSG_HEAD2		h;
+	short			aIndex;
+	char			AccountID[11];
+};
+
+struct ISHOP_ANS_ITEMLIST
+{
+	PWMSG_HEAD2		h;
+	short			aIndex;
+	char			AccountID[11];
+	int				Result;
+	int				Count;
+};
+
+struct ISHOP_ITEMLIST
+{
+	int				UniqueCode;
+	int				AuthCode;
+	int				UniqueID1;
+	int				UniqueID2;
+	int				UniqueID3;
+	BYTE			InventoryType;
+};
+
+struct ISHOP_REQ_POINT
+{
+	PBMSG_HEAD		h;
+	short			aIndex;
+	char			AccountID[11];
+};
+
+struct ISHOP_ANS_POINT
+{
+	PBMSG_HEAD		h;
+	short			aIndex;
+	char			AccountID[11];
+	BYTE			Result;
+	float			CoinP;
+	float			CoinC;
+	float			Goblin;
+};
+
+struct ISHOP_PITEM_SAVE
+{
+	PWMSG_HEAD		h;
+	short			aIndex;
+	char			AccountID[11];
+	int				Count;
+};
+
+struct ISHOP_PITEM_REQ
+{
+	PBMSG_HEAD		h;
+	short			aIndex;
+	char			AccountID[11];
+};
+
+struct ISHOP_PITEM_INFO
+{
+	int				Serial;
+	int				ItemID;
+	__int64			Time;
+};
+void GDReqInGameShopItemList(int aIndex);
+void DGAnsInGameShopItemList(LPBYTE lpRecv);
+void GDReqInGameShopPoint(int aIndex);
+void DGAnsInGameShopPoint(ISHOP_ANS_POINT *lpMsg);
+void GDReqInGameShopItemListSave(int aIndex);
+void GDReqInGameShopPointSave(int aIndex);
+void GDReqInGameShopTimeItemsList(int aIndex);
+void DGAnsInGameShopTimeItemsList(LPBYTE lpRecv);
+void GDReqInGameShopTimeItemsSave(int aIndex);
+
 typedef struct
 {
 	PBMSG_HEAD h;

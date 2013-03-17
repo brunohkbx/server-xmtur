@@ -207,10 +207,11 @@ void CMonsterItemMng::gObjGiveItemSearch(int monsterlevel, int maxlevel)
 			continue;
 		}
 
-		if ( CanItemTouchCash(ITEMGET(type, index)) == TRUE )
+		//Cash shop
+		/*if ( CanItemTouchCash(ITEMGET(type, index)) == TRUE )
 		{
 			continue;
-		}
+		}*/
         
 		//season 3.0 add-on
 		if( (type == 14 && index == 45) ||

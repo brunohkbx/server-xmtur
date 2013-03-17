@@ -10,15 +10,33 @@
 #endif // _MSC_VER > 1000
 
 
-#include "User.h"
+#include "user.h"
 
-#if( GS_CASTLE )
-	#define MAX_ITEM_PERIOD_INFO	1500
-#else
-	#define MAX_ITEM_PERIOD_INFO	1000
-#endif
+#define MAX_ITEM_PERIOD_INFO	1500
 
-#define	MAX_ITEM_PERIOD_EFFECT	10
+struct PERIODITEM_LIST
+{
+	BYTE btUsedItem;
+	int iItemCode;
+	BYTE btItemOption;
+	BYTE btItemEffectType1;
+	BYTE btItemEffectType2;
+	int iItemPeriodUsedTime;
+	int iItemPeriodLeftTime;
+};
+
+struct PMSG_ANS_PERIODITEM_LIST
+{
+	PBMSG_HEAD2 head;	// 0
+	int iUserIndex;	// 4
+	int iUserGuid;	// 8
+	BYTE btCount;	// C
+	char btResult;	// D
+	//int test;
+	PERIODITEM_LIST Items[10];
+};
+
+
 
 struct PMSG_ANS_PERIODITEM_INSERT
 {
@@ -38,48 +56,25 @@ struct PMSG_ANS_PERIODITEM_INSERT_RESULT
 	BYTE btResult;	// 4
 };
 
-struct ITEM_USER_DATA
-{
-	bool bInUse;					// 0	|	18
-	BYTE btOptionType;				// 1	|	19
-	BYTE btEffectType1;				// 2	|	1A
-	BYTE btEffectType2;				// 3	|	1B
-	int iItemCode;					// 4    |	1C
-	int iItemPeriodUsedTime;		// 8	|	20
-	UINT iItemPeriodLeftTime;		// C	|	24
-};/*0x10*/
 
 struct ITEMPERIOD_INFO
 {
-	BYTE btUsedInfo;				// 0	|	8
-	BYTE btCountItems;				// 1	|	9
-	WORD wdUserIndex;				// 2	|	A
-	int iUserGuid;					// 4	|	C
-	DWORD dwItemCheckTickCount;		// 8	|	10
-	char chCharacterName[11];		// C	|	14
-	ITEM_USER_DATA	vItemEffect[MAX_ITEM_PERIOD_EFFECT]; // 18	|	1F
-};/*0xB8*/
+	BYTE btUsedInfo;	// 0
+	int iUserIndex;	// 4
+	int iUserGuid;	// 8
+	BYTE Unk1; // 9 New
+	BYTE Unk2; // A New
+	char chCharacterName[11];	// C
+	int iItemCode;	// 18
+	BYTE btEffectType1;	// 1C
+	BYTE btEffectType2;	// 1D
+	int iItemPeriodUsedTime;	// 20
+	int iItemPeriodLeftTime;	// 24
+	char chItemPeriodBuyDate[20];	// 28
+	char chItemPeriodEndDate[20];	// 3C
+	DWORD dwItemCheckTickCount;	// 50
+};
 
-struct PMSG_ANS_PERIODITEM_DATA
-{
-	BYTE btInUse;					// 10
-	int iItemCode;					// 14
-	BYTE btOptionType;				// 18
-	BYTE btEffectType1;				// 19
-	BYTE btEffectType2;				// 1A
-	int iItemPeriodUsedTime;		// 20
-	UINT iItemPeriodLeftTime;		// 24
-};/*0x14*/
-
-struct PMSG_ANS_PERIODITEM_LIST//DiG FiX
-{
-	PBMSG_HEAD2 head;	//  0
-	int iUserIndex;		//  4
-	int iUserGuid;		//  8
-	BYTE btCountItems;	//  C
-	char btResult;		//  D
-	PMSG_ANS_PERIODITEM_DATA	m_ListItem[MAX_ITEM_PERIOD_EFFECT];//10
-};/*0xD8*/
 
 struct PMSG_ANS_PERIODITEM_INQUIRY
 {
@@ -88,27 +83,6 @@ struct PMSG_ANS_PERIODITEM_INQUIRY
 	BYTE btResult;	// 8
 };
 
-struct PMSG_REQ_PERIODITEM_INSERT
-{
-	PBMSG_HEAD2 head;	// C1:D0:03
-	int iUserIndex;	// 4
-	int iUserGuid;	// 8
-	int iItemCode;	// C
-	int iItemPeriodDate;	// 10
-	BYTE btItemEffectType1;	// 14
-	BYTE btItemEffectType2;	// 15
-	char chUserID[11];	// 16
-	char chExpireDate[20];	//21
-	BYTE btOptionType;//DiG fix
-};
-
-struct PMSG_REQ_PERIODITEM_LIST
-{
-	PBMSG_HEAD2 head;	// C1:D0:05
-	int iUserIndex;	// 4
-	int iUserGuid;	// 8
-	char chCharacterName[11];	// C
-};
 
 struct PMSG_ANS_PERIODITEM_UPDATE
 {
@@ -127,32 +101,7 @@ struct PMSG_ANS_PERIODITEM_DELETE
 	BYTE btResult;	// C
 };
 
-struct PMSG_REQ_PERIODITEM_INQUIRY
-{
-	PBMSG_HEAD2 head;	// C1:D0:01
-	int iUserIndex;	// 4
-	int iUserGuid;	// 8
 
-};
-
-struct PMSG_REQ_PERIODITEM_UPDATE
-{
-	PBMSG_HEAD2 head;	// C1:D0:07
-	int iUserIndex;	// 4
-	int iUserGuid;	// 8
-	int iItemCode;	// C
-	int iUsedTime;	// 10
-	int iLeftTime;	// 14
-	char chCharacterName[11];	// 18
-};
-
-struct PMSG_REQ_PERIODITEM_DELETE
-{
-	PBMSG_HEAD2 head;	// C1:D0:09
-	int iUserIndex;	// 4
-	int iUserGuid;	// 8
-	char chCharacterName[11];	// C
-};
 
 class CCashItemPeriodSystem
 {
@@ -165,11 +114,11 @@ public:
 	void Initialize();
 	void GetUserPeriodItemList(LPOBJ lpObj);
 	int SetPeriodItemEffect(LPOBJ lpObj, int iItemCode,BYTE btEffectType1, BYTE btEffectType2, DWORD dwItemPeriod);
-	int ClearPeriodItemEffect(LPOBJ lpObj, int ItemCode);
+	int ClearPeriodItemEffect(LPOBJ lpObj);
 	void GDReqPeriodItemList(LPOBJ lpObj);
 	void GDReqPeriodItemInsert(LPOBJ lpObj, int iItemCode, int iItemEffectDate);
 	void GDReqPeriodItemInquiry(LPOBJ lpObj);
-	void GDReqPeriodItemUpdate(LPOBJ lpObj, int iOptionIndex);
+	void GDReqPeriodItemUpdate(LPOBJ lpObj);
 	void DGAnsPeriodItemList(PMSG_ANS_PERIODITEM_LIST* aRecv);
 	void DGAnsPeriodItemInsert(PMSG_ANS_PERIODITEM_INSERT* aRecv);
 	void DGAnsPeriodItemInquiry(PMSG_ANS_PERIODITEM_INQUIRY* aRecv);
@@ -182,18 +131,12 @@ public:
 	void ConvertStringToTime(const char * pchDate,class CTime* lpTime);
 	void ConvertTimeToString(const class CTime* lpTime, LPSTR pchDate);
 
-	bool SearchAndDeleteItemPeriodEffect(LPOBJ lpObj, int iItemCode);
-	int CheckHaveItemPeriodSealEffect(LPOBJ lpObj);
-	ITEMPERIOD_INFO* GetItemPeriodInfo(LPOBJ lpObj);
-	int GetItemPeriodInfoEffectID(int iItemCode);
-	BOOL ApplyItemPeriodEffect(LPOBJ lpObj, int iItemCode, int iDuration);
-
 	static DWORD WINAPI CCashItemPeriodSystem::PeriodCheckThread(void* lpPeriodInfo);
 
 private:
 
 	int iItemPeriodInfoCount;	// 4
-	ITEMPERIOD_INFO ItemPeriodInfo[MAX_ITEM_PERIOD_INFO];	// 8
+	ITEMPERIOD_INFO ItemPeriodInfo[MAX_ITEM_PERIOD_INFO];	// 8 #error was the original size 928
 	HANDLE hThreadHandle;	// 130B8
 };
 
