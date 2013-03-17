@@ -16,6 +16,7 @@
  - Arreglados Pickup de Items de Eventos Nuevos
  - Varios Fixes en otros Detalles
  - Removidos Mensajes del Siege y Deep Event
+ - Fixed DuelManager::MoveDuelers (Change Player1 to Player2 in Var Definition)
 
 //////////////////////////////////////////////////////////////////////////////
 //  Bugs Pendientes

@@ -606,7 +606,7 @@ void CDuelManager::MoveDuelers(int Room){
 	int Player1, Player2;
 
 	Player1 = this->DuelRoom[Room].Dueler1;
-	Player2 = this->DuelRoom[Room].Dueler1;
+	Player2 = this->DuelRoom[Room].Dueler2;
 
 	if(Player1 < (OBJMAX-OBJMAXUSER) || Player1 > (OBJMAX-1)) return;
 	if(!gObjIsConnected(Player1)) return;
@@ -705,30 +705,37 @@ void CDuelManager::FinishDuel(int aIndex)
 ///------------------------------------------------------------------
 /// Threads Check
 void CDuelManager::Run(){
-	
-	for(int n=0;n<OBJMAX;n++){
-
-		if(gObj[n].MapNumber == 64){
-			gObjStateSetCreate(n);
-			gObjViewportListDestroy(n);
-			gObjViewportListCreate(n);
-			gObjViewportListProtocol(n);
-		}
-	}
-
 	//Check for Wait Time
 	for(int X=0; X < MAX_DUEL_ROOMS;X++){
 
-		DuelManager.CheckRoomStatus(X);
-		DuelManager.UpdateDuelScore(X);
-
-		if(DuelManager.DuelRoom[X].dwMoveTime > 0 &&
-			(DuelManager.DuelRoom[X].dwMoveTime < GetTickCount())){
-			DuelManager.MoveDuelers(X);
+		if(this->DuelRoom[X].Dueler1 >= OBJ_STARTUSERINDEX && this->DuelRoom[X].Dueler1 < OBJMAX){
+			if(gObj[this->DuelRoom[X].Dueler1].MapNumber == 64 && gObjIsConnected(this->DuelRoom[X].Dueler1)){
+				gObjStateSetCreate(this->DuelRoom[X].Dueler1);
+				gObjViewportListDestroy(this->DuelRoom[X].Dueler1);
+				gObjViewportListCreate(this->DuelRoom[X].Dueler1);
+				gObjViewportListProtocol(this->DuelRoom[X].Dueler1);
+			}
 		}
 
-		if(DuelManager.DuelRoom[X].dwWaitTime < GetTickCount()){
-			DuelManager.DuelRoom[X].Waiting = FALSE;
+		if(this->DuelRoom[X].Dueler2 >= OBJ_STARTUSERINDEX && this->DuelRoom[X].Dueler2 < OBJMAX){
+			if(gObj[this->DuelRoom[X].Dueler2].MapNumber == 64 && gObjIsConnected(this->DuelRoom[X].Dueler2)){
+				gObjStateSetCreate(this->DuelRoom[X].Dueler2);
+				gObjViewportListDestroy(this->DuelRoom[X].Dueler2);
+				gObjViewportListCreate(this->DuelRoom[X].Dueler2);
+				gObjViewportListProtocol(this->DuelRoom[X].Dueler2);
+			}
+		}
+
+		this->CheckRoomStatus(X);
+		this->UpdateDuelScore(X);
+
+		if(this->DuelRoom[X].dwMoveTime > 0 &&
+			(this->DuelRoom[X].dwMoveTime < GetTickCount())){
+			this->MoveDuelers(X);
+		}
+
+		if(this->DuelRoom[X].dwWaitTime < GetTickCount()){
+			this->DuelRoom[X].Waiting = FALSE;
 		}
 	}
 }
