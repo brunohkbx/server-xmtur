@@ -47,6 +47,9 @@
 #define COMMONSERVER_PATH "..\\Data\\CommonServer.cfg"
 #define SERVER_INFO_PATH "Data\\Serverinfo.dat"
 
+//#define INTERNATIONAL_JAPAN "1"
+//#define INTERNATIONAL_ENGLISH "0"
+
 #ifdef INTERNATIONAL_KOREA	
 #define PROTOCOL_MOVE 0xD3
 #define PROTOCOL_POSITION 0xDF

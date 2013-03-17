@@ -7,6 +7,7 @@
 #include "BuffManager.h"
 #include "GameMain.h"
 #include "TMonsterAIUtil.h"
+#include "Winutil.h"
 
 CDoppelganger Doppelganger;
 
@@ -14,13 +15,14 @@ static TMonsterAIUtil MonsterAIUtil;
 
 void CDoppelganger::MoveProc(LPOBJ lpObj)
 {
-	if(lpObj->MapNumber == this->EventMap){
+	if(DOPPELGANGER_MAP_RANGE(lpObj->MapNumber) && lpObj->Type == OBJ_MONSTER){
 		
 		for(int X=0; X < this->MonstersCount;X++){
+			
 			if(this->CurrentMonster[X] == lpObj->m_Index){
 				lpObj->MTX = this->PosX[this->EventMap-65];
 				lpObj->MTY = this->PosY[this->EventMap-65];
-				MonsterAIUtil.FindPathToMoveMonster(lpObj,lpObj->MTX,lpObj->MTY,5,0);
+				MonsterAIUtil.FindPathToMoveMonster(lpObj,lpObj->MTX,lpObj->MTY,10,2);
 			}
 		}
 	}
@@ -36,7 +38,7 @@ void CDoppelganger::StartProcess(BOOL Reload)
 	this->Timer = 599;
 	this->MonsterPassed = 0;
 
-	this->EventMap = 65;
+	this->EventMap = 64;
 
 	this->OnlyInParty = GetPrivateProfileIntA("Doppelganger","EnterInParty",0,"..\\Data\\Events\\Doppelganger.dat");
 	this->SilverChest_DropRate = GetPrivateProfileIntA("Doppelganger","SilverChestDropRate",50,"..\\Data\\Events\\Doppelganger.dat");
@@ -50,14 +52,13 @@ void CDoppelganger::StartProcess(BOOL Reload)
 	memset(this->CurrentMonster,-1,sizeof(this->CurrentMonster));
 
 	//Load All Shit
-	this->LoadMonsters();
 	this->LoadItemBag(); //Silver & Golden Chest
 
 	//Set Monsters Codinates
-	this->PosX[0] = 197, this->PosY[0] = 30;
-	this->PosX[1] = 139, this->PosY[1] = 72;
-	this->PosX[2] = 110, this->PosY[2] = 60;
-	this->PosX[3] = 95, this->PosY[3] = 15;
+	this->PosX[0] = 200, this->PosY[0] = 32;
+	this->PosX[1] = 140, this->PosY[1] = 70;
+	this->PosX[2] = 112, this->PosY[2] = 65;
+	this->PosX[3] = 98, this->PosY[3] = 21;
 
 	//Monster Start Coord (Not in Use)
 	this->MPosX[0] = 224, this->MPosY[0] = 100;
@@ -214,7 +215,7 @@ void CDoppelganger::State_PREPARING(){
 		this->State = RUNNING;
 		LogAddTD("[Doppelganger] SetState->RUNNING");
 				
-		this->MonstersProcess();
+		this->CreateSlaughterer();
 		this->Timer = 599;
 	}
 }
@@ -226,7 +227,6 @@ void CDoppelganger::State_RUNNING(){
 
 	//Rest Time
 	this->Timer -= 1;
-
 
 	if(this->Timer == 150){
 		this->CreateIceWalker();
@@ -254,9 +254,6 @@ void CDoppelganger::State_RUNNING(){
 	}
 	
 	this->MonstersProcess();
-
-	//Check Monsters Pass
-	this->CheckMonsterPassed();
 
 	//Check Party Members Status
 	this->CheckPartyStatus();
@@ -340,28 +337,22 @@ void Doppelganger_CheckCore(void * lpParam)
 
 void CDoppelganger::CheckMonsterPassed(){
 
+	
 	if(this->State != RUNNING) return;
 
-	//Check Monster Pass
-	for(int X=0; X < this->MonstersCount;X++){
-			
-		if(this->CurrentMonster[X] >= 0 && this->CurrentMonster[X] < OBJ_STARTUSERINDEX){
+	for(int i=0; i < (OBJ_STARTUSERINDEX-1);i++){
 
-			LPOBJ gTargetObj = &gObj[this->CurrentMonster[X]];
-	
-			if(gTargetObj->X <= this->PosX[this->EventMap-65] && gTargetObj->Y <= this->PosY[this->EventMap-65]){
-				gObjDel(this->CurrentMonster[X]);
-				this->CurrentMonster[X] = -1;
-				this->MonsterPassed++;
+		if(DOPPELGANGER_MAP_RANGE(gObj[i].MapNumber)){
+
+			if((gObj[i].Class >= 533 || gObj[i].Class <= 539) && gObj[i].Live){
+				if(gObj[i].X <= this->PosX[this->EventMap-65] && gObj[i].Y <= this->PosY[this->EventMap-65]){
+					gObj[i].Life = FALSE;
+					gObjDel(i);
+					this->MonsterPassed++;
+					LogAddTD("[Doppelganger][%d] Monster Passed to Protected Zone",gObj[i].m_Index);
+				}
 			}
 		}
-	}
-
-	//Finish Event if +3 Monster Pass
-	if(this->MonsterPassed >= 3){
-		this->Status = FAILED; //Failed
-		this->State = FINISHED;
-		LogAddTD("[Doppelganger] 3 Monsters Passed the Magic Circles - EVENT FINISH FAILED");
 	}
 }
 
@@ -429,7 +420,6 @@ void CDoppelganger::SendTrianglesPosition(int aIndex){
 	Position.Timer = this->Timer;
 	Position.Players = this->PlayersCount;
 
-
 	//Set Triangles Position...
 	memset(Position.Player,0,sizeof(Position.Player));
 
@@ -460,18 +450,26 @@ void CDoppelganger::SendTrianglesPosition(int aIndex){
 
 	//Set Monster Kill Count
 	PMSG_DGOER_MONSTER_COUNT KillCount;
-	KillCount.C = 0xC1;
-	KillCount.Size = 0x06;
-	KillCount.Headcode = 0xBF;
-	KillCount.Subcode = 0x14;
+	PHeadSubSetB((LPBYTE)&KillCount, 0xBF, 0x14, sizeof(KillCount));
 	KillCount.Total = 3;
+
+	//Finish Event if +3 Monster Pass
+	if(this->MonsterPassed >= 3){
+		this->Status = FAILED; //Failed
+		this->State = FINISHED;
+		this->MonsterPassed = 3;
+		LogAddTD("[Doppelganger] 3 Monsters Passed the Magic Circles - EVENT FINISH FAILED");
+	}
+
+	
 	KillCount.Killed = this->MonsterPassed;
 
 	DataSend(aIndex,(LPBYTE)&IceWalker,IceWalker.Size); //Send Triangles	
 	DataSend(aIndex,(LPBYTE)&LinePosition,LinePosition.Size); //Send Line			
 	DataSend(aIndex,(LPBYTE)&Position,Position.Size); //Send Position
-	DataSend(aIndex,(LPBYTE)&KillCount,KillCount.Size); //Send Kill Count
+	DataSend(aIndex,(LPBYTE)&KillCount,KillCount.h.size); //Send Kill Count
 }
+
 
 
 struct PMSG_SET_TIMERINFO
@@ -693,6 +691,7 @@ void CDoppelganger::InterimRewardChest(int X,int Y)
 
 void CDoppelganger::FinalRewardChest(int X, int Y){
 
+	this->MonsterBoss[2] = -1;
 	this->GoldenChestIndex = gObjAddMonster(this->EventMap);
 
 	if(this->GoldenChestIndex >= 0){
@@ -754,16 +753,19 @@ void CDoppelganger::ClearMonsters()
 void CDoppelganger::MonstersProcess(){
 
 	int MapNumber = this->EventMap - 65;
+	int Monster = 533;
+	if(this->MonstersCount < 80){
 
-	if(this->MonstersCount < 150){
+		for(int i=0; i < 80;i++){
 
-		for(int i=0; i < 150;i++){
+			Monster++;
+			if(Monster == 540) Monster = 533;
 
 			if(this->CurrentMonster[i] == -1){
 				this->CurrentMonster[i] = gObjAddMonster(this->EventMap);
 
 				if(this->CurrentMonster[i] >= 0){
-					this->AddMonster(this->CurrentMonster[i],(rand()%6+533),
+					this->AddMonster(this->CurrentMonster[i],Monster,
 					this->MPosX[MapNumber],this->MPosY[MapNumber]);
 					this->MonstersCount++;
 				}
@@ -772,22 +774,21 @@ void CDoppelganger::MonstersProcess(){
 	}
 }
 
-void CDoppelganger::SetMonsters()
-{
+void CDoppelganger::CreateSlaughterer()
+{	
+	int MapNumber = this->EventMap - 65;
+
 	this->MonsterBoss[0] = gObjAddMonster(this->EventMap);
 	if(this->MonsterBoss[0] >= 0){
-		this->AddMonster(this->MonsterBoss[0],529,
-			Doppelganger_Boss_Position[this->EventMap-65].Boss1X,
-			Doppelganger_Boss_Position[this->EventMap-65].Boss1Y);
+		this->AddMonster(this->MonsterBoss[0],529,this->MPosX[MapNumber],this->MPosY[MapNumber]);
 	}
 	
 	this->MonsterBoss[1] = gObjAddMonster(this->EventMap);
 	if(this->MonsterBoss[1] >= 0){
-		this->AddMonster(this->MonsterBoss[1],530,
-			Doppelganger_Boss_Position[this->EventMap-65].Boss2X,
-			Doppelganger_Boss_Position[this->EventMap-65].Boss2Y);
+		this->AddMonster(this->MonsterBoss[1],530,this->MPosX[MapNumber],this->MPosY[MapNumber]);
 	}
-
+	
+	LogAddTD("[Doppelganger] Slaughterer and Furious Slaughterer Created on Map %d",this->EventMap);
 }
 
 void CDoppelganger::CreateIceWalker(){
@@ -806,20 +807,13 @@ void CDoppelganger::AddMonster(int aIndex, int Class, int X, int Y){
 
 	LPOBJ lpObj = &gObj[aIndex];
 	  
-	lpObj->TargetNumber = -1;
-	lpObj->NextActionTime = 1000;
-	lpObj->m_PosNum = gMSetBase.m_Count;
-	lpObj->TX = lpObj->X;
-	lpObj->TY = lpObj->Y;
-	lpObj->m_OldX = lpObj->X;
-	lpObj->m_OldY = lpObj->Y;
-	lpObj->Dir = 1;
-	lpObj->StartX = lpObj->X;
-	lpObj->StartY = lpObj->Y;
+	lpObj->MapNumber = this->EventMap;
+	lpObj->X = X;
+	lpObj->Y = Y;
 
-	if(Class == 541 || Class == 542){
-		lpObj->Type = 3;
-	} 
+	gObjSetMonster(aIndex,Class);
+
+	if(lpObj->Class == 541 || lpObj->Class == 542) lpObj->m_MoveRange = 0;
 
 	float PartyPercent = 0;
 	if(this->PlayersCount == 2){
@@ -845,10 +839,6 @@ void CDoppelganger::AddMonster(int aIndex, int Class, int X, int Y){
 		lpObj->m_AttackDamageMin += (int)(lpObj->m_AttackDamageMin * PartyPercent);
 		lpObj->m_AttackDamageMax += (int)(lpObj->m_AttackDamageMax * PartyPercent);
 	}
-}
-
-
-void CDoppelganger::LoadMonsters(){
 }
 
 void CDoppelganger::LoadItemBag(){

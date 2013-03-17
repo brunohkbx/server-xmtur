@@ -34,6 +34,7 @@
 #include "MiniDump.h"
 #include "Raklion.h"
 #include "DuelManager.h"
+#include "Doppelganger.h"
 
 int gServerReady;
 int gCloseMsg;
@@ -533,7 +534,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					g_XMasAttackEvent.Run();
 					
 					g_CashShop.CheckShopServerConnectState();
-
+					
+					Doppelganger.CheckMonsterPassed();
 					DuelManager.Run();
 					break;
 				case WM_AI_MONSTER_MOVE_PROC:

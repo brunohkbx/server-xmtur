@@ -2654,9 +2654,9 @@ void CGItemGetRequest(PMSG_ITEMGETREQUEST * lpMsg, int aIndex) //00438C70
 				}
 			}
 			
-			if ( lpItem->m_Type == ITEMGET(14,29) )
+			if(lpItem->m_Type == ITEMGET(14,29))
 			{
-				for ( int n=0;n<MAIN_INVENTORY_SIZE;n++)
+				for(int n=0;n<MAIN_INVENTORY_SIZE;n++)
 				{
 					int pos = ::g_KalimaGate.CheckOverlapKundunMark(aIndex, lpItem->m_Level);
 
@@ -2706,6 +2706,88 @@ void CGItemGetRequest(PMSG_ITEMGETREQUEST * lpMsg, int aIndex) //00438C70
 					else
 					{
 						break;
+					}
+				}
+			}
+
+			if(lpItem->m_Type == ITEMGET(14,110))
+			{
+				int Pos = -1;
+				
+				for(int X=0; X < MAIN_INVENTORY_SIZE;X++ ){
+					if(gObj[aIndex].pInventory[X].IsItem() == TRUE){
+						if(gObj[aIndex].pInventory[X].m_Type == ITEMGET(14,110)
+						&& gObj[aIndex].pInventory[X].m_Durability < 5.0f){
+							Pos = X;
+						}
+					}
+				}
+
+				if(Pos != -1){
+
+					if(MapC[map_num].ItemGive(aIndex,item_num,TRUE) == TRUE )
+					{
+						BYTE NewOption[MAX_EXOPTION_SIZE];
+						::ItemIsBufExOption(NewOption, (lpItem != NULL)?(CItem*)&lpItem->m_Number:NULL);
+						LogAddTD(lMsg.Get(MSGGET(1, 221)), gObj[aIndex].AccountID, gObj[aIndex].Name, map_num, gObj[aIndex].X, gObj[aIndex].Y, lpItem->m_Number, szItemName, type, level, lpItem->m_Option1, lpItem->m_Option2, lpItem->m_Option3, (int)lpItem->m_Durability, NewOption[0], NewOption[1], NewOption[2], NewOption[3], NewOption[4], NewOption[5], NewOption[6], lpItem->m_SetOption, lpItem->m_ItemOptionEx>>7, g_kJewelOfHarmonySystem.GetItemStrengthenOption((lpItem)?((CItem *)&lpItem->m_Number):NULL), g_kJewelOfHarmonySystem.GetItemOptionLevel((lpItem)?((CItem *)&lpItem->m_Number):NULL));
+						pResult.result = -3;
+						DataSend(aIndex, (LPBYTE)&pResult, pResult.h.size);			
+
+						gObj[aIndex].pInventory[Pos].m_Durability +=1;
+
+						if(gObj[aIndex].pInventory[Pos].m_Durability >= 5.0f){
+
+							::gObjInventoryItemSet(aIndex,Pos,-1);
+							gObj[aIndex].pInventory[Pos].Clear();
+							::GCInventoryItemDeleteSend(aIndex,Pos,1);
+							::ItemSerialCreateSend(aIndex,235,gObj[aIndex].X,gObj[aIndex].Y,ItemGetNumberMake(14,111),lpItem->m_Level,0,0,0,0,aIndex,0,0);
+
+							LogAddTD("[Doppelganger] [%s][%s] Make Speculum (Pos: %d)",gObj[aIndex].AccountID,gObj[aIndex].Name,Pos);
+						} else {
+							GCItemDurSend(aIndex,Pos,gObj[aIndex].pInventory[Pos].m_Durability,0);
+						}
+						return;
+					}
+				}
+			}
+
+			if(lpItem->m_Type == ITEMGET(14,101))
+			{
+				int Pos = -1;
+				
+				for(int X=0; X < MAIN_INVENTORY_SIZE;X++ ){
+					if(gObj[aIndex].pInventory[X].IsItem() == TRUE){
+						if(gObj[aIndex].pInventory[X].m_Type == ITEMGET(14,101)
+						&& gObj[aIndex].pInventory[X].m_Durability < 5.0f){
+							Pos = X;
+						}
+					}
+				}
+
+				if(Pos != -1){
+
+					if(MapC[map_num].ItemGive(aIndex,item_num,TRUE) == TRUE )
+					{
+						BYTE NewOption[MAX_EXOPTION_SIZE];
+						::ItemIsBufExOption(NewOption, (lpItem != NULL)?(CItem*)&lpItem->m_Number:NULL);
+						LogAddTD(lMsg.Get(MSGGET(1, 221)), gObj[aIndex].AccountID, gObj[aIndex].Name, map_num, gObj[aIndex].X, gObj[aIndex].Y, lpItem->m_Number, szItemName, type, level, lpItem->m_Option1, lpItem->m_Option2, lpItem->m_Option3, (int)lpItem->m_Durability, NewOption[0], NewOption[1], NewOption[2], NewOption[3], NewOption[4], NewOption[5], NewOption[6], lpItem->m_SetOption, lpItem->m_ItemOptionEx>>7, g_kJewelOfHarmonySystem.GetItemStrengthenOption((lpItem)?((CItem *)&lpItem->m_Number):NULL), g_kJewelOfHarmonySystem.GetItemOptionLevel((lpItem)?((CItem *)&lpItem->m_Number):NULL));
+						pResult.result = -3;
+						DataSend(aIndex, (LPBYTE)&pResult, pResult.h.size);			
+
+						gObj[aIndex].pInventory[Pos].m_Durability +=1;
+
+						if(gObj[aIndex].pInventory[Pos].m_Durability >= 5.0f){
+
+							::gObjInventoryItemSet(aIndex,Pos,-1);
+							gObj[aIndex].pInventory[Pos].Clear();
+							::GCInventoryItemDeleteSend(aIndex,Pos,1);
+							::ItemSerialCreateSend(aIndex,235,gObj[aIndex].X,gObj[aIndex].Y,ItemGetNumberMake(14,102),lpItem->m_Level,0,0,0,0,aIndex,0,0);
+
+							LogAddTD("[ImperialGuardian] [%s][%s] Make Gaion Order (Pos: %d)",gObj[aIndex].AccountID,gObj[aIndex].Name,Pos);
+						} else {
+							GCItemDurSend(aIndex,Pos,gObj[aIndex].pInventory[Pos].m_Durability,0);
+						}
+						return;
 					}
 				}
 			}

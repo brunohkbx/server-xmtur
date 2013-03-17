@@ -1156,11 +1156,6 @@ void gObjMonsterProcess(LPOBJ lpObj)
 		return;
 	}
 
-
-	if(DOPPELGANGER_MAP_RANGE(lpObj->MapNumber)){
-		LogAdd("DEBUG! %d",lpObj->m_ActState.Move);
-	}
-
 	if ( lpObj->m_iMonsterBattleDelay > 0 )
 	{
 		lpObj->m_iMonsterBattleDelay--;
@@ -1192,7 +1187,6 @@ void gObjMonsterProcess(LPOBJ lpObj)
 		g_KalimaGate.KalimaGateAct(lpObj->m_Index);
 		return;
 	}
-
 
 	if(lpObj->Class == 283)
 	{
@@ -1273,6 +1267,7 @@ void gObjMonsterProcess(LPOBJ lpObj)
 			}
 		}
 	}
+
 
 	if(lpObj->m_ActState.Move != 0){
 
@@ -1941,6 +1936,16 @@ void gObjMonsterMoveAction(LPOBJ lpObj) //00419530
 		return;
 	}
 
+	if(DOPPELGANGER_MAP_RANGE(lpObj->MapNumber))
+	{
+		lpObj->TargetNumber = -1;
+		lpObj->m_ActState.Attack = 0;
+		lpObj->m_ActState.Emotion = 0;
+		lpObj->m_ActState.Move = 1;
+		lpObj->NextActionTime = 300;
+		return;
+	}
+
 	int maxmoverange = lpObj->m_MoveRange*2+1;
 	int searchc=10;
 	lpObj->NextActionTime = 1000;
@@ -1961,6 +1966,7 @@ void gObjMonsterMoveAction(LPOBJ lpObj) //00419530
 
 		int mchk = gObjMonsterMoveCheck(lpObj, tpx, tpy);
 		BYTE attr = MapC[lpObj->MapNumber].GetAttr(tpx, tpy);
+
 
 		if ( (lpObj->Class ==249 || lpObj->Class == 247) && mchk )	// Guard
 		{
@@ -2812,31 +2818,25 @@ void gObjMonsterDieGiveItem(LPOBJ lpObj, LPOBJ lpTargetObj)
 		}
 	}
 
-	//Doppelganger Event
-	if(Doppelganger.State == RUNNING){
+	if(DOPPELGANGER_MAP_RANGE(lpObj->MapNumber)){
+		
+		int MaxHitUser = gObjMonsterTopHitDamageUser(lpObj);
 
 		if(lpObj->Class == 529){
-			lpObj->Live = FALSE;
 			Doppelganger.InterimRewardChest(lpObj->X,lpObj->Y);
 			LogAdd("[Doppelganger][%s][%s] Kill Furious Slaughterer",lpTargetObj->AccountID,lpTargetObj->Name);
-			gObjDel(Doppelganger.MonsterBoss[0]);
 			Doppelganger.MonsterBoss[0] = -1;
 			return;
 		}
 
 		if(lpObj->Class == 530){
-			lpObj->Live = FALSE;
 			Doppelganger.InterimRewardChest(lpObj->X,lpObj->Y);
 			LogAdd("[Doppelganger][%s][%s] Kill Slaughterer",lpTargetObj->AccountID,lpTargetObj->Name);
-			gObjDel(Doppelganger.MonsterBoss[1]);
 			Doppelganger.MonsterBoss[1] = -1;
 			return;
 		}
 
 		if(lpObj->Class == 531){
-			lpObj->Live = FALSE;
-			gObjDel(Doppelganger.MonsterBoss[2]);
-			Doppelganger.MonsterBoss[2] = -1;
 			Doppelganger.FinalRewardChest(gObj->X,gObj->Y);
 			LogAdd("[Doppelganger][%s][%s] Kill Ice Walker",lpTargetObj->AccountID,lpTargetObj->Name);
 			return;
@@ -4142,8 +4142,8 @@ BOOL gEventMonsterItemDrop(LPOBJ lpObj, LPOBJ lpTargetObj)
 		return TRUE;
 	}
 
-#ifdef INTERNATIONAL_JAPAN
-	if ( (rand()%10000) < g_iJapan1StAnivItemDropRate )
+#ifdef INTERNATIONAL_JAPAN/*
+	if ( (rand()%10000) < Configs.Japan1StAnivItemDropRate )
 	{
 		if ( lpTargetObj->PartyNumber >= 0 )
 		{
@@ -4206,7 +4206,7 @@ BOOL gEventMonsterItemDrop(LPOBJ lpObj, LPOBJ lpTargetObj)
 					}
 			}
 		}
-	}
+	}*/
 #endif
 
 	if (Configs.IsDropDarkLordItem )

@@ -1002,31 +1002,30 @@ struct PMSG_CHATDATA_WHISPER
 	char chatmsg[60];	// D  
 };
 
-#ifdef INTERNATIONAL_ENGLISH
+#ifdef INTERNATIONAL_JAPAN
+struct PMSG_IDPASS
+{
+	PBMSG_HEAD h;
+	BYTE subcode; // 3
+	char Id[10]; // 4
+	char Pass[10]; // E // 20 for GMO
+	DWORD TickCount; // 18
+	BYTE CliVersion[5]; // 1C
+	BYTE CliSerial[16]; // 21  
+};
+#else
 #pragma pack(1)
 struct PMSG_IDPASS
 {
- PBMSG_HEAD h;
- BYTE subcode; // 3
- char Id[10]; // 4
- char Pass[20]; //  -> in new same as E 
- DWORD TickCount; // 18 -> in new is 0x22
- BYTE CliVersion[5]; // 1C
- BYTE CliSerial[16]; // 21  
+	PBMSG_HEAD h;
+	BYTE subcode; // 3
+	char Id[10]; // 4
+	char Pass[20]; //  -> in new same as E 
+	DWORD TickCount; // 18 -> in new is 0x22
+	BYTE CliVersion[5]; // 1C
+	BYTE CliSerial[16]; // 21  
 };
-
 #pragma pack()
-#else
-struct PMSG_IDPASS
-{
- PBMSG_HEAD h;
- BYTE subcode; // 3
- char Id[10]; // 4
- char Pass[10]; // E // 20 for GMO
- DWORD TickCount; // 18
- BYTE CliVersion[5]; // 1C
- BYTE CliSerial[16]; // 21  
-};
 #endif
 
 struct PMSG_CLIENTCLOSE

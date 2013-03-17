@@ -99,7 +99,7 @@ struct CImperialGuardian {
 	void CheckTraps();
 	void CheckPassGates(int aIndex, WORD Gate);
 	void CheckGates();
-	void OpenCloseGate(BYTE Status);
+	void OpenCloseGate(int CordX, int CordY);
 
 	void SendStage();
 	void SendTimer();

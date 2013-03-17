@@ -7,6 +7,8 @@
 #include "BuffManager.h"
 #include "GameMain.h"
 #include "BloodCastle.h"
+#include "IllusionTempleProcess.h"
+#include "Winutil.h"
 
 CImperialGuardian ImperialGuardian;
 
@@ -20,23 +22,12 @@ void ImperialGuardian_CheckCore(void * lpParam){
 	_endthread();
 }
 
-void ImperialGuardian_CheckGates(void * lpParam){
-
-	while(TRUE){
-		ImperialGuardian.CheckGates();
-		Sleep(100);
-	}
-
-	_endthread();
-}
-
 void CImperialGuardian::StartProcess(BOOL Reload){
 	
 	this->BattleStatus == IMPERIAL_NONE;
 
 	if(Reload == 0){
 		_beginthread(ImperialGuardian_CheckCore,0,NULL);
-		_beginthread(ImperialGuardian_CheckGates,0,NULL);
 	}
 
 	this->LoadGaionItemBag();
@@ -99,12 +90,12 @@ void CImperialGuardian::EnterEvent(int aIndex){
 	}
 
 	//If not in Party
-	/*if(lpObj->PartyNumber == -1){
+	if(lpObj->PartyNumber == -1){
 		pMsg.Result = 6;
 		DataSend(aIndex,(LPBYTE)&pMsg,pMsg.h.size);
 		LogAddTD("[ImperialGuardian][%s][%s] User is not in Party",lpObj->AccountID,lpObj->Name);
 		return;
-	}*/
+	}
 
 	if(this->EventDay == 0){ //Domingo
 		GateNumber = 322;
@@ -128,7 +119,7 @@ void CImperialGuardian::EnterEvent(int aIndex){
 
 	gObjMoveGate(aIndex,GateNumber);
 	LogAddTD("[ImperialGuardian][%s][%s] Player 1 Enter: %d",lpObj->AccountID,lpObj->Name,aIndex);
-	/*
+
 	this->PartyNumber = lpObj->PartyNumber;
 
 	if(PartyNumber != -1){	
@@ -152,7 +143,7 @@ void CImperialGuardian::EnterEvent(int aIndex){
 	gObjInventoryDeleteItem(aIndex,TicketPos);
 	GCInventoryItemDeleteSend(aIndex,TicketPos,1);
 	LogAddTD("[ImperialGuardian][%s][%s] Ticket Deleted %d",lpObj->AccountID,lpObj->Name,TicketPos);
-	*/
+
 	//Clear Event Monsters
 	this->ClearMonsters();
 
@@ -177,44 +168,18 @@ void CImperialGuardian::EnterEvent(int aIndex){
 	LogAddTD("[ImperialGuardian] Players: %d/5, Map: %d, Party: %d",this->PlayersCount,this->EventMap,PartyNumber);
 }
 
-static const struct KatoMapAttr
-{
-	int StartX;
-	int StartY;
-	int EndX;
-	int EndY;
-} g_KatoMapAttr[9] = {
-	142, 190, 147, 192,
-	115, 191, 120, 193,
-	85, 195, 90, 197,
-	222, 133, 224, 138,
-	222, 159, 224, 164,
-	222, 192, 224, 197,
-	166, 216, 168, 221
-};
-
-void CImperialGuardian::OpenCloseGate(BYTE Status){ //0x02: OPEN - 0x03: CLOSED
-	
-	/*PMSG_FORT_OPENCLOSE_GATE pMsg;
-	pMsg.h.set((LPBYTE)&pMsg,0xBF,0x09,sizeof(pMsg));
-	pMsg.Status = 0x01;
-	pMsg.Result = Status;
-
-	//Set All Doors Opened!
-	for(int X=0; X < 5;X++){
-		if(this->Player[X] >= OBJ_STARTUSERINDEX) this->DoorState[X] = DOOR_OPEN;
-	}*/
+void CImperialGuardian::OpenCloseGate(int CordX, int CordY){
 
 	char Buff[256];
 	short PacketSize = 0;
 	PMSG_SETMAPATTR_COUNT * lpMsg = (PMSG_SETMAPATTR_COUNT *)(Buff);
 	PMSG_SETMAPATTR * lpMsgBody = (PMSG_SETMAPATTR *)(Buff + sizeof(PMSG_SETMAPATTR_COUNT));
 
-	lpMsgBody[0].btX = 0;
-	lpMsgBody[0].btY = 0;
-	lpMsgBody[1].btX = 255;
-	lpMsgBody[1].btY = 255;
-
+	lpMsgBody[0].btX = CordX-5;
+	lpMsgBody[0].btY = CordY-5;
+	lpMsgBody[1].btX = CordX+5;
+	lpMsgBody[1].btY = CordY+5;
+	
 	PacketSize = (sizeof(PMSG_SETMAPATTR_COUNT)+6*sizeof(PMSG_SETMAPATTR));
 
 	lpMsg->btMapAttr = 16;
@@ -226,7 +191,19 @@ void CImperialGuardian::OpenCloseGate(BYTE Status){ //0x02: OPEN - 0x03: CLOSED
 	lpMsg->h.headcode = 0x46;
 	lpMsg->h.size = PacketSize;
 
-	this->PDataSend((LPBYTE)&lpMsg,lpMsg->h.size);
+	for(int i=OBJ_MAXMONSTER;i<OBJMAX;i++){
+		if(IMPERIAL_MAP_RANGE(gObj[i].MapNumber)){
+			if(gObj[i].Connected > PLAYER_LOGGED){
+				DataSend(i,(LPBYTE)Buff,PacketSize);
+			}
+		}
+	}
+
+	for(int i=(CordX-5);i<=(CordX+5);i++){
+		for(int j= (CordY-5);j<=(CordY+5);j++){
+			MapC[this->EventMap].m_attrbuf[j * 256 + i] = 0;
+		}
+	}
 }
 
 void CImperialGuardian::SendTimer(){
@@ -263,17 +240,17 @@ void CImperialGuardian::SendTimer(){
 		}
 	}
 
-	/*if(this->PlayersCount < 2){
+	if(this->PlayersCount < 2){
 		LogAddTD("[ImperialGuardian] Not enought Users for Battle");
 		this->SetState(IMPERIAL_FAILED);
 		return;
-	}*/
+	}
 
 	//Check for Traps!
 	this->CheckTraps();
 
 	//Check the Party Members, if not in Party Move to Devias and Delete from Event
-	//this->CheckPartyStatus();
+	this->CheckPartyStatus();
 
 	int PlayerIndex = 0;
 	//Check for Players
@@ -333,14 +310,10 @@ void CImperialGuardian::MessageSend(char* Msg, int Type){
 
 void CImperialGuardian::PDataSend(LPBYTE aRecv, int Size){
 
-	int PlayerIndex = 0;
-	for(int X=0; X < 5;X++){
-		if(this->Player[X] >= OBJ_STARTUSERINDEX){
-			PlayerIndex = this->Player[X];
-			LPOBJ lpObj = &gObj[PlayerIndex];
-
-			if(lpObj->MapNumber == this->EventMap){
-				DataSend(lpObj->m_Index,(LPBYTE)&aRecv,Size);
+	for(int i=OBJ_MAXMONSTER;i<OBJMAX;i++){
+		if(IMPERIAL_MAP_RANGE(gObj[i].MapNumber)){
+			if(gObj[i].Connected > PLAYER_LOGGED){
+				DataSend(i,(LPBYTE)aRecv,Size);
 			}
 		}
 	}
@@ -427,9 +400,6 @@ void CImperialGuardian::SetState(int SetState){
 
 			//Set Step
 			this->Step++;
-
-			//Open Gate
-			this->OpenCloseGate(0x02);
 
 			//Set Timer and Status
 			this->BattleStatus = IMPERIAL_GATEKILL; //Monster Kill
@@ -589,104 +559,16 @@ void CImperialGuardian::CheckTraps(){
 
 void CImperialGuardian::CheckPassGates(int aIndex, WORD Gate){
 
-	/*if(Gate < 307 || Gate > 328) return;
+	if(Gate < 307 || Gate > 328) return;
 	if(this->BattleStatus == IMPERIAL_NONE) return;
 
-	PMSG_FORT_OPENCLOSE_GATE pMsg;
-	pMsg.h.set((LPBYTE)&pMsg,0xBF,0x09,sizeof(pMsg));
-	pMsg.Status = 0x01;
-	pMsg.Result = 0x03;
-	
 	if((this->Step == 3 || this->Step == 6 || this->Step == 9) && this->BattleStatus == IMPERIAL_GATEKILL){
 		ImperialGuardian.SetState(IMPERIAL_STANDBY);
 	}
-	
-	for(int X=0; X < 5;X++){
-		if(this->Player[X] == aIndex){
-			if(this->DoorState[X] == DOOR_OPEN){
-				DataSend(aIndex,(LPBYTE)&pMsg,pMsg.h.size);
-			}
-		}
-	}*/
 }
 
 void CImperialGuardian::CheckGates(){
-
-	if(this->BattleStatus == IMPERIAL_NONE) return;
-
-	/*PMSG_FORT_OPENCLOSE_GATE pMsg;
-	pMsg.h.set((LPBYTE)&pMsg,0xBF,0x09,sizeof(pMsg));
-	pMsg.Status = 0x01;
-	pMsg.Result = 0x03;
-	
-	for(int X=0; X < 5;X++){
-		if(this->Player[X] >= OBJ_STARTUSERINDEX){
-			int Index = X;
-
-			if(this->DoorState[Index] == DOOR_OPEN){
-
-				LPOBJ lpObj = &gObj[Index];
-
-				if(this->EventMap == 69){
-					if((lpObj->X >= 220 && lpObj->X <= 243) && (lpObj->Y >= 32 && lpObj->Y <= 48)
-					|| (lpObj->X >= 225 && lpObj->X <= 235) && (lpObj->Y >= 58 && lpObj->Y <= 67)
-					|| (lpObj->X >= 205 && lpObj->X <= 212) && (lpObj->Y >= 78 && lpObj->Y <= 84)
-					|| (lpObj->X >= 180 && lpObj->X <= 190) && (lpObj->Y >= 19 && lpObj->Y <= 38)
-					|| (lpObj->X >= 152 && lpObj->X <= 162) && (lpObj->Y >= 23 && lpObj->Y <= 31)
-					|| (lpObj->X >= 152 && lpObj->X <= 156) && (lpObj->Y >= 57 && lpObj->Y <= 65)
-					|| (lpObj->X >= 172 && lpObj->X <= 187) && (lpObj->Y >= 82 && lpObj->Y <= 102)){ //Lunes y Jueves
-						this->DoorState[X] = DOOR_CLOSED;
-					}
-				}
-				
-				if(this->EventMap == 70){
-					if((lpObj->X >= 57 && lpObj->X <= 71) && (lpObj->Y >= 52 && lpObj->Y <= 75)
-					|| (lpObj->X >= 31 && lpObj->X <= 47) && (lpObj->Y >= 62 && lpObj->Y <= 67)
-					|| (lpObj->X >= 9 && lpObj->X <= 16) && (lpObj->Y >= 62 && lpObj->Y <= 67)
-					|| (lpObj->X >= 26 && lpObj->X <= 49) && (lpObj->Y >= 96 && lpObj->Y <= 110)
-					|| (lpObj->X >= 38 && lpObj->X <= 46) && (lpObj->Y >= 122 && lpObj->Y <= 130)
-					|| (lpObj->X >= 53 && lpObj->X <= 57) && (lpObj->Y >= 158 && lpObj->Y <= 162)
-					|| (lpObj->X >= 95 && lpObj->X <= 102) && (lpObj->Y >= 104 && lpObj->Y <= 118)){ //Martes y Viernes
-						this->DoorState[X] = DOOR_CLOSED;
-					}
-				}
-
-				
-				if(this->EventMap == 71){
-					if((lpObj->X >= 130 && lpObj->X <= 143) && (lpObj->Y >= 180 && lpObj->Y <= 204)
-					|| (lpObj->X >= 108 && lpObj->X <= 116) && (lpObj->Y >= 185 && lpObj->Y <= 205)
-					|| (lpObj->X >= 78 && lpObj->X <= 86) && (lpObj->Y >= 193 && lpObj->Y <= 197)
-					|| (lpObj->X >= 213 && lpObj->X <= 232) && (lpObj->Y >= 137 && lpObj->Y <= 150)
-					|| (lpObj->X >= 220 && lpObj->X <= 224) && (lpObj->Y >= 163 && lpObj->Y <= 273)
-					|| (lpObj->X >= 222 && lpObj->X <= 224) && (lpObj->Y >= 196 && lpObj->Y <= 202)
-					|| (lpObj->X >= 157 && lpObj->X <= 176) && (lpObj->Y >= 220 && lpObj->Y <= 230)){ //Miercoles y Sabados
-						this->DoorState[X] = DOOR_CLOSED;
-					}
-				}
-
-				
-				if(this->EventMap == 72){
-					if((lpObj->X >= 60 && lpObj->X <= 78) && (lpObj->Y >= 59 && lpObj->Y <= 78)
-					|| (lpObj->X >= 37 && lpObj->X <= 47) && (lpObj->Y >= 66 && lpObj->Y <= 74)
-					|| (lpObj->X >= 29 && lpObj->X <= 32) && (lpObj->Y >= 93 && lpObj->Y <= 98)
-					|| (lpObj->X >= 20 && lpObj->X <= 47) && (lpObj->Y >= 179 && lpObj->Y <= 199)
-					|| (lpObj->X >= 55 && lpObj->X <= 67) && (lpObj->Y >= 188 && lpObj->Y <= 193)
-					|| (lpObj->X >= 66 && lpObj->X <= 72) && (lpObj->Y >= 158 && lpObj->Y <= 163)
-					|| (lpObj->X >= 159 && lpObj->X <= 175) && (lpObj->Y >= 127 && lpObj->Y <= 139)
-					|| (lpObj->X >= 200 && lpObj->X <= 220) && (lpObj->Y >= 131 && lpObj->Y <= 135)
-					|| (lpObj->X >= 221 && lpObj->X <= 226) && (lpObj->Y >= 162 && lpObj->Y <= 166)
-					|| (lpObj->X >= 195 && lpObj->X <= 211) && (lpObj->Y >= 20 && lpObj->Y <= 32)){ //Domingos
-						this->DoorState[X] = DOOR_CLOSED;
-					}
-				}
-
-				if(this->DoorState[Index] == DOOR_CLOSED){
-					DataSend(lpObj->m_Index,(LPBYTE)&pMsg,pMsg.h.size);
-					LogAddTD("[ImperialGuardian][%s][%s] Close Gates %d",lpObj->AccountID,lpObj->Name,this->Step);
-				}
-			}
-		}
-	}*/
+	//Not in use Anymore!
 }
 
 //////////////////////////////////////////////////////////////////
@@ -753,6 +635,13 @@ void CImperialGuardian::CreateDoor(int GateType, int X, int Y, int Direction){
 
 		this->Door[this->TotalDoors] = DoorIndex;
 		this->TotalDoors++;
+
+		for(int i=(X);i<=(X);i++){
+			for(int j= (Y);j<=(Y);j++){
+				MapC[this->EventMap].m_attrbuf[j * 256 + i] = 0;
+			}
+		}
+
 	} else {
 		LogAddTD("[ImperialGuardian] Failed to Add Door %d",this->TotalDoors+1);
 	}
@@ -960,7 +849,7 @@ void CImperialGuardian::GaionItemDrop(int aIndex, int CordX, int CordY)
 					Excellent = GetExcellentOption();
 				}
 
-				ItemSerialCreateSend(lpObj->m_Index,lpObj->MapNumber,CordX,CordY,
+				ItemSerialCreateSend(lpObj->m_Index,lpObj->MapNumber,((CordX)+rand()%3),((CordY)+rand()%3),
 				((this->Items[ItemID].Index*512)+this->Items[ItemID].ID),
 				this->Items[ItemID].Level,
 				this->Items[ItemID].Durability,

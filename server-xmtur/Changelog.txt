@@ -10,10 +10,16 @@
  - SafeMap System Fixed
  - Fixed Blood Castle 8 Master
 
+17/03/2013
+ - Fixeado Imperial Guardian Event
+ - Fixeado Doppelganger Event
+ - Arreglados Pickup de Items de Eventos Nuevos
+ - Varios Fixes en otros Detalles
+ - Removidos Mensajes del Siege y Deep Event
+
 //////////////////////////////////////////////////////////////////////////////
 //  Bugs Pendientes
 
- - MapAttr del ImperialGuardian no abren el Paso al matar los Gates
- (Packets Bien, pero no Abre) - En Revision por LeaRC
-
+ - Falta Agregar Medussa Event (Plugin 1.00.90 XTR)
+ - Season5 CashShop
  

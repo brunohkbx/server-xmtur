@@ -1047,7 +1047,9 @@ struct PMSG_CHARLISTCOUNT
 	BYTE MaxClass;	// 4
 	BYTE MoveCnt;	// 5
 	BYTE Count;	// 6
-	//BYTE Unk1; SEASON6!
+#ifdef INTERNATIONAL_KOREA
+	BYTE Unk1; //SEASON6!
+#endif
 };
 
 struct PMSG_CHARLIST
