@@ -533,7 +533,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					g_Raklion.Run();
 					g_XMasAttackEvent.Run();
 					
-					g_CashShop.CheckShopServerConnectState();
+					//Cash shop
+					//g_CashShop.CheckShopServerConnectState();
 					
 					Doppelganger.CheckMonsterPassed();
 					DuelManager.Run();

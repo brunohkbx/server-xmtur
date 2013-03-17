@@ -80,7 +80,7 @@ public:
 	bool SetItemEffect(LPOBJ lpObj, int iItemNumber, int iItemUseTime);
 	BYTE SetManualItemEffect(LPOBJ lpObj,int iEffectType,int iEffectValue,int iLeftTime);
 	bool ClearItemEffect(LPOBJ lpObj, int iEffectOption);
-	bool SearchItemEffectType(int iItemNumber, int* iEffectType1, int* iEffectType2,int *iEffectValidTime);
+	bool SearchItemEffectType(int iItemNumber, int* iEffectType1, int* iEffectType2,int *iEffectValidTime,int *iOptionType);
 	int SearchItemOptionType(int iItemNumber);
 	BYTE SearchForClearItemEffect(int iItemNumber);
 	LPITEMEFFECT SearchItemEffectType1(int iItemNumber);

@@ -388,13 +388,14 @@ BOOL CMoveCommand::Move(LPOBJ lpObj, LPSTR mapname)
 
 	if ( g_bUseMoveMapBound == TRUE )
 	{
-		if ( g_CashItemPeriodSystem.CheckHaveItemPeriodSealEffect(lpObj) == FALSE )
-		{
+		//Cash shop
+		//if ( g_CashItemPeriodSystem.CheckHaveItemPeriodSealEffect(lpObj) == FALSE )
+		//{
 			if ( !this->CheckMoveMapBound(index))
 			{
 				return FALSE;
 			}
-		}
+		//}
 	}
 
 	int loc6 = this->m_MoveCommandData[index].Index; //season 3.0 add-on

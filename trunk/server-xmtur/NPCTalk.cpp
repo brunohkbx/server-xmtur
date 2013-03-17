@@ -684,10 +684,11 @@ BOOL NpcChaosGoblelin(LPOBJ lpNpc, LPOBJ lpObj)
 
 BOOL NpcChaosCardMaster(LPOBJ lpNpc, LPOBJ lpObj)
 {
-	if ( g_bUseLotteryEvent == FALSE )
+	//Cash shop
+	/*if ( g_bUseLotteryEvent == FALSE )
 	{
 		return FALSE;
-	}
+	}*/
 	
 	if ( lpObj->m_bPShopOpen == 1 )//Season 4.5 addon
 	{

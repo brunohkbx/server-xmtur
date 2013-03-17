@@ -753,7 +753,9 @@ void ProtocolCore(BYTE protoNum, BYTE * aRecv, int aLen, int aIndex, BOOL Encryp
 					}
 				}
 				break;
-			case 0xF5:
+			
+			//Cash shop	
+			/*case 0xF5:
 				{
 					PMSG_DEFAULT2 * lpDef = (PMSG_DEFAULT2 *)aRecv;
 
@@ -773,7 +775,33 @@ void ProtocolCore(BYTE protoNum, BYTE * aRecv, int aLen, int aIndex, BOOL Encryp
 							break;
 					}
 				}
-				break;
+				break;*/
+			case 0xD2:
+				{
+					PMSG_DEFAULT2 * lpDef = (PMSG_DEFAULT2 *)aRecv;
+
+					switch ( lpDef->subcode )
+					{
+						case 0x01:
+							g_CashShop.CGCashPoint(lpObj);
+							break;
+						case 0x02:
+							g_CashShop.CGCashShopOpen(lpObj, (PMSG_REQ_INGAMESHOPOPEN *)aRecv);
+							break;
+						case 0x03:
+							g_CashShop.CGCashItemBuy(lpObj, (PMSG_REQ_INGAMESHOP_ITEMBUY *)aRecv);
+							break;
+						case 0x05:
+							g_CashShop.CGCashInventoryItemCount(lpObj, (PMSG_REQ_INGAMESHOP_INVENTORY *)aRecv);
+							break;
+						case 0x0B:
+							g_CashShop.CGCashInventoryItemUse(lpObj, (PMSG_REQ_INGAMESHOP_ITEMUSE *)aRecv);
+							break;
+						default:
+							LogAddC(2, "InGameShop Unknown Packet: %X %X", lpDef->h.headcode, lpDef->subcode);
+							LogAddHeadHex(gObj[aIndex].AccountID, (char*)aRecv, aLen);
+					}
+				}
 				//illusion temple
 			case 0xBF:
 				{
@@ -3165,10 +3193,11 @@ BOOL CGItemDropRequest(PMSG_ITEMTHROW * lpMsg, int aIndex, BOOL drop_type) //004
 		pResult.Result = false;
 	}
 
-	if ( CanItemTouchCash(lpObj->pInventory[lpMsg->Ipos].m_Type) == TRUE ) //season 4.5 add-on
+	//Cash Shop
+	/*if ( CanItemTouchCash(lpObj->pInventory[lpMsg->Ipos].m_Type) == TRUE ) //season 4.5 add-on
 	{
 		pResult.Result = false;
-	}
+	}*/
 
 	if( lpObj->pInventory[lpMsg->Ipos].m_QuestItem) //season 2.5 add-on
 	{
@@ -4730,11 +4759,12 @@ void CGSellRequestRecv(PMSG_SELLREQUEST * lpMsg, int aIndex)
 		return;
 	}
 
-	if ( CanItemTouchCash(lpObj->pInventory[lpMsg->Pos].m_Type) == TRUE ) //season4 add-on
+	//Cash shop
+	/*if ( CanItemTouchCash(lpObj->pInventory[lpMsg->Pos].m_Type) == TRUE ) //season4 add-on
 	{
 		DataSend(aIndex, (LPBYTE)&pResult, pResult.h.size);
 		return;
-	}
+	}*/
 
 	if ( lpObj->pInventory[lpMsg->Pos].m_Type == ITEMGET(14,12) && lpObj->pInventory[lpMsg->Pos].m_Level == 1) // Heart+1
 	{
@@ -5033,8 +5063,9 @@ void CGModifyRequestItem(PMSG_ITEMDURREPAIR * lpMsg, int aIndex)
 				if ( IsCashItem(lpObj->pInventory[n].m_Type ) == TRUE )
 					continue;
 
-				if ( CanItemTouchCash(lpObj->pInventory[n].m_Type ) == TRUE ) //season4 add-on
-					continue;
+				//Cash shop
+				/*if ( CanItemTouchCash(lpObj->pInventory[n].m_Type ) == TRUE ) //season4 add-on
+					continue;*/
 
 				if ( lpObj->pInventory[n].m_Type == ITEMGET(13,20) && (lpObj->pInventory[n].m_Level == 0 ||lpObj->pInventory[n].m_Level == 1 ))
 					continue;
@@ -5102,8 +5133,9 @@ void CGModifyRequestItem(PMSG_ITEMDURREPAIR * lpMsg, int aIndex)
 	if ( IsCashItem(lpObj->pInventory[lpMsg->Position].m_Type ) == TRUE )
 		return;
 
-	if ( CanItemTouchCash(lpObj->pInventory[lpMsg->Position].m_Type ) == TRUE ) //season4 add-on
-		return;
+	//Cash shop
+	/*if ( CanItemTouchCash(lpObj->pInventory[lpMsg->Position].m_Type ) == TRUE ) //season4 add-on
+		return;*/
 
 	if ( lpObj->pInventory[lpMsg->Position].m_Type == ITEMGET(13,20) && (lpObj->pInventory[lpMsg->Position].m_Level == 0 ||lpObj->pInventory[lpMsg->Position].m_Level == 1 ))
 		return;

@@ -908,6 +908,7 @@
     <ClCompile Include="MyWinsockBase.cpp" />
     <ClCompile Include="NewsSystem.cpp" />
     <ClCompile Include="PartySystem.cpp" />
+    <ClCompile Include="PropertyItem.cpp" />
     <ClCompile Include="QuestManager.cpp" />
     <ClCompile Include="SafeMapSystem.cpp" />
     <ClCompile Include="SetItemOption.cpp" />
@@ -1142,6 +1143,7 @@
     <ClInclude Include="PartySystem.h" />
     <ClInclude Include="Path.h" />
     <ClInclude Include="Prodef.h" />
+    <ClInclude Include="PropertyItem.h" />
     <ClInclude Include="QuestManager.h" />
     <ClInclude Include="ReadScript.h" />
     <ClInclude Include="SafeMapSystem.h" />

@@ -447,6 +447,16 @@ struct QUESTSTRUCTURE {
 };
 
 //size 2238 for GS-CS
+
+struct INGAMESHOP_PLAYER_ITEMINFO
+{
+	int	UniqueCode;
+	int	AuthCode;
+	int	ItemCode1;
+	int ItemCode2;
+	int ItemCode3;
+};
+
 struct OBJECTSTRUCT
 {
 	int		m_Index;
@@ -1063,7 +1073,9 @@ struct OBJECTSTRUCT
 
 	int		m_iIllusionTempleIndex; //20FC
 	BOOL	m_bSkillKeyRecv; //0x2100
-	int		m_iPeriodItemEffectIndex; //0x2104
+	
+	//int		m_iPeriodItemEffectIndex; //0x2104
+	int		m_iPeriodItemEffectIndex[10]; // Adaptado al Cash shop
 	BYTE	Summoner; //0x2108
 
 	//Season4 add-on size 0x108
@@ -1114,6 +1126,13 @@ struct OBJECTSTRUCT
 
 	int VaultInUse;
 	DWORD MultiVautFloodTime;
+
+	//Cash Shop
+	double m_WCoinP;
+	double m_WCoinC;
+	double m_GoblinPoint;
+	INGAMESHOP_PLAYER_ITEMINFO	ShopInventory[30];
+	INGAMESHOP_PLAYER_ITEMINFO	GiftInventory[30];
 };
 
 typedef OBJECTSTRUCT * LPOBJ;

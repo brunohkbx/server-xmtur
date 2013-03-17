@@ -796,6 +796,9 @@
     <ClCompile Include="ClassDef.cpp">
       <Filter>Player</Filter>
     </ClCompile>
+    <ClCompile Include="PropertyItem.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="SimpleModulus.lib" />
@@ -1412,6 +1415,9 @@
     </ClInclude>
     <ClInclude Include="ClassDef.h">
       <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PropertyItem.h">
+      <Filter>Items</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

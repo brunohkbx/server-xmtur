@@ -11,13 +11,14 @@
 
 
 #include "PCSProtocol.h"
-#include "Item.h"
-#include "Protocol.h"
+#include "item.h"
+#include "protocol.h"
 #include "wsShopServerCli.h"
 
 
 #define MAX_CASH_SHOP_CATEGORY	4
-#define MAX_CASH_SHOP_ITEM		135
+#define MAX_SHOP_ITEM		500	//135
+#define MAX_PACK_ITEM		200
 #define MAX_CASH_SHOP_PROTOCOL	15
 #define MAX_CASH_SHOP_PROTOCOL_DATA	9
 #define MAX_CASH_ITEM_BRANCH	100
@@ -55,25 +56,159 @@ struct CASHSHOP_ITEMLIST
 	BYTE btItemDuration;	// 14
 	BYTE btSpecialOption;	// 15
 	BYTE btItemUsedType;	// 16
-	BYTE btItemInfo[MAX_ITEM_INFO];	// 17
+	BYTE btItemInfo[7];	// 17
 	DWORD dwItemUsePeriod;	// 1E
 	CItem ItemInfo;	// 22
 
-	CASHSHOP_ITEMLIST(){};
+	CASHSHOP_ITEMLIST(){};	// #error - need to be confirmed if Constructor has no code
 };
 
+struct INGAMESHOP_ITEMLIST
+{
+	BYTE	btGuid;
+	DWORD	dwItemIndex;
+	DWORD	dwItemSubIndex;
+	DWORD	dwItemOpt;
+	WORD	wItemPackage;
+	WORD	dwItemGroup;
+	WORD	dwItemType;
+	BYTE	btItemLevel;
+	BYTE	btItemDurability;
+	BYTE	btItemSkill;
+	BYTE	btItemLuck;
+	BYTE	btItemOption;
+	BYTE	btItemExOption;
+	BYTE	btItemSetOption;
+	BYTE	btItemSocketCount;
+	BYTE	btItemType;
+	DWORD	dwItemPeriodTime;
+	BYTE	btCoinType;
+	WORD	wPrice;
+	WORD	wUniqueID1;
+	WORD	wUniqueID2;
+	WORD	wUniqueID3;
+	BYTE	btX;
+	BYTE	btY;
+	DWORD	ItemCategory;
+};
 
+struct INGAMESHOP_PACKAGELIST
+{
+	BYTE	Guid;
+	BYTE	PackageID;
+	BYTE	ItemSeqNum;
+	WORD	dwItemGroup;
+	WORD	dwItemType;
+	BYTE	btItemLevel;
+	BYTE	btItemDurability;
+	BYTE	btItemSkill;
+	BYTE	btItemLuck;
+	BYTE	btItemOption;
+	BYTE	btItemExOption;
+	BYTE	btItemSetOption;
+	BYTE	btItemType;
+	DWORD	dwItemPeriodTime;
+	WORD	wUniqueID1;
+	WORD	wUniqueID2;
+	WORD	wUniqueID3;
+	BYTE	btX;
+	BYTE	btY;
+};
 
+struct PMSG_SEND_CASHSHOP_VERS
+{
+	BYTE H;
+	BYTE Size;
+	BYTE Head;
+	BYTE Sub;
+	WORD Vers_Main;
+	WORD Vers_Sub;
+	WORD Vers_Rev;
+};
 
+struct PMSG_REQ_INGAMESHOPINIT
+{
+	PBMSG_HEAD2 h;
+};
 
+struct PMSG_ANS_INGAMESHOP_POINT
+{
+	PBMSG_HEAD2 h;
+	BYTE result;
+	double WCoinC[2];
+	double WCoinP[2];
+	double Goblin;
+};
 
-struct PMSG_REQ_CASHSHOPOPEN
+struct PMSG_ANS_INGAMESHOP_ITEMCOUNT
+{
+	PBMSG_HEAD2 h;
+	short OwnInv[2];
+	short GiftInv[2];
+};
+#pragma pack (1)
+struct PMSG_ANS_INGAMESHOP_ITEM
+{
+	PBMSG_HEAD2	h;
+	int	UniqueCode;
+	int AuthCode;
+	int UniqueValue1;
+	int UniqueValue2;
+	int UniqueValue3;
+	int Unk1;
+	int Unk2;
+	BYTE Unk3;
+};
+
+struct PMSG_REQ_INGAMESHOPOPEN
 {
 	PBMSG_HEAD2 head;
 	BYTE btShopOpenType;	// 4
-	BYTE btShopOpenAlready;	// 5
 };
 
+struct PMSG_REQ_INGAMESHOP_INVENTORY
+{
+	PBMSG_HEAD2	h;
+	int	Result;
+	BYTE InventoryType;
+	BYTE Unk;
+};
+
+struct PMSG_REQ_INGAMESHOP_ITEMBUY
+{
+	PBMSG_HEAD2	h;
+	int ItemIndex;
+	int Category;
+	int ItemOpt;
+	short ItemID;
+	int ItemSubIndex;
+};
+
+struct PMSG_ANS_INGAMESHOP_ITEMBUY
+{
+	PBMSG_HEAD2 h;
+	BYTE Result;
+	int Unknown;
+};
+
+struct PMSG_REQ_INGAMESHOP_ITEMUSE
+{
+	PBMSG_HEAD2	h;
+	int UniqueCode;
+	int AuthCode;
+	WORD ItemID;
+	BYTE Unk;
+};
+
+struct PMSG_ANS_INGAMESHOP_ITEMUSE
+{
+	PBMSG_HEAD2	h;
+	BYTE result;
+};
+
+
+
+#pragma pack ()
 
 struct PMSG_REQ_CASHITEMLIST
 {
@@ -134,83 +269,59 @@ public:
 
 	void Initialize();
 	void Load(LPSTR pchFilename);
+	void LoadPackages(LPSTR pchFilename);
 	void LoadShopOption(LPSTR pchFilename);
-	void LoadTestScript(LPSTR pchFilename);
-	BOOL ConnectShopServer(LPSTR pchIpAddress, int iPortNumber);
-	BOOL ReConnectShopServer();
-	void CheckShopServerConnectState();
 	void CashShopOptioNReload();
-	BOOL InsertItemStatus(CASHSHOP_ITEM_STATUS* lpItemStatus);
-	BOOL SetItemInfoFromShop(protocol::MSG_STOG_ITEM_LIST_ANS* lpMsg);
-	BOOL SetPackageItemInfoFromShop(protocol::MSG_STOG_PACKAGE_LIST_ANS* lpMsg);
-	void MakeItemList(CASHSHOP_ITEM_STATUS* lpItemStatus, sellItem* lpItemSellInfo);
-	BOOL CheckValidItemInfo(sellItem* lpItemInfo);
-	CASHSHOP_ITEM_STATUS* GetCashItemStatus(int iItemCode);
-	BOOL IsGetSocketSeedFromShopItem(int iItemCode);
+	BOOL InsertItemStatus(INGAMESHOP_ITEMLIST* lpItemStatus);
+	BOOL InsertPackStatus(INGAMESHOP_PACKAGELIST* lpPackStatus);
 	BOOL IsGetAmountFromShopItem(int iItemCode);
-	CASHSHOP_ITEMLIST* SearchItemList(int iItemGuid);
+	INGAMESHOP_ITEMLIST* SearchItemList(int ItemIndex, int ItemSubIndex, int Category, int ItemID, int ItemOpt);
+	INGAMESHOP_ITEMLIST* SearchItemList(int UniqueID1, int UniqueID2, int UniqueID3);
+	INGAMESHOP_ITEMLIST* SearchItemFromInventory(LPOBJ lpObj, int UniqueCode, int AuthCode);
 	BOOL AddUser(LPOBJ lpObj);
 	BOOL DeleteUser(LPOBJ lpObj);
 	LPOBJ SearchUser(int iUserGuid);
-	BOOL CGCashShopOpen(LPOBJ lpObj, PMSG_REQ_CASHSHOPOPEN* lpMsg);
+	BOOL CGCashShopOpen(LPOBJ lpObj, PMSG_REQ_INGAMESHOPOPEN* lpMsg);
 	BOOL CGCashPoint(LPOBJ lpObj);
-	BOOL GCCashItemListSend(LPOBJ lpObj,  PMSG_REQ_CASHITEMLIST* lpMsg);
-	void CGCashItemBuy(LPOBJ lpObj,  PMSG_REQ_CASHITEM_BUY* lpMsg);
-	void GCCashPoint(LPOBJ lpObj, DWORD dwCashPoint);
+	void CGCashItemBuy(LPOBJ lpObj, PMSG_REQ_INGAMESHOP_ITEMBUY* lpMsg);
+	void GCCashPoint(LPOBJ lpObj);
 	void GCCashItemBuyResult(LPOBJ lpObj, BYTE btResult);
+	BOOL CGCashInventoryItemCount(LPOBJ lpObj, PMSG_REQ_INGAMESHOP_INVENTORY* lpMsg);
+	void GCCashInventoryItemCount(LPOBJ lpObj, PMSG_REQ_INGAMESHOP_INVENTORY* lpMsg);
+	BOOL GCCashItemInventory(LPOBJ lpObj, int ItemCount, int InventoryType);
+	void CGCashInventoryItemUse(LPOBJ lpObj, PMSG_REQ_INGAMESHOP_ITEMUSE* lpMsg);
 	int CheckInventoryEmptySpace(LPOBJ lpObj, struct CASHSHOP_ITEMLIST* lpItemInfo);
-	BOOL GiveBuyItemToInventory(LPOBJ lpObj, int iItemGuid);
+	bool DeleteItemFromInventory(LPOBJ lpObj, int UniqueCode, int AuthCode);
+	BOOL GiveBuyItemToInventory(LPOBJ lpObj, INGAMESHOP_ITEMLIST* lpItemInfo, BYTE Inventory);
+	BOOL GiveBuyItemToInventory(LPOBJ lpObj, INGAMESHOP_PACKAGELIST * lpPackInfo, BYTE Inventory);
 	BOOL CheckPeriodItemUsed(LPOBJ lpObj, int iItemCode);
 	BOOL CheckPeriodItem(int iItemCode);
-	void GSReqCashPoint(DWORD dwUserGuid);
-	void GSReqCashItemList();
-	void GSReqPackageItemList();
-	void GSReqBuyCashItem(DWORD dwServerGuid, DWORD dwUserGuid, DWORD dwCharacterGuid, LPSTR szCharacterName, DWORD dwCount, DWORD dwPriceGuid);
-	void GSNtfBuyCashItem(protocol::MSG_GTOS_BUY_ITEM_NTF* pMsg);
-	void GSReqBranchItemList();
-	void SetBranchItem(DWORD dwItemGuid, int iBranchType);
-	int  GetBranchType(DWORD dwItemGuid);
-	void MakeItemListProtocol();
+	int	 GetItemCountInShopInventory(LPOBJ lpObj, int InventoryType);
+	bool InsertItemToInventory(LPOBJ lpObj, int UniqueCode, int AuthCode, int UniqueID1, int UniqueID2, int UniqueID3, BYTE Inventory);
+	bool UsePackage(LPOBJ lpObj, int PackageID);
 	LPBYTE GetItemList(int iCategory, int iPageCount);
-
-
-	static long  CCashShop::ParentWndProc(HWND hWnd, UINT iMessage, WPARAM wParam, long lParam);
-	static WNDPROC m_lpOldProc;
-  
 
 private:
 
 	int iCashItemCount;	// 4
-	int iCashItemPageNumber;	// 8
+	int iPackItemCount;
 	BOOL bCashItemListReload;	// C
-	std::map<int,OBJECTSTRUCT *> MapUserObject;	//
-	std::map<int,CASHSHOP_ITEMLIST *> MapCashItemList;	//
-	std::map<int,CASHSHOP_ITEM_STATUS *> MapCashItemStatus;	//
-	CASHSHOP_ITEMLIST CashItemList[MAX_CASH_SHOP_CATEGORY][MAX_CASH_SHOP_ITEM];	//
-	CASHSHOP_ITEMLIST_TO_PROTOCOL CashItemListCompress[MAX_CASH_SHOP_CATEGORY][MAX_CASH_SHOP_ITEM];	//
-	PMSG_ANS_CASHITEMLIST CashItemProtocol[MAX_CASH_SHOP_CATEGORY][MAX_CASH_SHOP_PROTOCOL];	//
-	int iAddItemCountInCategory[MAX_CASH_SHOP_CATEGORY];	//
-	int iCashItemCountInCategory[MAX_CASH_SHOP_CATEGORY];	//
-	CASHSHOP_BRANCH_ITEMLIST BranchItemList[MAX_CASH_ITEM_BRANCH];	//
-	int iBranchItemCount;	//
-	DWORD dwCheckShopServerConnectStatePeriod;	//
+	std::map<int,OBJECTSTRUCT *> MapUserObject;	// 10
+	std::map<int,INGAMESHOP_ITEMLIST *> MapItemList;	// 20
+	std::map<int,INGAMESHOP_PACKAGELIST *> MapPackageList;
+	INGAMESHOP_ITEMLIST ShopItemList[MAX_SHOP_ITEM];	// 40
+	INGAMESHOP_PACKAGELIST PackItemList[MAX_PACK_ITEM];
 };
 
 extern BOOL g_bUseMoveMapBound;
 extern CCashShop g_CashShop;
-extern wsShopServerCli g_ShopServerClient;
-extern BOOL g_bUseLotteryEvent;
-
-
-
-void ShopServerProtocolCore(DWORD protoNum, LPBYTE aRecv, int aLen);
-void SGAnsCashPoint(protocol::MSG_STOG_USER_CASH_ANS* aRecv);
-void  SGAnsCashItemList(protocol::MSG_STOG_ITEM_LIST_ANS* aRecv);
-void SGAnsPackageItemList(protocol::MSG_STOG_PACKAGE_LIST_ANS* aRecv);
-void SGAnsBranchItemList(protocol::MSG_STOG_BRANCH_ITEM_LIST_ANS* lpMsg);
-void SGAnsBuyCashItem( protocol::MSG_STOG_BUY_ITEM_ANS* aRecv);
+//static BYTE InGameShopKey1[10] = { 0xC1, 0x0A, 0xD2, 0x0C, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00 };
+//static BYTE InGameShopKey2[10] = { 0xC1, 0x0A, 0xD2, 0x15, 0x47, 0x02, 0x00, 0x00, 0x00, 0x00 };
+//static BYTE InGameShopKey1[10] = { 0xC1, 0x0A, 0xD2, 0x0C, 0x00, 0x02, 0xDB, 0x07, 0x06, 0x00 };
+//static BYTE InGameShopKey2[10] = { 0xC1, 0x0A, 0xD2, 0x15, 0x47, 0x02, 0xDA, 0x07, 0x05, 0x00 };
+static BYTE InGameShopKey1[10] = { 0xC1, 0x0A, 0xD2, 0x0C, 0x00, 0x02, 0xDB, 0x07, 0x06, 0x00 };
+static BYTE InGameShopKey2[10] = { 0xC1, 0x0A, 0xD2, 0x15, 0x47, 0x02, 0xDA, 0x07, 0x05, 0x00 };
 BOOL IsCashItem(int iItemCode);
-BOOL CanItemTouchCash(int iItemCode);
 
 
 
