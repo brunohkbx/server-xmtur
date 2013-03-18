@@ -296,14 +296,14 @@ struct ISHOP_ITEMLIST
 
 struct ISHOP_REQ_POINT
 {
-	PBMSG_HEAD		h;
+	PBMSG_HEAD2		h;
 	short			aIndex;
 	char			AccountID[11];
 };
 
 struct ISHOP_ANS_POINT
 {
-	PBMSG_HEAD		h;
+	PBMSG_HEAD2		h;
 	short			aIndex;
 	char			AccountID[11];
 	BYTE			Result;
@@ -322,7 +322,7 @@ struct ISHOP_PITEM_SAVE
 
 struct ISHOP_PITEM_REQ
 {
-	PBMSG_HEAD		h;
+	PBMSG_HEAD2		h;
 	short			aIndex;
 	char			AccountID[11];
 };
