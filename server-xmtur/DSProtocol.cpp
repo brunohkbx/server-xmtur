@@ -340,16 +340,23 @@ void DataServerProtocolCore(BYTE protoNum, BYTE *aRecv, int aLen)
 		}
 		break;
 
-		//Cash shop
-		case 0xD1:
-			DGAnsInGameShopPoint((ISHOP_ANS_POINT*)aRecv);
-			break;
-		case 0xD2:
-			DGAnsInGameShopItemList(aRecv);
-			break;
-		case 0xD3:
-			DGAnsInGameShopTimeItemsList(aRecv);
-			break;
+		//New CashShop
+		case 0xD2:{
+			PMSG_DEFAULT2 * lpMsg = (PMSG_DEFAULT2*)aRecv;
+
+			switch(lpMsg->subcode){
+				case 0x01:
+					DGAnsInGameShopPoint((ISHOP_ANS_POINT*)aRecv);
+					break;
+				case 0x02:
+					DGAnsInGameShopItemList(aRecv);
+					break;
+				case 0x03:
+					DGAnsInGameShopTimeItemsList(aRecv);
+					break;
+			}
+		}
+		break;
 
 		case 0xFF: {
 			PMSG_TEST * pMsg = (PMSG_TEST *)aRecv;
@@ -5959,7 +5966,7 @@ void DGSummonerStateRecv(LPPMSG_ANS_SUMMONER_STATUS lpMsg)
 void GDReqInGameShopItemList(int aIndex)
 {
 	ISHOP_REQ_ITEMLIST pMsg;
-	PHeadSubSetB((LPBYTE)&pMsg, 0xD2, 0x02, sizeof(pMsg));
+	PHeadSubSetB((LPBYTE)&pMsg,0xD2,0x02,sizeof(pMsg));
 
 	memcpy(pMsg.AccountID, gObj[aIndex].AccountID, 11);
 	pMsg.aIndex = aIndex;
@@ -5987,7 +5994,7 @@ void GDReqInGameShopPoint(int aIndex)
 {
 	ISHOP_REQ_POINT pMsg = {0};
 
-	PHeadSetB((LPBYTE)&pMsg, 0xD1, sizeof(pMsg));
+	PHeadSubSetB((LPBYTE)&pMsg,0xD2,0x01,sizeof(pMsg));
 	memcpy(pMsg.AccountID, gObj[aIndex].AccountID, 11);
 	pMsg.aIndex = aIndex;
 

@@ -9,7 +9,7 @@
 #include "ItemAddOption.h"
 #include "Winutil.h"
 #include "BuffEffect.h"
-
+#include "BuffManager.h"
 
 CCashItemPeriodSystem g_CashItemPeriodSystem;
 BOOL g_bRunningPeriodCheckThread = FALSE;
@@ -191,7 +191,7 @@ void CCashItemPeriodSystem::ConvertTimeToString(const CTime * lpTime, LPSTR pchD
 	iHour = lpTime->GetHour();
 	iMinute = lpTime->GetMinute();
 
-	wsprintf(chDate, "%d-%d-%d %d:%d", iYear, iMonth, iDay, iHour, iMinute);
+	wsprintf(chDate, "%d-%d-%d %d:%d", iDay, iMonth, iYear, iHour, iMinute);
 	memcpy(pchDate, chDate, sizeof(chDate));
 }
 
@@ -228,7 +228,6 @@ BOOL CCashItemPeriodSystem::SetPeriodItemEffect(LPOBJ lpObj, int iItemCode, BYTE
 				lpObj->m_iPeriodItemEffectIndex[n] = i;
 
 				g_ItemAddOption.SetItemEffect(lpObj, iItemCode, dwItemPeriod);
-
 				return TRUE;
 			}
 		}
@@ -325,7 +324,7 @@ void CCashItemPeriodSystem::GDReqPeriodItemInsert(LPOBJ lpObj, int iItemCode, in
 
 	tExpireDate = this->CalcItemUseEndTime(iItemEffectDate);
 
-	wsprintf(pMsg.chExpireDate, "%d-%d-%d %d:%d", tExpireDate.GetYear(), tExpireDate.GetMonth(), tExpireDate.GetDay(), tExpireDate.GetHour(), tExpireDate.GetMinute());
+	wsprintf(pMsg.chExpireDate, "%d-%d-%d %d:%d", tExpireDate.GetDay(), tExpireDate.GetMonth(), tExpireDate.GetYear(), tExpireDate.GetHour(), tExpireDate.GetMinute());
 
 	PHeadSubSetB((LPBYTE)&pMsg, 0xD0, 0x03, sizeof(PMSG_REQ_PERIODITEM_INSERT));
 
@@ -432,20 +431,25 @@ void CCashItemPeriodSystem::GDReqPeriodItemUpdate(LPOBJ lpObj)
 
 void CCashItemPeriodSystem::DGAnsPeriodItemInsert(PMSG_ANS_PERIODITEM_INSERT * aRecv)
 {
+	
+	LogAddTD("DEBUG MIJO DEBUG 2!!! : %d",aRecv->iUserIndex);
+
 	int iIndex = aRecv->iUserIndex;
 	LPOBJ lpObj = &gObj[iIndex];
 	BYTE btResult = FALSE;
 
-	switch ( aRecv->btResult )
-	{
+	switch(aRecv->btResult){
 		case 0: btResult = 1; break;
 		case 1: btResult = 2; break;
 		case 2: btResult = 3; break;
 		default: btResult = 1;
 	}
 
+	LogAddTD("DEBUG MIJO DEBUG!!! : %d",iIndex);
+
 	if ( btResult == 1 )
 	{
+		gObjSetItemEffect(&gObj[iIndex], 101);
 		this->SetPeriodItemEffect(lpObj, aRecv->iItemCode, aRecv->btItemEffectType1, aRecv->btItemEffectType2, aRecv->iItemPeriodDate);
 
 		LogAddTD("[CashShop][PeriodItemInsert Ans] Success - ID : %s, Name : %s, ItemCode : %d, Effect1 : %d, Effect2 : %d, UseTime : %d",
@@ -606,11 +610,8 @@ void CCashItemPeriodSystem::DGAnsPeriodItemDelete(PMSG_ANS_PERIODITEM_DELETE *aR
 void CCashItemPeriodSystem::GCSendPeriodItemInserResult(LPOBJ lpObj, BYTE btResult)
 {
 	PMSG_ANS_PERIODITEM_INSERT_RESULT pMsg;
-	
 	pMsg.btResult = btResult;
-
 	PHeadSubSetB((LPBYTE)&pMsg, 0xD0, 0x03, sizeof(PMSG_ANS_PERIODITEM_INSERT_RESULT));
-
 	DataSend(lpObj->m_Index, (LPBYTE)&pMsg,	sizeof(PMSG_ANS_PERIODITEM_INSERT_RESULT));
 }
 

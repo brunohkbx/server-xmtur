@@ -40,7 +40,7 @@ struct PMSG_ANS_PERIODITEM_LIST
 
 struct PMSG_ANS_PERIODITEM_INSERT
 {
-	PBMSG_HEAD2 head;
+	PBMSG_HEAD2 headz;
 	int iUserIndex;	// 4
 	int iItemCode;	// 8
 	int iItemPeriodDate;	// C

@@ -789,6 +789,28 @@ void CIllusionTempleProcess::SetState_PLAYING()
 	this->SetNpcStatueRegen();
 	this->NotifyTempleInfo(2,-1);
 
+	for(int i=(140);i<=145;i++){
+		for(int j=50;j<=55;j++){
+			MapC[45].m_attrbuf[j * 256 + i] = 0;
+			MapC[46].m_attrbuf[j * 256 + i] = 0;
+			MapC[47].m_attrbuf[j * 256 + i] = 0;
+			MapC[48].m_attrbuf[j * 256 + i] = 0;
+			MapC[49].m_attrbuf[j * 256 + i] = 0;
+			MapC[50].m_attrbuf[j * 256 + i] = 0;
+		}
+	}
+
+	for(int i=(194);i<=200;i++){
+		for(int j=115;j<=122;j++){
+			MapC[45].m_attrbuf[j * 256 + i] = 0;
+			MapC[46].m_attrbuf[j * 256 + i] = 0;
+			MapC[47].m_attrbuf[j * 256 + i] = 0;
+			MapC[48].m_attrbuf[j * 256 + i] = 0;
+			MapC[49].m_attrbuf[j * 256 + i] = 0;
+			MapC[50].m_attrbuf[j * 256 + i] = 0;
+		}
+	}
+
 #if(DEBUG_IT == 1)
 	for( int i = 0; i < MAX_FLOOR_USER; i++ )
 	{
@@ -808,6 +830,28 @@ void CIllusionTempleProcess::SetState_END()
 	this->m_iEventBattleTimer = 1000 * (m_i_IT_RestTime * 60);
 
 	this->NotifyTempleInfo(3,-1);
+
+	for(int i=(140);i<=145;i++){
+		for(int j=50;j<=55;j++){
+			MapC[45].m_attrbuf[j * 256 + i] &= ~2;
+			MapC[46].m_attrbuf[j * 256 + i] &= ~2;
+			MapC[47].m_attrbuf[j * 256 + i] &= ~2;
+			MapC[48].m_attrbuf[j * 256 + i] &= ~2;
+			MapC[49].m_attrbuf[j * 256 + i] &= ~2;
+			MapC[50].m_attrbuf[j * 256 + i] &= ~2;
+		}
+	}
+
+	for(int i=(194);i<=200;i++){
+		for(int j=115;j<=122;j++){
+			MapC[45].m_attrbuf[j * 256 + i] &= ~2;
+			MapC[46].m_attrbuf[j * 256 + i] &= ~2;
+			MapC[47].m_attrbuf[j * 256 + i] &= ~2;
+			MapC[48].m_attrbuf[j * 256 + i] &= ~2;
+			MapC[49].m_attrbuf[j * 256 + i] &= ~2;
+			MapC[50].m_attrbuf[j * 256 + i] &= ~2;
+		}
+	}
 
 	for( int i = 0; i < MAX_FLOOR_USER; i++ )
 	{
@@ -980,8 +1024,6 @@ BOOL CIllusionTempleProcess::LeaveBattleUser(int aIndex)
 
 int CIllusionTempleProcess::GetFloorIndex(int aIndex) //Identical (Unused)
 {
-	int loc2 = 0; //?? weird
-
 	LPOBJ lpObj = &gObj[aIndex];
 
 	if( OBJMAX_RANGE(aIndex) == FALSE )

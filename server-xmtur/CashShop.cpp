@@ -217,8 +217,6 @@ void CCashShop::Load(LPSTR pchFilename)
 				ItemStatus.ItemCategory = TokenNumber;
 
 
-
-				
 				LogAddTD("[InGameShop][Load Cash Item List] - Add List - (%d/%d) Level:%d, Dur:%d, Skill:%d, Luck:%d, Add:%d, Ex:%d, X:%d, Y:%d, Price:%d",
 					ItemStatus.dwItemGroup, ItemStatus.dwItemType, ItemStatus.btItemLevel, ItemStatus.btItemDurability,
 					ItemStatus.btItemSkill, ItemStatus.btItemLuck, ItemStatus.btItemOption, ItemStatus.btItemExOption, 
@@ -394,6 +392,10 @@ BOOL CCashShop::AddUser(LPOBJ lpObj)
 	this->MapUserObject.insert(std::pair<int, LPOBJ>(lpObj->DBNumber, lpObj));
 	GDReqInGameShopPoint(lpObj->m_Index);
 	GDReqInGameShopItemList(lpObj->m_Index);
+
+	lpObj->m_GoblinPoint = 1000;
+	lpObj->m_WCoinP = 1000;
+	lpObj->m_WCoinC = 1000;
 	return TRUE;
 }
 
@@ -830,7 +832,12 @@ void CCashShop::CGCashItemBuy(LPOBJ lpObj, PMSG_REQ_INGAMESHOP_ITEMBUY *lpMsg)
 
 	if(lpCashItemInfo == NULL) 
 	{
-		LogAddC(4, "[InGameShop] Unknown Item: Index:%d Sub:%d Category: %d ItemID: %d Opt: %d", lpMsg->ItemIndex, lpMsg->ItemSubIndex, lpMsg->Category, lpMsg->ItemID, lpMsg->ItemOpt);
+		LogAddC(4, "[InGameShop] Unknown Item: Index:%d Sub:%d Category: %d ItemID: %d Opt: %d", 
+			lpMsg->ItemIndex, 
+			lpMsg->ItemSubIndex, 
+			lpMsg->Category, 
+			lpMsg->ItemID, 
+			lpMsg->ItemOpt);
 		return;
 	}
 
@@ -975,7 +982,10 @@ INGAMESHOP_ITEMLIST * CCashShop::SearchItemList(int ItemIndex,int ItemSubIndex,i
 	for(Iter = this->MapItemList.begin(); Iter != this->MapItemList.end(); ++Iter)
 	{
 		lpItemInfo = Iter->second;
-		if(ItemIndex == lpItemInfo->dwItemIndex /*&& ItemSubIndex == lpItemInfo->dwItemSubIndex */&& Category == lpItemInfo->ItemCategory && ItemID == ItemGetNumberMake(lpItemInfo->dwItemGroup, lpItemInfo->dwItemType) && ItemOpt == lpItemInfo->dwItemOpt)
+		if(ItemIndex == lpItemInfo->dwItemIndex /*&& ItemSubIndex == lpItemInfo->dwItemSubIndex */
+		&& Category == lpItemInfo->ItemCategory 
+		&& ItemID == ItemGetNumberMake(lpItemInfo->dwItemGroup, lpItemInfo->dwItemType) 
+		&& ItemOpt == lpItemInfo->dwItemOpt)
 		{
 			break;
 		}
