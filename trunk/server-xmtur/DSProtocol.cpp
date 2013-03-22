@@ -348,12 +348,14 @@ void DataServerProtocolCore(BYTE protoNum, BYTE *aRecv, int aLen)
 				case 0x01:
 					DGAnsInGameShopPoint((ISHOP_ANS_POINT*)aRecv);
 					break;
-				case 0x02:
-					DGAnsInGameShopItemList(aRecv);
-					break;
 				case 0x03:
 					DGAnsInGameShopTimeItemsList(aRecv);
 					break;
+			}
+
+			if(aRecv[4] == 0x02){
+				DGAnsInGameShopItemList(aRecv);
+				break;
 			}
 		}
 		break;
@@ -2098,9 +2100,9 @@ void GCItemListSend(int aIndex)
 			memcpy(&sendBuf[sOfs], &pMsgIL, pMsgILSize);
 			itemcount++;
 			sOfs += pMsgILSize;
-			if ( lpObj->pInventory[n].m_ExpirationItem == true )
-			{
-				++timeitem;
+
+			if(lpObj->pInventory[n].m_ExpirationItem == TRUE){
+				g_PropItems.SendPropertyInfo(lpObj, lpObj->pInventory[n].m_Type, lpObj->pInventory[n].m_Number, n);
 			}
 		}
 	}
@@ -2114,21 +2116,6 @@ void GCItemListSend(int aIndex)
 	memcpy(sendBuf, &pMsgILC, sizeof(PMSG_INVENTORYLISTCOUNT));
 
 	DataSend(aIndex, sendBuf, sOfs);
-
-	//Cash shop
-	for(int i=0;i<timeitem;++i)
-	{
-		if(lpObj->pInventory[i].IsItem() == true)
-		{
-			if ( lpObj->pInventory[i].m_bItemExist == true )
-			{
-				if ( lpObj->pInventory[i].m_ExpirationItem == true )
-				{
-					g_PropItems.SendPropertyInfo(lpObj, lpObj->pInventory[i].m_Type, lpObj->pInventory[i].m_Number, i);
-				}
-			}
-		}
-	}
 }
 
 /* * * * * * * * * * * * * * * * * * * * * 
@@ -2933,20 +2920,22 @@ void ItemSerialCreateRecv(SDHP_ITEMCREATERECV * lpMsg)
 			int iItemType = ITEM_GET_TYPE(lpMsg->Type);
 			int iItemIndex	= ITEM_GET_INDEX(lpMsg->Type);
 
-			pCreateItem.m_Level = lpMsg->Level;//Season 4.5 changed position
-			pCreateItem.m_Durability = lpMsg->Dur;//Season 4.5 changed position
+			pCreateItem.m_Level = lpMsg->Level;
+			pCreateItem.m_Durability = lpMsg->Dur;
+			pCreateItem.m_Number = lpMsg->m_Number;
+			pCreateItem.m_ExpirationItem = TRUE;
 
 			pCreateItem.Convert(ITEMGET(iItemType, iItemIndex), lpMsg->Op1, lpMsg->Op2, lpMsg->Op3, lpMsg->NewOption, lpMsg->SetOption, 0, NULL, 0xFF, 3);
 
 			BYTE btItemPos = gObjInventoryInsertItem(lpMsg->aIndex, pCreateItem);
 
-			if ( btItemPos == (BYTE)-1 )
-			{
+			g_PropItems.MakePropertyItem(&gObj[lpMsg->aIndex],(CItem *)&pCreateItem,lpMsg->lootindex);
+
+			if(btItemPos == (BYTE)-1){
 				LogAddTD("[CashShop] Error : Failed To Insert Item Type:%d, TypeIndex:%d to [%s][%s]", iItemType, iItemIndex, gObj[lpMsg->aIndex].AccountID, gObj[lpMsg->aIndex].Name);
-			}
-			else
-			{
+			} else{
 				GCInventoryItemOneSend(lpMsg->aIndex, btItemPos);
+				g_PropItems.SendPropertyInfo(&gObj[lpMsg->aIndex],pCreateItem.m_Type,pCreateItem.m_Number,btItemPos);
 			}
 		}
 	}
@@ -5972,21 +5961,29 @@ void GDReqInGameShopItemList(int aIndex)
 	pMsg.aIndex = aIndex;
 
 	cDBSMng.Send((PCHAR)&pMsg, sizeof(pMsg));
-	LogAddTD("[InGameShop] Requesting Item List: [%s]", gObj[aIndex].AccountID);
+	LogAddTD("[InGameShop][%s] Requesting Shop ItemList to DB", gObj[aIndex].AccountID);
 }
 
 void DGAnsInGameShopItemList(LPBYTE lpRecv)
 {
+	int lsOfs = 0;
 	ISHOP_ANS_ITEMLIST * lpMsg = (ISHOP_ANS_ITEMLIST *)(lpRecv);
-	ISHOP_ITEMLIST * lpMsgBody = (ISHOP_ITEMLIST *)(lpRecv+sizeof(ISHOP_ANS_ITEMLIST));
+	ISHOP_ITEMLIST * ItemInfo = (ISHOP_ITEMLIST*)(lpRecv + sizeof(ISHOP_ANS_ITEMLIST));
+
+	lsOfs += sizeof(ISHOP_ANS_ITEMLIST);
 
 	LPOBJ lpObj = &gObj[lpMsg->aIndex];
 
-	for(int i=0;i<lpMsg->Count;++i)
-	{
-		lpMsgBody = (ISHOP_ITEMLIST *)(lpRecv+sizeof(ISHOP_ANS_ITEMLIST) + (i*sizeof(ISHOP_ITEMLIST)));
-		g_CashShop.InsertItemToInventory(lpObj, lpMsgBody->UniqueCode, lpMsgBody->AuthCode,
-			lpMsgBody->UniqueID1, lpMsgBody->UniqueID2, lpMsgBody->UniqueID3, lpMsgBody->InventoryType);
+	LogAddTD("[InGameShop][%s] ItemList Total Count %d",lpObj->AccountID,lpMsg->Count);
+
+	for(int i=0;i< lpMsg->Count;++i){
+
+		ItemInfo = (ISHOP_ITEMLIST*)(lpRecv + lsOfs);
+
+		g_CashShop.InsertItemToInventory(lpObj, ItemInfo->UniqueCode, ItemInfo->AuthCode,
+		ItemInfo->UniqueID1, ItemInfo->UniqueID2, ItemInfo->UniqueID3, ItemInfo->InventoryType);
+		
+		lsOfs += sizeof(ISHOP_ITEMLIST);
 	}	
 }
 
@@ -5999,7 +5996,7 @@ void GDReqInGameShopPoint(int aIndex)
 	pMsg.aIndex = aIndex;
 
 	cDBSMng.Send((PCHAR)&pMsg, sizeof(pMsg));
-	LogAddTD("[InGameShop] Requesting Point Info: [%s]", gObj[aIndex].AccountID);
+	LogAddTD("[InGameShop][%s] Requesting Point Info to DB",gObj[aIndex].AccountID);
 }
 
 void DGAnsInGameShopPoint(ISHOP_ANS_POINT *lpMsg)
@@ -6008,12 +6005,12 @@ void DGAnsInGameShopPoint(ISHOP_ANS_POINT *lpMsg)
 	gObj[lpMsg->aIndex].m_WCoinP = lpMsg->CoinP;
 	gObj[lpMsg->aIndex].m_GoblinPoint = lpMsg->Goblin;
 
-	LogAddTD("[InGameShop] [%s] WCoinC: %f WCoinP: %f GoblinPoint: %f", gObj[lpMsg->aIndex].AccountID, gObj[lpMsg->aIndex].m_WCoinC, gObj[lpMsg->aIndex].m_WCoinP, gObj[lpMsg->aIndex].m_GoblinPoint);
+	LogAddTD("[InGameShop][%s] WCoinC: %f WCoinP: %f GoblinPoint: %f", gObj[lpMsg->aIndex].AccountID, gObj[lpMsg->aIndex].m_WCoinC, gObj[lpMsg->aIndex].m_WCoinP, gObj[lpMsg->aIndex].m_GoblinPoint);
 }
 void GDReqInGameShopTimeItemsList(int aIndex)
 {
 	ISHOP_PITEM_REQ pMsg;
-	PHeadSetB((LPBYTE)&pMsg, 0xD3, sizeof(pMsg));
+	PHeadSubSetB((LPBYTE)&pMsg,0xD2,0x03,sizeof(pMsg));
 
 	pMsg.aIndex = aIndex;
 	memcpy(pMsg.AccountID, gObj[aIndex].AccountID, 11);
@@ -6038,8 +6035,7 @@ void DGAnsInGameShopTimeItemsList(LPBYTE lpRecv)
 void GDReqInGameShopPointSave(int aIndex)
 {
 	ISHOP_ANS_POINT pMsg = {0};
-
-	PHeadSetB((LPBYTE)&pMsg, 0xD7, sizeof(pMsg));
+	PHeadSubSetB((LPBYTE)&pMsg,0xD2,0x04,sizeof(pMsg));
 
 	pMsg.aIndex = aIndex;
 	memcpy(pMsg.AccountID, gObj[aIndex].AccountID, 11);
@@ -6055,7 +6051,7 @@ void GDReqInGameShopItemListSave(int aIndex)
 {
 	char Buff[1024] = {0};
 	int PacketSize = 0;
-	int shopcount = 0;
+	int Count = 0;
 
 	ISHOP_ANS_ITEMLIST * Info = (ISHOP_ANS_ITEMLIST *)(Buff);
 	ISHOP_ITEMLIST * Item = (ISHOP_ITEMLIST *)(Buff+sizeof(ISHOP_ANS_ITEMLIST));
@@ -6072,13 +6068,13 @@ void GDReqInGameShopItemListSave(int aIndex)
 			Item->UniqueID3 = gObj[aIndex].ShopInventory[i].ItemCode3;
 			Item->InventoryType = 1;
 			Info->Count++;
-			shopcount++;
+			Count++;
 		}
 	}
+
 	for(int i=0;i<30;++i)
 	{
-		shopcount = shopcount+i;
-		Item = (ISHOP_ITEMLIST *)(Buff+sizeof(ISHOP_ANS_ITEMLIST)+shopcount*sizeof(ISHOP_ITEMLIST));
+		Item = (ISHOP_ITEMLIST *)(Buff+sizeof(ISHOP_ANS_ITEMLIST)+Count*sizeof(ISHOP_ITEMLIST));
 		if(gObj[aIndex].GiftInventory[i].UniqueCode != 0)
 		{
 			Item->UniqueCode = gObj[aIndex].GiftInventory[i].UniqueCode;
@@ -6086,16 +6082,15 @@ void GDReqInGameShopItemListSave(int aIndex)
 			Item->UniqueID1 = gObj[aIndex].GiftInventory[i].ItemCode1;
 			Item->UniqueID2 = gObj[aIndex].GiftInventory[i].ItemCode2;
 			Item->UniqueID3 = gObj[aIndex].GiftInventory[i].ItemCode3;
-			Item->InventoryType = 1;
+			Item->InventoryType = 2;
 			Info->Count++;
 		}
 	}
+
 	PacketSize = sizeof(ISHOP_ANS_ITEMLIST)+Info->Count*sizeof(ISHOP_ITEMLIST);
 
-	Info->h.c = 0xC2;
-	Info->h.headcode = 0xD8;
-	Info->h.sizeH = HIBYTE(PacketSize);
-	Info->h.sizeL = LOBYTE(PacketSize);
+	
+	PHeadSubSetW((LPBYTE)Info,0xD2,0x05,PacketSize);
 
 	Info->aIndex = aIndex;
 	memcpy(Info->AccountID, gObj[aIndex].AccountID, 11);

@@ -22,7 +22,7 @@ void CDoppelganger::MoveProc(LPOBJ lpObj)
 			if(this->CurrentMonster[X] == lpObj->m_Index){
 				lpObj->MTX = this->PosX[this->EventMap-65];
 				lpObj->MTY = this->PosY[this->EventMap-65];
-				MonsterAIUtil.FindPathToMoveMonster(lpObj,lpObj->MTX,lpObj->MTY,10,2);
+				MonsterAIUtil.FindPathToMoveMonster(lpObj,lpObj->MTX,lpObj->MTY,15,2);
 			}
 		}
 	}
@@ -139,10 +139,21 @@ void CDoppelganger::EnterDoppelganger(int aIndex,int Invitation)
 		}
 	}
 
-	
-	//Delete Ticket
-	gObjInventoryDeleteItem(aIndex,Invitation);
-	GCInventoryItemDeleteSend(aIndex,Invitation,1);
+	//Ticket
+	if(lpObj->pInventory[Invitation].m_Type != ITEMGET(14,111) 
+	&& (lpObj->pInventory[Invitation].m_Type != ITEMGET(13,125) 
+	|| lpObj->pInventory[Invitation].m_Durability <= 0.0f)){
+		return;
+	}
+
+	if(lpObj->pInventory[Invitation].m_Type == ITEMGET(13,125) && lpObj->pInventory[Invitation].m_Durability >= 1.0f){
+		lpObj->pInventory[Invitation].m_Durability -= 1.0f;
+		GCItemDurSend2(lpObj->m_Index, Invitation,lpObj->pInventory[Invitation].m_Durability,0);
+	} else {
+		//Delete Mirror
+		gObjInventoryDeleteItem(aIndex,Invitation);
+		GCInventoryItemDeleteSend(aIndex,Invitation,1);
+	}
 	
 	gObjMoveGate(aIndex,Gate);
 
@@ -754,9 +765,9 @@ void CDoppelganger::MonstersProcess(){
 
 	int MapNumber = this->EventMap - 65;
 	int Monster = 533;
-	if(this->MonstersCount < 80){
+	if(this->MonstersCount < 50){
 
-		for(int i=0; i < 80;i++){
+		for(int i=0; i < 50;i++){
 
 			Monster++;
 			if(Monster == 540) Monster = 533;

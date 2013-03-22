@@ -63,16 +63,25 @@ void CImperialGuardian::EnterEvent(int aIndex){
 	int GateNumber = 17;
 
 	int Item = ITEMGET(14,102);
-	if(Day == 7){
-		Item = ITEMGET(14,109);
-	}
+	
 	
 	for(short i=12; i < 76;++i){
-		if(lpObj->pInventory[i].m_Type == Item){
-			TicketPos = i;
-			break;
+
+		if(Day != 7){
+			if(lpObj->pInventory[i].m_Type == ITEMGET(14,102)
+			|| (lpObj->pInventory[i].m_Type == ITEMGET(13,126) && lpObj->pInventory[i].m_Durability >= 1.0f)){
+				TicketPos = i;
+				break;
+			}
+		} else {
+			if(lpObj->pInventory[i].m_Type == ITEMGET(14,109)
+			|| (lpObj->pInventory[i].m_Type == ITEMGET(13,127) && lpObj->pInventory[i].m_Durability >= 1.0f)){
+				TicketPos = i;
+				break;
+			}
 		}
 	}
+
 
 	if(TicketPos == -1){
 		pMsg.Result = 2;
@@ -140,8 +149,18 @@ void CImperialGuardian::EnterEvent(int aIndex){
 		}
 	}
 
-	gObjInventoryDeleteItem(aIndex,TicketPos);
-	GCInventoryItemDeleteSend(aIndex,TicketPos,1);
+	//Remove Durability
+	if(lpObj->pInventory[TicketPos].m_Type == ITEMGET(13,126) 
+	|| lpObj->pInventory[TicketPos].m_Type == ITEMGET(13,127) 
+	&& lpObj->pInventory[TicketPos].m_Durability > 1.0f){
+		lpObj->pInventory[TicketPos].m_Durability -= 1.0f;
+		GCItemDurSend2(lpObj->m_Index,TicketPos,lpObj->pInventory[TicketPos].m_Durability,0);
+	} else {
+		//Delete Ticket
+		gObjInventoryDeleteItem(aIndex,TicketPos);
+		GCInventoryItemDeleteSend(aIndex,TicketPos,1);
+	}
+
 	LogAddTD("[ImperialGuardian][%s][%s] Ticket Deleted %d",lpObj->AccountID,lpObj->Name,TicketPos);
 
 	//Clear Event Monsters

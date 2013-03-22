@@ -67,6 +67,7 @@ int logincounttest;
 #include "DuelManager.h"
 #include "Commands.h"
 #include "PartySystem.h"
+#include "PropertyItem.h"
 
 int tempindex;
 int iCount;
@@ -1597,12 +1598,12 @@ void CSPJoinIdPassRequest(PMSG_IDPASS* lpMsg, int aIndex)
 	char serial[17];
 	char id[11];
 
-	if ( lpMsg->CliVersion[0] != Configs.szClientVersion[0] ||
-		 lpMsg->CliVersion[1] != Configs.szClientVersion[1] ||
-		 lpMsg->CliVersion[2] != Configs.szClientVersion[2] ||
-		 lpMsg->CliVersion[3] != Configs.szClientVersion[3] ||
-		 lpMsg->CliVersion[4] != Configs.szClientVersion[4] )
-	{
+	if(lpMsg->CliVersion[0] != Configs.szClientVersion[0] ||
+	lpMsg->CliVersion[1] != Configs.szClientVersion[1] ||
+	lpMsg->CliVersion[2] != Configs.szClientVersion[2] ||
+	lpMsg->CliVersion[3] != Configs.szClientVersion[3] ||
+	lpMsg->CliVersion[4] != Configs.szClientVersion[4]){
+
 		GCJoinResult(JS_BAD_CLIENT_VERSION, aIndex);
 		CloseClient(aIndex);
 		return;
@@ -4054,6 +4055,20 @@ void CGInventoryItemMove(PMSG_INVENTORYITEMMOVE * lpMsg, int aIndex) //00446250
 
 		result = gObjInventoryMoveItem(aIndex, source, target, DurSSend, DurTSend, lpMsg->sFlag, lpMsg->tFlag, (LPBYTE)&ItemInfo);
 		::GCItemMoveResultSend(aIndex, result, target, (LPBYTE)&ItemInfo);
+
+		if(lpMsg->tFlag == 2){
+			if(gObj[aIndex].pWarehouse[target].m_ExpirationItem == 1){
+				g_PropItems.SendPropertyInfo(&gObj[aIndex], 
+				gObj[aIndex].pWarehouse[target].m_Type,
+				gObj[aIndex].pWarehouse[target].m_Number,target);
+			}
+		} else {
+			if(gObj[aIndex].pInventory[target].m_ExpirationItem == 1){
+				g_PropItems.SendPropertyInfo(&gObj[aIndex],
+				gObj[aIndex].pInventory[target].m_Type,
+				gObj[aIndex].pInventory[target].m_Number, target);
+			}
+		}
 
 		if ( DurSSend != FALSE )
 			::GCItemDurSend(aIndex, source, lpObj->pInventory[source].m_Durability, FALSE);

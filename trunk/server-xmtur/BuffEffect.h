@@ -35,6 +35,7 @@ public:
 	bool Insert(BYTE Index, BYTE ViewPortIndex, BYTE ItemType, BYTE ItemIndex, char *BuffName, BYTE Type, BYTE Notification, BYTE ClearType, char *BuffInfo);
 	bool IsValidIndex(BYTE btBuffIndex);
 	LPBUFF_EFFECT_DATA GetBuffData(BYTE btBuffIndex);
+	BYTE GetBuffIndex(int btItemID);
 
 	int iLoadCount;	// 0x04
 	BUFF_EFFECT_DATA m_EffectData[MAX_BUFF_EFFECT]; //Effects Struct

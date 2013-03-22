@@ -5,6 +5,7 @@
 #include "ObjCalCharacter.h"
 #include "CashItemPeriodSystem.h"
 #include "Readscript.h"
+#include "BuffManager.h"
 
 CItemAddOption g_ItemAddOption;
 
@@ -411,6 +412,9 @@ bool CItemAddOption::SetItemEffect(LPOBJ lpObj, int iItemNumber, int iItemUseTim
 
 	if ( iItemUseTime > 0 )
 	{
+		
+
+
 		this->_SetItemEffect(lpObj, lpItemEffect->wEffectType1, lpItemEffect->iEffectValue1);
 		this->SendItemUse(lpObj, iItemNumber, lpItemEffect->wOptionType, lpItemEffect->wEffectType1, lpItemEffect->iEffectValue1, iItemUseTime * 60);
 
