@@ -209,6 +209,11 @@ BOOL CCashItemPeriodSystem::SetPeriodItemEffect(LPOBJ lpObj, int iItemCode, BYTE
 		}
 	}*/
 
+	//Nuevo by Zero
+	BYTE iBuffIndex = g_BuffEffect.GetBuffIndex(iItemCode);
+	gObjApplyBuffEffectItemPeriod(lpObj,iBuffIndex,dwItemPeriod);
+	LogAddTD("[SetPeriodItemEffect][%s][%s] Add Period Item Effect %d %d",lpObj->AccountID,lpObj->Name,iItemCode,iBuffIndex);
+
 	for ( int i=0;i<MAX_ITEM_PERIOD_INFO;i++)
 	{
 		for ( int n=0;n<10;++n)
@@ -227,7 +232,9 @@ BOOL CCashItemPeriodSystem::SetPeriodItemEffect(LPOBJ lpObj, int iItemCode, BYTE
 
 				lpObj->m_iPeriodItemEffectIndex[n] = i;
 
-				g_ItemAddOption.SetItemEffect(lpObj, iItemCode, dwItemPeriod);
+				//Nuevo by Zero
+				BYTE iBuffIndex = g_BuffEffect.GetBuffIndex(iItemCode);
+				gObjApplyBuffEffectItemPeriod(lpObj,iBuffIndex,dwItemPeriod);
 				return TRUE;
 			}
 		}
@@ -345,9 +352,6 @@ struct PMSG_REQ_PERIODITEM_LIST
 };
 
 
-
-
-
 void CCashItemPeriodSystem::GDReqPeriodItemList(LPOBJ lpObj)
 {
 	PMSG_REQ_PERIODITEM_LIST pMsg;
@@ -357,7 +361,7 @@ void CCashItemPeriodSystem::GDReqPeriodItemList(LPOBJ lpObj)
 	memcpy(pMsg.chCharacterName, lpObj->Name, sizeof(pMsg.chCharacterName));
 
 	PHeadSubSetB((LPBYTE)&pMsg, 0xD0, 0x05, sizeof(PMSG_REQ_PERIODITEM_LIST));
-
+	
 	cDBSMng.Send((char *)&pMsg, sizeof(PMSG_REQ_PERIODITEM_LIST));
 }
 
@@ -431,9 +435,6 @@ void CCashItemPeriodSystem::GDReqPeriodItemUpdate(LPOBJ lpObj)
 
 void CCashItemPeriodSystem::DGAnsPeriodItemInsert(PMSG_ANS_PERIODITEM_INSERT * aRecv)
 {
-	
-	LogAddTD("DEBUG MIJO DEBUG 2!!! : %d",aRecv->iUserIndex);
-
 	int iIndex = aRecv->iUserIndex;
 	LPOBJ lpObj = &gObj[iIndex];
 	BYTE btResult = FALSE;
@@ -444,12 +445,8 @@ void CCashItemPeriodSystem::DGAnsPeriodItemInsert(PMSG_ANS_PERIODITEM_INSERT * a
 		case 2: btResult = 3; break;
 		default: btResult = 1;
 	}
-
-	LogAddTD("DEBUG MIJO DEBUG!!! : %d",iIndex);
-
 	if ( btResult == 1 )
 	{
-		gObjSetItemEffect(&gObj[iIndex], 101);
 		this->SetPeriodItemEffect(lpObj, aRecv->iItemCode, aRecv->btItemEffectType1, aRecv->btItemEffectType2, aRecv->iItemPeriodDate);
 
 		LogAddTD("[CashShop][PeriodItemInsert Ans] Success - ID : %s, Name : %s, ItemCode : %d, Effect1 : %d, Effect2 : %d, UseTime : %d",

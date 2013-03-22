@@ -156,3 +156,20 @@ LPBUFF_EFFECT_DATA CBuffEffect::GetBuffData(BYTE btBuffIndex)
 
 	return NULL;
 }
+
+BYTE CBuffEffect::GetBuffIndex(int btItemID)
+{
+	BYTE btBuffIndex = 0;
+
+	for(int i = 0; i < MAX_BUFF_EFFECT-1; i++){
+		if(btItemID == ((this->m_EffectData[i].btItemType * 512) + this->m_EffectData[i].btItemIndex)){
+			btBuffIndex = this->m_EffectData[i].btIndex;
+		}
+	}
+
+	if(this->IsValidIndex(btBuffIndex) == FALSE){
+		return NULL;
+	}
+
+	return btBuffIndex;
+}

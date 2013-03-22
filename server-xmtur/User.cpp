@@ -76,6 +76,7 @@
 #include "DuelManager.h"
 #include "GMManager.h"
 #include "MarrySystem.h"
+#include "PropertyItem.h"
 
 int ChangeCount; 
 int lOfsChange;
@@ -1688,6 +1689,13 @@ void DbItemSetInByte(LPOBJ lpObj, struct SDHP_DBCHAR_INFORESULT* lpMsg, int Item
 
 			gObjInventoryInsertItemPos(lpObj->m_Index,item,n,0);
 
+			lpObj->pInventory[n].m_ExpirationItem = false;
+
+			if(g_PropItems.IsPropertyItem(lpObj, lpObj->pInventory[n].m_Type, lpObj->pInventory[n].m_Number) == true)
+			{
+				lpObj->pInventory[n].m_ExpirationItem = true;
+			}
+
 			if(bIsItemExist == false)
 			{
 				lpObj->pInventory[n].m_bItemExist = 0;
@@ -2606,6 +2614,7 @@ BOOL gObjSetCharacter(LPBYTE lpdata, int aIndex)
 	g_CashShop.AddUser(lpObj);
 	g_CashShop.CGCashPoint(lpObj);
 	g_CashItemPeriodSystem.GDReqPeriodItemList(lpObj);
+	
 
 	if(lpObj->Class == CLASS_DARKLORD) //season4 add-on
 	{

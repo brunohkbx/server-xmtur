@@ -35,8 +35,7 @@ bool CPropertyItem::MakePropertyItem(LPOBJ lpObj, CItem * Item, int seconds)
 
 	this->m_vtPropertyItems.push_back(ItemStruct);
 
-	LogAddTD("[Expiration Items] (%s)(%s) Set Property Item: %d Serial: %d Time: %d seconds", lpObj->AccountID, lpObj->Name, Item->m_Type, Item->m_Number, seconds);
-
+	LogAddTD("[Expiration Items] (%s)(%s) Set Property Item: %d Serial: %d Time: %d Seconds", lpObj->AccountID, lpObj->Name, Item->m_Type, Item->m_Number, seconds);
 	return true;
 }
 
@@ -86,7 +85,7 @@ void CPropertyItem::LoadPropertyItem(int aIndex, int ItemID, int Serial, int Tim
 
 	this->m_vtPropertyItems.push_back(ItemStruct);
 
-	LogAddTD("[Expiration Items] (Account %s) Loaded Item: ID:%d SERIAL:%d", gObj[aIndex].AccountID, ItemID, Serial);
+	LogAddTD("[Expiration Items] (Account %s) Loaded Item: ID: %d Serial: %d", gObj[aIndex].AccountID, ItemID, Serial);
 }
 
 bool CPropertyItem::IsPropertyItem(LPOBJ lpObj, int ItemID, int Serial)

@@ -17,8 +17,8 @@
 
 
 #define MAX_CASH_SHOP_CATEGORY	4
-#define MAX_SHOP_ITEM		500	//135
-#define MAX_PACK_ITEM		200
+#define MAX_SHOP_ITEM			500	//135
+#define MAX_PACK_ITEM			200
 #define MAX_CASH_SHOP_PROTOCOL	15
 #define MAX_CASH_SHOP_PROTOCOL_DATA	9
 #define MAX_CASH_ITEM_BRANCH	100
@@ -38,58 +38,23 @@ struct CASHSHOP_ITEM_STATUS
 	BYTE btItemInfo[MAX_ITEM_INFO];	// 9
 };
 
-
-struct CASHSHOP_ITEMLIST
-{
-	DWORD dwItemGuid;	// 0
-	DWORD dwPriceGuid;	// 4
-	BYTE btCategoryCode;	// 8
-	BYTE btItemType;	// 9
-	WORD wItemIndex;	// A
-	BYTE btItemLevel;	// C
-	BYTE btItemSkillOpion;	// D
-	BYTE btItemLuckOption;	// E 
-	BYTE btItemAddOption;	// F
-	BYTE btItemExOption;	// 10
-	BYTE btItemSaleRatio;	// 11
-	WORD wItemPrice;	// 12
-	BYTE btItemDuration;	// 14
-	BYTE btSpecialOption;	// 15
-	BYTE btItemUsedType;	// 16
-	BYTE btItemInfo[7];	// 17
-	DWORD dwItemUsePeriod;	// 1E
-	CItem ItemInfo;	// 22
-
-	CASHSHOP_ITEMLIST(){};	// #error - need to be confirmed if Constructor has no code
-};
-
 struct INGAMESHOP_ITEMLIST
 {
-	BYTE	btGuid;
-	DWORD	dwItemIndex;
-	DWORD	dwItemSubIndex;
-	DWORD	dwItemOpt;
-	WORD	wItemPackage;
-	WORD	dwItemGroup;
-	WORD	dwItemType;
-	BYTE	btItemLevel;
-	BYTE	btItemDurability;
-	BYTE	btItemSkill;
-	BYTE	btItemLuck;
-	BYTE	btItemOption;
-	BYTE	btItemExOption;
-	BYTE	btItemSetOption;
-	BYTE	btItemSocketCount;
-	BYTE	btItemType;
-	DWORD	dwItemPeriodTime;
-	BYTE	btCoinType;
-	WORD	wPrice;
-	WORD	wUniqueID1;
-	WORD	wUniqueID2;
-	WORD	wUniqueID3;
-	BYTE	btX;
-	BYTE	btY;
-	DWORD	ItemCategory;
+	int Category;
+	int Place;
+	int PackageID;
+	int ProductIndex;
+	int ProductOption;
+	WORD ItemType;
+	WORD ItemIndex;
+	BYTE BuyType; 
+	int Price;
+	BYTE ItemCategory;
+	int Durability;
+	BYTE X;
+	BYTE Y;
+	BYTE PackageItem;
+	char* Name[250];
 };
 
 struct INGAMESHOP_PACKAGELIST
@@ -272,8 +237,6 @@ public:
 	void LoadPackages(LPSTR pchFilename);
 	void LoadShopOption(LPSTR pchFilename);
 	void CashShopOptioNReload();
-	BOOL InsertItemStatus(INGAMESHOP_ITEMLIST* lpItemStatus);
-	BOOL InsertPackStatus(INGAMESHOP_PACKAGELIST* lpPackStatus);
 	BOOL IsGetAmountFromShopItem(int iItemCode);
 	INGAMESHOP_ITEMLIST* SearchItemList(int ItemIndex, int ItemSubIndex, int Category, int ItemID, int ItemOpt);
 	INGAMESHOP_ITEMLIST* SearchItemList(int UniqueID1, int UniqueID2, int UniqueID3);
@@ -290,7 +253,6 @@ public:
 	void GCCashInventoryItemCount(LPOBJ lpObj, PMSG_REQ_INGAMESHOP_INVENTORY* lpMsg);
 	BOOL GCCashItemInventory(LPOBJ lpObj, int ItemCount, int InventoryType);
 	void CGCashInventoryItemUse(LPOBJ lpObj, PMSG_REQ_INGAMESHOP_ITEMUSE* lpMsg);
-	int CheckInventoryEmptySpace(LPOBJ lpObj, struct CASHSHOP_ITEMLIST* lpItemInfo);
 	bool DeleteItemFromInventory(LPOBJ lpObj, int UniqueCode, int AuthCode);
 	BOOL GiveBuyItemToInventory(LPOBJ lpObj, INGAMESHOP_ITEMLIST* lpItemInfo, BYTE Inventory);
 	BOOL GiveBuyItemToInventory(LPOBJ lpObj, INGAMESHOP_PACKAGELIST * lpPackInfo, BYTE Inventory);
@@ -307,22 +269,15 @@ private:
 	int iPackItemCount;
 	BOOL bCashItemListReload;	// C
 	std::map<int,OBJECTSTRUCT *> MapUserObject;	// 10
-	std::map<int,INGAMESHOP_ITEMLIST *> MapItemList;	// 20
-	std::map<int,INGAMESHOP_PACKAGELIST *> MapPackageList;
+
 	INGAMESHOP_ITEMLIST ShopItemList[MAX_SHOP_ITEM];	// 40
 	INGAMESHOP_PACKAGELIST PackItemList[MAX_PACK_ITEM];
 };
 
 extern BOOL g_bUseMoveMapBound;
 extern CCashShop g_CashShop;
-//static BYTE InGameShopKey1[10] = { 0xC1, 0x0A, 0xD2, 0x0C, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00 };
-//static BYTE InGameShopKey2[10] = { 0xC1, 0x0A, 0xD2, 0x15, 0x47, 0x02, 0x00, 0x00, 0x00, 0x00 };
-//static BYTE InGameShopKey1[10] = { 0xC1, 0x0A, 0xD2, 0x0C, 0x00, 0x02, 0xDB, 0x07, 0x06, 0x00 };
-//static BYTE InGameShopKey2[10] = { 0xC1, 0x0A, 0xD2, 0x15, 0x47, 0x02, 0xDA, 0x07, 0x05, 0x00 };
 static BYTE InGameShopKey1[10] = { 0xC1, 0x0A, 0xD2, 0x0C, 0x00, 0x02, 0xDB, 0x07, 0x06, 0x00 };
 static BYTE InGameShopKey2[10] = { 0xC1, 0x0A, 0xD2, 0x15, 0x47, 0x02, 0xDA, 0x07, 0x05, 0x00 };
 BOOL IsCashItem(int iItemCode);
-
-
 
 #endif // !defined(AFX_CASHSHOP_H__B57A9271_3D21_40E0_B132_82F87B122CB4__INCLUDED_)

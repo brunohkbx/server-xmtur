@@ -1,7 +1,3 @@
-// CashShop.cpp: implementation of the CCashShop class.
-// GS-N 1.00.18 JPN	0x00585620	-	Completed
-//////////////////////////////////////////////////////////////////////
-
 #include "stdafx.h"
 #include "CashShop.h"
 #include "CashItemPeriodSystem.h"
@@ -13,95 +9,38 @@
 #include "Readscript.h"
 #include "Winutil.h"
 
-
 BOOL g_bUseCashShop = FALSE;
 BOOL g_bUseLotteryEvent = FALSE;
 BOOL g_bUseMoveMapBound = FALSE;
 
 CCashShop g_CashShop;
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
-
-
-
-CCashShop::CCashShop()
-{
+CCashShop::CCashShop(){
 	return;
 }
 
-CCashShop::~CCashShop()
-{
+CCashShop::~CCashShop(){
 	return;
 }
-
-
 
 void CCashShop::Initialize()
 {
 	this->iCashItemCount = 0;
 	this->bCashItemListReload = FALSE;
 	this->MapUserObject.clear();
-	this->MapItemList.clear();
-	this->MapPackageList.clear();
 
-	for (int i=0;i<MAX_SHOP_ITEM;i++)
-	{
-		this->ShopItemList[i].btCoinType = 0;
-		this->ShopItemList[i].btItemDurability = 0;
-		this->ShopItemList[i].btItemExOption = 0;
-		this->ShopItemList[i].btItemLevel = 0;
-		this->ShopItemList[i].btItemLuck = 0;
-		this->ShopItemList[i].btItemOption = 0;
-		this->ShopItemList[i].btItemSetOption = 0;
-		this->ShopItemList[i].btItemSkill = 0;
-		this->ShopItemList[i].btItemSocketCount = 0;
-		this->ShopItemList[i].btItemType = 0;
-		this->ShopItemList[i].dwItemGroup = 0;
-		this->ShopItemList[i].dwItemPeriodTime = 0;
-		this->ShopItemList[i].dwItemType = 0;
-		this->ShopItemList[i].wPrice = 0;
-		this->ShopItemList[i].wUniqueID1 = 0;
-		this->ShopItemList[i].wUniqueID2 = 0;
-		this->ShopItemList[i].wUniqueID3 = 0;
-		this->ShopItemList[i].btX = 0;
-		this->ShopItemList[i].btY = 0;
-	}
-	for (int i=0;i<MAX_PACK_ITEM;i++)
-	{
-		this->PackItemList[i].PackageID = 0;
-		this->PackItemList[i].btItemDurability = 0;
-		this->PackItemList[i].btItemExOption = 0;
-		this->PackItemList[i].btItemLevel = 0;
-		this->PackItemList[i].btItemLuck = 0;
-		this->PackItemList[i].btItemOption = 0;
-		this->PackItemList[i].btItemSetOption = 0;
-		this->PackItemList[i].btItemSkill = 0;
-		this->PackItemList[i].btItemType = 0;
-		this->PackItemList[i].dwItemGroup = 0;
-		this->PackItemList[i].dwItemPeriodTime = 0;
-		this->PackItemList[i].dwItemType = 0;
-		this->PackItemList[i].ItemSeqNum = 0;
-		this->PackItemList[i].btX = 0;
-		this->PackItemList[i].btY = 0;
-	}
+	memset(&this->ShopItemList,0,sizeof(this->ShopItemList));
+	memset(&this->PackItemList,0,sizeof(this->PackItemList));
 }
 
 
-
-
-void CCashShop::CashShopOptioNReload() //GS-CS Decompiled 100%
+void CCashShop::CashShopOptioNReload() 
 {
 	this->bCashItemListReload = TRUE;
-
-	this->Load(gDirPath.GetNewPath("CashShopList.txt"));
-
+	this->Load(gDirPath.GetNewPath("InGameShop_Products.txt"));
+	this->LoadPackages(gDirPath.GetNewPath("InGameShop_Packages.txt"));
 	this->bCashItemListReload = FALSE;
 }
-
-
-
 
 void CCashShop::Load(LPSTR pchFilename)
 {
@@ -109,9 +48,8 @@ void CCashShop::Load(LPSTR pchFilename)
 
 	SMDFile = fopen(pchFilename, "r");
 
-	if ( SMDFile == NULL )
-	{
-		MsgBox("[InGameShop][ItemList] List load failed. [%s]", pchFilename);
+	if(SMDFile == NULL){
+		MsgBox("[InGameShop][Products] List load Failed. [%s]", pchFilename);
 		return;
 	}
 
@@ -120,119 +58,82 @@ void CCashShop::Load(LPSTR pchFilename)
 	int iType = 0;
 	INGAMESHOP_ITEMLIST ItemStatus;
 	BOOL bResult = 0;
+	this->iCashItemCount = 0;
+	memset(&this->ShopItemList,0,sizeof(this->ShopItemList));
 
-	while ( true )
+	while(TRUE)
 	{
 		Token = (SMDToken)GetToken();
-
-		if ( Token == END )
-			break;
+		if(Token == END) break;
 
 		iType = TokenNumber;
 
-		while ( true )
+		while(TRUE)
 		{
 			Token = (SMDToken)GetToken();
 
-			if ( Token == END )
-				break;
+			if(Token == END) break;
 		
-			if ( iType == 1 )
-			{
-				if ( !strcmp("end", TokenString) )
-					break;
+			if(iType == 1){
 
-				ItemStatus.btGuid = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				ItemStatus.dwItemIndex = TokenNumber;
+				if(!strcmp("end", TokenString)) break;
+	
+				this->ShopItemList[iCashItemCount].Category = TokenNumber;
 
 				Token = (SMDToken)GetToken();
-				ItemStatus.dwItemSubIndex = TokenNumber;
+				this->ShopItemList[iCashItemCount].Place = TokenNumber;
 
 				Token = (SMDToken)GetToken();
-				ItemStatus.dwItemOpt = TokenNumber;
+				this->ShopItemList[iCashItemCount].PackageID = TokenNumber;
 
 				Token = (SMDToken)GetToken();
-				ItemStatus.wItemPackage = TokenNumber;
+				this->ShopItemList[iCashItemCount].ProductIndex = TokenNumber;
 
 				Token = (SMDToken)GetToken();
-				ItemStatus.dwItemGroup = TokenNumber;
+				this->ShopItemList[iCashItemCount].ProductOption = TokenNumber;
 
 				Token = (SMDToken)GetToken();
-				ItemStatus.dwItemType = TokenNumber;
+				this->ShopItemList[iCashItemCount].ItemType = TokenNumber;
+				
+				Token = (SMDToken)GetToken();
+				this->ShopItemList[iCashItemCount].ItemIndex = TokenNumber;
+				
+				Token = (SMDToken)GetToken();
+				this->ShopItemList[iCashItemCount].BuyType = TokenNumber;
 
 				Token = (SMDToken)GetToken();
-				ItemStatus.btItemLevel = TokenNumber;
+				this->ShopItemList[iCashItemCount].Price = TokenNumber;
 
 				Token = (SMDToken)GetToken();
-				ItemStatus.btItemDurability = TokenNumber;
+				this->ShopItemList[iCashItemCount].ItemCategory = TokenNumber;
 
 				Token = (SMDToken)GetToken();
-				ItemStatus.btItemSkill = TokenNumber;
+				this->ShopItemList[iCashItemCount].Durability = TokenNumber;
 
 				Token = (SMDToken)GetToken();
-				ItemStatus.btItemLuck = TokenNumber;
+				this->ShopItemList[iCashItemCount].X = TokenNumber;
 
 				Token = (SMDToken)GetToken();
-				ItemStatus.btItemOption = TokenNumber;
-
+				this->ShopItemList[iCashItemCount].Y = TokenNumber;
+				
 				Token = (SMDToken)GetToken();
-				ItemStatus.btItemExOption = TokenNumber;
+				strcpy((char*)this->ShopItemList[iCashItemCount].Name, TokenString);
 
-				Token = (SMDToken)GetToken();
-				ItemStatus.btItemSetOption = TokenNumber;
+				LogAddTD("[InGameShop][Load Cash Item List](%s) Add List - (%d/%d) X:%d, Y:%d, Price:%d",
+					this->ShopItemList[iCashItemCount].Name,
+					this->ShopItemList[iCashItemCount].ItemType,
+					this->ShopItemList[iCashItemCount].ItemIndex,
+					this->ShopItemList[iCashItemCount].X, this->ShopItemList[iCashItemCount].Y, 
+					this->ShopItemList[iCashItemCount].Price);
 
-				Token = (SMDToken)GetToken();
-				ItemStatus.btItemSocketCount = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				ItemStatus.btItemType = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				ItemStatus.dwItemPeriodTime = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				ItemStatus.btCoinType = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				ItemStatus.wPrice = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				ItemStatus.wUniqueID1 = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				ItemStatus.wUniqueID2 = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				ItemStatus.wUniqueID3 = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				ItemStatus.btX = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				ItemStatus.btY = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				ItemStatus.ItemCategory = TokenNumber;
-
-
-				LogAddTD("[InGameShop][Load Cash Item List] - Add List - (%d/%d) Level:%d, Dur:%d, Skill:%d, Luck:%d, Add:%d, Ex:%d, X:%d, Y:%d, Price:%d",
-					ItemStatus.dwItemGroup, ItemStatus.dwItemType, ItemStatus.btItemLevel, ItemStatus.btItemDurability,
-					ItemStatus.btItemSkill, ItemStatus.btItemLuck, ItemStatus.btItemOption, ItemStatus.btItemExOption, 
-					ItemStatus.btX, ItemStatus.btY, ItemStatus.wPrice);
-
-				this->InsertItemStatus(&ItemStatus);
+				this->iCashItemCount++;
 			}
 		}
 	}
 
 	fclose(SMDFile);
 
-	LogAddTD("[InGameShop][Load Item List] - Complete! - Total:%d",
-		this->MapItemList.size());
-
-	this->LoadPackages(gDirPath.GetNewPath("InGameShopPackages.txt"));
+	LogAddTD("[InGameShop][Load Item List] - Complete! - Total: %d", this->iCashItemCount);
 }
 
 void CCashShop::LoadPackages(LPSTR pchFilename)
@@ -241,9 +142,8 @@ void CCashShop::LoadPackages(LPSTR pchFilename)
 
 	SMDFile = fopen(pchFilename, "r");
 
-	if(SMDFile == NULL)
-	{
-		MsgBox("[InGameShop][PackageList] File not found: %s", pchFilename);
+	if(SMDFile == NULL){
+		MsgBox("[InGameShop][PackageList] File not Found: %s", pchFilename);
 		return;
 	}
 
@@ -251,131 +151,39 @@ void CCashShop::LoadPackages(LPSTR pchFilename)
 	INGAMESHOP_PACKAGELIST PackStatus;
 	BOOL bResult = 0;
 
-	while ( true )
+	while(TRUE)
 	{
 		Token = (SMDToken)GetToken();
 
-		if ( Token == END )
-			break;
+		if(Token == END) break;
 
 		iType = TokenNumber;
 
-		while ( true )
+		while(TRUE)
 		{
 			Token = (SMDToken)GetToken();
 
-			if ( Token == END )
-				break;
+			if(Token == END) break;
 		
-			if ( iType == 1 )
+			if(iType == 1)
 			{
-				if ( !strcmp("end", TokenString) )
-					break;
+				if(!strcmp("end", TokenString)) break;
 
-				PackStatus.Guid = TokenNumber;
 
-				Token = (SMDToken)GetToken();
-				PackStatus.PackageID = TokenNumber;
+				//FALTA TERMINAR AUN!! PARTE DE PACKAGES (PAQUETES DE VARIOS ITEMSSSS)
 
-				Token = (SMDToken)GetToken();
-				PackStatus.ItemSeqNum = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				PackStatus.dwItemGroup = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				PackStatus.dwItemType = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				PackStatus.btItemLevel = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				PackStatus.btItemDurability = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				PackStatus.btItemSkill = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				PackStatus.btItemLuck = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				PackStatus.btItemOption = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				PackStatus.btItemExOption = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				PackStatus.btItemSetOption = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				PackStatus.btItemType = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				PackStatus.dwItemPeriodTime = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				PackStatus.wUniqueID1 = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				PackStatus.wUniqueID2 = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				PackStatus.wUniqueID3 = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				PackStatus.btX = TokenNumber;
-
-				Token = (SMDToken)GetToken();
-				PackStatus.btY = TokenNumber;
-
-				LogAddTD("[InGameShop][Package Item List] Add Package Item: Pack: %d, Seq: %d", PackStatus.PackageID, PackStatus.ItemSeqNum);
-				this->InsertPackStatus(&PackStatus);
+				LogAddTD("[InGameShop][Package Item List] Add Package Item: Pack: %d, Seq: %d", 0,0);
 			}
 		}
 	}
-	LogAddTD("[InGameShop][Package Load List] Complete! - Total:%d", this->MapPackageList.size());
+
+	LogAddTD("[InGameShop][Package Load List] Complete! - Total:%d", this->iPackItemCount);
 	fclose(SMDFile);
 }
 
-BOOL CCashShop::InsertItemStatus(INGAMESHOP_ITEMLIST * lpItemStatus)
+
+BOOL CCashShop::IsGetAmountFromShopItem(int iItemCode) //NOT IN USE
 {
-	int iItemCode = 0;
-	INGAMESHOP_ITEMLIST * lpNewItemStatus = new INGAMESHOP_ITEMLIST;
-
-	memcpy(lpNewItemStatus, lpItemStatus, sizeof(INGAMESHOP_ITEMLIST));
-
-	this->MapItemList.insert(std::pair<int, INGAMESHOP_ITEMLIST *>(lpItemStatus->btGuid, lpNewItemStatus));
-
-	return TRUE;
-}
-
-BOOL CCashShop::InsertPackStatus(INGAMESHOP_PACKAGELIST * lpItemStatus)
-{
-	int iItemCode = 0;
-	INGAMESHOP_PACKAGELIST * lpNewItemStatus = new INGAMESHOP_PACKAGELIST;
-
-	memcpy(lpNewItemStatus, lpItemStatus, sizeof(INGAMESHOP_PACKAGELIST));
-
-	this->MapPackageList.insert(std::pair<int, INGAMESHOP_PACKAGELIST *>(lpItemStatus->Guid, lpNewItemStatus));
-
-	return TRUE;
-}
-
-BOOL CCashShop::IsGetAmountFromShopItem(int iItemCode) //GS-CS Weird Compilation
-{
-	switch ( iItemCode )
-	{
-		case ITEMGET(14,53):
-
-		case ITEMGET(13,46):
-		case ITEMGET(13,47):
-		case ITEMGET(13,48):
-
-		case ITEMGET(14,70): //CashShop HP Potion
-	
-		return TRUE;
-	}
-
 	return FALSE;
 }
 
@@ -392,60 +200,36 @@ BOOL CCashShop::AddUser(LPOBJ lpObj)
 	this->MapUserObject.insert(std::pair<int, LPOBJ>(lpObj->DBNumber, lpObj));
 	GDReqInGameShopPoint(lpObj->m_Index);
 	GDReqInGameShopItemList(lpObj->m_Index);
-
-	lpObj->m_GoblinPoint = 1000;
-	lpObj->m_WCoinP = 1000;
-	lpObj->m_WCoinC = 1000;
 	return TRUE;
 }
-
-
 
 BOOL CCashShop::DeleteUser(LPOBJ lpObj)
 {
 	std::map<int, OBJECTSTRUCT *>::iterator Iter;
 
 	Iter = this->MapUserObject.find(lpObj->DBNumber);
-	
-	if ( Iter == this->MapUserObject.end() )
-		return FALSE;
+	if(Iter == this->MapUserObject.end()) return FALSE;
 
 	this->MapUserObject.erase(Iter);
 
-	for(int i=0;i<30;++i)
-	{
-		lpObj->ShopInventory[i].UniqueCode = 0;
-		lpObj->ShopInventory[i].AuthCode = 0;
-		lpObj->ShopInventory[i].ItemCode1 = 0;
-		lpObj->ShopInventory[i].ItemCode2 = 0;
-		lpObj->ShopInventory[i].ItemCode3 = 0;
-		lpObj->GiftInventory[i].UniqueCode = 0;
-		lpObj->GiftInventory[i].AuthCode = 0;
-		lpObj->GiftInventory[i].ItemCode1 = 0;
-		lpObj->GiftInventory[i].ItemCode2 = 0;
-		lpObj->GiftInventory[i].ItemCode3 = 0;
-	}
-
+	memset(&lpObj->ShopInventory,0,sizeof(lpObj->ShopInventory));
+	memset(&lpObj->GiftInventory,0,sizeof(lpObj->GiftInventory));
 	return TRUE;
 }
 
 
-LPOBJ CCashShop::SearchUser(int iUserGuid)
-{
+LPOBJ CCashShop::SearchUser(int iUserGuid){
+
 	LPOBJ lpReturnObj = NULL;
 
 	std::map<int, OBJECTSTRUCT *>::iterator Iter;
 	Iter = this->MapUserObject.find(iUserGuid);
 
-	if ( Iter == this->MapUserObject.end() )
-		return FALSE;
-
+	if(Iter == this->MapUserObject.end()) return FALSE;
 	lpReturnObj = Iter->second;
 
 	return lpReturnObj;
 }
-
-
 
 struct PMSG_ANS_CASHSHOPOPEN
 {
@@ -453,45 +237,30 @@ struct PMSG_ANS_CASHSHOPOPEN
 	BYTE btResult;	// 4
 };
 
-
-
-
 BOOL CCashShop::CGCashShopOpen(LPOBJ lpObj, PMSG_REQ_INGAMESHOPOPEN * lpMsg)
 {
 	BYTE btResult = 0;
 
-	if ( this->bCashItemListReload == TRUE )
-	{
-		btResult = 6;
-	}
+	if(this->bCashItemListReload == TRUE) btResult = 6;
 
-	if ( !gObjIsAccontConnect(lpObj->m_Index, lpObj->AccountID))
-	{
-		LogAddC(2, "Trying to open shop with disconnected state (%s)(%d)", lpObj->AccountID, lpObj->m_Index);
-		return FALSE;
-	}
+	if(!gObjIsAccontConnect(lpObj->m_Index, lpObj->AccountID)) return FALSE;
+	
+	if(lpObj->Connected <= PLAYER_LOGGED || lpObj->CloseCount != -1) return FALSE;
 
-	if ( lpObj->Connected <= PLAYER_LOGGED || lpObj->CloseCount != -1 )
-		return FALSE;
+	if(lpMsg->btShopOpenType == 0){
 
-	if ( lpMsg->btShopOpenType == 0 )
-	{
-		if ( lpObj->m_IfState.use > 0 )
-		{
+		if(lpObj->m_IfState.use > 0){
 			btResult = 8;
 		}
 
-		if ( btResult == 0 )
-		{
+		if(btResult == 0){
 			lpObj->m_IfState.use = 1;
 			lpObj->m_IfState.type = 18;
 			lpObj->m_IfState.state = 1;
 			btResult = 1;
-			LogAddTD("[InGameShop] [%s][%s] Opened shop", lpObj->AccountID, lpObj->Name);
 		}
-	}
-	else if ( lpMsg->btShopOpenType == 1 )
-	{
+
+	} else if(lpMsg->btShopOpenType == 1){
 		lpObj->m_IfState.use = 0;
 		lpObj->m_IfState.type = 0;
 		lpObj->m_IfState.state = 0;
@@ -501,9 +270,7 @@ BOOL CCashShop::CGCashShopOpen(LPOBJ lpObj, PMSG_REQ_INGAMESHOPOPEN * lpMsg)
 	PMSG_ANS_CASHSHOPOPEN pMsg;
 
 	pMsg.btResult = btResult;
-
 	PHeadSubSetB((LPBYTE)&pMsg, 0xD2, 0x02, sizeof(PMSG_ANS_CASHSHOPOPEN));
-
 	DataSend(lpObj->m_Index, (LPBYTE)&pMsg, pMsg.head.size);
 
 	return TRUE;
@@ -511,13 +278,8 @@ BOOL CCashShop::CGCashShopOpen(LPOBJ lpObj, PMSG_REQ_INGAMESHOPOPEN * lpMsg)
 
 BOOL CCashShop::CGCashInventoryItemCount(LPOBJ lpObj, PMSG_REQ_INGAMESHOP_INVENTORY *lpMsg)
 {
-	if ( !gObjIsAccontConnect(lpObj->m_Index, lpObj->AccountID) )
-	{
-		LogAddC(2, "Trying to get inventory with disconnected state (%s)(%d)", lpObj->AccountID, lpObj->m_Index);
-		return FALSE;
-	}
-	if ( lpObj->Connected !=PLAYER_PLAYING && lpObj->Type != OBJ_USER )
-		return FALSE;
+	if(!gObjIsAccontConnect(lpObj->m_Index, lpObj->AccountID)) return FALSE;
+	if(lpObj->Connected !=PLAYER_PLAYING && lpObj->Type != OBJ_USER) return FALSE;
 
 	this->GCCashInventoryItemCount(lpObj, lpMsg);
 	return true;
@@ -526,14 +288,9 @@ BOOL CCashShop::CGCashInventoryItemCount(LPOBJ lpObj, PMSG_REQ_INGAMESHOP_INVENT
 
 BOOL CCashShop::CGCashPoint(LPOBJ lpObj)
 {
-	if ( !gObjIsAccontConnect(lpObj->m_Index, lpObj->AccountID))
-	{
-		LogAddC(2, "Trying to get cash point with disconnected state (%s)(%d)", lpObj->AccountID, lpObj->m_Index);
-		return FALSE;
-	}
-
-	if ( lpObj->Connected !=PLAYER_PLAYING && lpObj->Type != OBJ_USER )
-		return FALSE;
+	if(!gObjIsAccontConnect(lpObj->m_Index, lpObj->AccountID)) return FALSE;
+	
+	if(lpObj->Connected !=PLAYER_PLAYING && lpObj->Type != OBJ_USER) return FALSE;
 
 	BYTE InitCashShop[4] = { 0xC1,0x04,0xD2,0x00 };
 	DataSend(lpObj->m_Index,(LPBYTE)&InitCashShop,4);
@@ -552,8 +309,6 @@ BOOL CCashShop::CGCashPoint(LPOBJ lpObj)
 
 	DataSend(lpObj->m_Index,(LPBYTE)&pMsg,pMsg.Size);
 
-	LogAddTD("[CashShop] Send Data");
-
 	this->GCCashPoint(lpObj);
 
 	return TRUE;
@@ -561,12 +316,8 @@ BOOL CCashShop::CGCashPoint(LPOBJ lpObj)
 
 void CCashShop::GCCashPoint(LPOBJ lpObj)
 {
-	if ( !gObjIsAccontConnect(lpObj->m_Index, lpObj->AccountID))
-	{
-		LogAddC(2, "Trying to get cash point with disconnected state (%s)(%d)", lpObj->AccountID, lpObj->m_Index);
-		return;
-	}
-
+	if(!gObjIsAccontConnect(lpObj->m_Index, lpObj->AccountID)) return;
+	
 	PMSG_ANS_INGAMESHOP_POINT pMsg;
 
 	PHeadSubSetB((LPBYTE)&pMsg, 0xD2, 0x01, sizeof(PMSG_ANS_INGAMESHOP_POINT));
@@ -582,46 +333,37 @@ void CCashShop::GCCashPoint(LPOBJ lpObj)
 int CCashShop::GetItemCountInShopInventory(LPOBJ lpObj, int InventoryType)
 {
 	int Count = 0;
-	for(int i=0;i<30;++i)
-	{
-		if(InventoryType == 0x53)
-		{
-			if(lpObj->ShopInventory[i].UniqueCode != 0)
-			{
+	for(int X=0; X < 30;++X){
+		if(InventoryType == 0x53){
+			if(lpObj->ShopInventory[X].UniqueCode != 0){
 				++Count;
 			}
-		}
-		else if(InventoryType == 0x47)
-		{
-			if(lpObj->GiftInventory[i].UniqueCode != 0)
-			{
+		} else if(InventoryType == 0x47){
+			if(lpObj->GiftInventory[X].UniqueCode != 0){
 				++Count;
 			}
 		}
 	}
+
 	return Count;
 }
 
 void CCashShop::GCCashInventoryItemCount(LPOBJ lpObj, PMSG_REQ_INGAMESHOP_INVENTORY *lpMsg)
 {
-	if ( !gObjIsAccontConnect(lpObj->m_Index, lpObj->AccountID))
-	{
-		LogAddC(2, "Trying to get inventory items with disconnected state (%s)(%d)", lpObj->AccountID, lpObj->m_Index);
-		return;
-	}
+	if(!gObjIsAccontConnect(lpObj->m_Index, lpObj->AccountID)) return;
 
 	int ItemCount = this->GetItemCountInShopInventory(lpObj, lpMsg->InventoryType);
 
 	PMSG_ANS_INGAMESHOP_ITEMCOUNT pMsg = {0};
-
 	PHeadSubSetB((LPBYTE)&pMsg, 0xD2, 0x06, sizeof(pMsg));
-	if(ItemCount > 0)
-	{
+
+	if(ItemCount > 0){
 		pMsg.OwnInv[0] = ItemCount+1;
 		pMsg.OwnInv[1] = ItemCount+1;
 		pMsg.GiftInv[0] = 1;
 		pMsg.GiftInv[1] = 1;
 	}
+
 	DataSend(lpObj->m_Index, (LPBYTE)&pMsg, pMsg.h.size);
 	this->GCCashItemInventory(lpObj, ItemCount, lpMsg->InventoryType);
 }
@@ -632,30 +374,27 @@ BOOL CCashShop::GCCashItemInventory(LPOBJ lpObj, int ItemCount, int InventoryTyp
 	PHeadSubSetB((LPBYTE)&pMsg, 0xD2, 0x0D, sizeof(pMsg));
 	pMsg.Unk3 = 0x50;
 	int Count = 0;
-	for(int i=0;i<30;++i)
+
+	for(int X=0; X < 30;++X)
 	{
-		if(InventoryType == 0x53 && lpObj->ShopInventory[i].UniqueCode != 0 && lpObj->ShopInventory[i].AuthCode != 0)
-		{
-			pMsg.UniqueCode = lpObj->ShopInventory[i].UniqueCode;
-			pMsg.AuthCode = lpObj->ShopInventory[i].AuthCode;
-			pMsg.UniqueValue1 = lpObj->ShopInventory[i].ItemCode1;
-			pMsg.UniqueValue2 = lpObj->ShopInventory[i].ItemCode2;
-			pMsg.UniqueValue3 = lpObj->ShopInventory[i].ItemCode3;
+		if(InventoryType == 0x53 && lpObj->ShopInventory[X].UniqueCode != 0 && lpObj->ShopInventory[X].AuthCode != 0){
+			pMsg.UniqueCode = lpObj->ShopInventory[X].UniqueCode;
+			pMsg.AuthCode = lpObj->ShopInventory[X].AuthCode;
+			pMsg.UniqueValue1 = lpObj->ShopInventory[X].ItemCode1;
+			pMsg.UniqueValue2 = lpObj->ShopInventory[X].ItemCode2;
+			pMsg.UniqueValue3 = lpObj->ShopInventory[X].ItemCode3;
 			++Count;
-		}
-		else if(InventoryType == 0x47 && lpObj->GiftInventory[i].UniqueCode != 0 && lpObj->GiftInventory[i].AuthCode != 0)
-		{
-			pMsg.UniqueCode = lpObj->GiftInventory[i].UniqueCode;
-			pMsg.AuthCode = lpObj->GiftInventory[i].AuthCode;
-			pMsg.UniqueValue1 = lpObj->GiftInventory[i].ItemCode1;
-			pMsg.UniqueValue2 = lpObj->GiftInventory[i].ItemCode2;
-			pMsg.UniqueValue3 = lpObj->GiftInventory[i].ItemCode3;
+		} else if(InventoryType == 0x47 && lpObj->GiftInventory[X].UniqueCode != 0 && lpObj->GiftInventory[X].AuthCode != 0){
+			pMsg.UniqueCode = lpObj->GiftInventory[X].UniqueCode;
+			pMsg.AuthCode = lpObj->GiftInventory[X].AuthCode;
+			pMsg.UniqueValue1 = lpObj->GiftInventory[X].ItemCode1;
+			pMsg.UniqueValue2 = lpObj->GiftInventory[X].ItemCode2;
+			pMsg.UniqueValue3 = lpObj->GiftInventory[X].ItemCode3;
 			++Count;
-		}
-		else
-		{
+		} else {
 			continue;
 		}
+
 		DataSend(lpObj->m_Index, (LPBYTE)&pMsg, pMsg.h.size);
 		if(Count >= ItemCount) break;
 	}
@@ -664,36 +403,33 @@ BOOL CCashShop::GCCashItemInventory(LPOBJ lpObj, int ItemCount, int InventoryTyp
 
 bool CCashShop::InsertItemToInventory(LPOBJ lpObj, int UniqueCode, int AuthCode, int UniqueID1, int UniqueID2, int UniqueID3, BYTE Inventory)
 {
-	for(int i=0;i<30;++i)
+	for(int X=0;X < 30;++X)
 	{
-		if(Inventory == 1)
-		{
-			if(lpObj->ShopInventory[i].UniqueCode == 0 && lpObj->ShopInventory[i].AuthCode == 0)
-			{
-				lpObj->ShopInventory[i].UniqueCode = UniqueCode;
-				lpObj->ShopInventory[i].AuthCode = AuthCode;
-				lpObj->ShopInventory[i].ItemCode1 = UniqueID1;
-				lpObj->ShopInventory[i].ItemCode2 = UniqueID2;
-				lpObj->ShopInventory[i].ItemCode3 = UniqueID3;
-				LogAddTD("[InGameShop] (%s) Add Item: %d/%d/%d/%d%d", lpObj->AccountID, UniqueCode, AuthCode, UniqueID1, UniqueID2, UniqueID3);
-				return true;
+		if(Inventory == 1){
+			if(lpObj->ShopInventory[X].UniqueCode == 0 && lpObj->ShopInventory[X].AuthCode == 0){
+				lpObj->ShopInventory[X].UniqueCode = UniqueCode;
+				lpObj->ShopInventory[X].AuthCode = AuthCode;
+				lpObj->ShopInventory[X].ItemCode1 = UniqueID1;
+				lpObj->ShopInventory[X].ItemCode2 = UniqueID2;
+				lpObj->ShopInventory[X].ItemCode3 = UniqueID3;
+				LogAddTD("[InGameShop][%s] Add Item - UniqueID: %d, Auth: %d, Package: %d, Index: %d, Option: %d",
+					lpObj->AccountID, UniqueCode, AuthCode, UniqueID1, UniqueID2, UniqueID3);
+				return TRUE;
 			}
-		}
-		else if(Inventory == 2)
-		{
-			if(lpObj->GiftInventory[i].UniqueCode == 0 && lpObj->GiftInventory[i].AuthCode == 0)
-			{
-				lpObj->GiftInventory[i].UniqueCode = UniqueCode;
-				lpObj->GiftInventory[i].AuthCode = AuthCode;
-				lpObj->GiftInventory[i].ItemCode1 = UniqueID1;
-				lpObj->GiftInventory[i].ItemCode2 = UniqueID2;
-				lpObj->GiftInventory[i].ItemCode3 = UniqueID3;
-				LogAddTD("[InGameShop] (%s) Add Gift: %d/%d/%d/%d%d", lpObj->AccountID, UniqueCode, AuthCode, UniqueID1, UniqueID2, UniqueID3);
-				return true;
+		} else if(Inventory == 2){
+			if(lpObj->GiftInventory[X].UniqueCode == 0 && lpObj->GiftInventory[X].AuthCode == 0){
+				lpObj->GiftInventory[X].UniqueCode = UniqueCode;
+				lpObj->GiftInventory[X].AuthCode = AuthCode;
+				lpObj->GiftInventory[X].ItemCode1 = UniqueID1;
+				lpObj->GiftInventory[X].ItemCode2 = UniqueID2;
+				lpObj->GiftInventory[X].ItemCode3 = UniqueID3;
+				LogAddTD("[InGameShop][%s] Add Gift - UniqueID: %d, Auth: %d, Package: %d, Index: %d, Option: %d",
+					lpObj->AccountID, UniqueCode, AuthCode, UniqueID1, UniqueID2, UniqueID3);
+				return TRUE;
 			}
 		}
 	}
-	return false;
+	return FALSE;
 }
 
 void CCashShop::CGCashInventoryItemUse(LPOBJ lpObj, PMSG_REQ_INGAMESHOP_ITEMUSE *lpMsg)
@@ -701,56 +437,44 @@ void CCashShop::CGCashInventoryItemUse(LPOBJ lpObj, PMSG_REQ_INGAMESHOP_ITEMUSE 
 	PMSG_ANS_INGAMESHOP_ITEMUSE pMsg;
 	PHeadSubSetB((LPBYTE)&pMsg, 0xD2, 0x0B, sizeof(pMsg));
 
-	if ( !gObjIsAccontConnect(lpObj->m_Index, lpObj->AccountID))
-	{
-		LogAddC(2, "Trying to use item with disconnected state (%s)(%d)", lpObj->AccountID, lpObj->m_Index);
-		return;
-	}
+	if(!gObjIsAccontConnect(lpObj->m_Index, lpObj->AccountID)) return;
 
-	if ( lpObj->Connected !=PLAYER_PLAYING && lpObj->Type != OBJ_USER )
-		return;
+	if(lpObj->Connected !=PLAYER_PLAYING && lpObj->Type != OBJ_USER) return;
 
 	INGAMESHOP_ITEMLIST * lpItem = this->SearchItemFromInventory(lpObj, lpMsg->UniqueCode, lpMsg->AuthCode);
 
-	if(lpItem == NULL)
-	{
+	if(lpItem == NULL){
 		pMsg.result = 1;
 		DataSend(lpObj->m_Index, (LPBYTE)&pMsg, pMsg.h.size);
+		LogAddTD("[InGameShop][%s][%s] Item is not Valid %d %d",lpObj->AccountID,lpObj->Name,lpMsg->UniqueCode,lpMsg->AuthCode);
 		return;
 	}
 
-	if(::CheckInventoryEmptySpace(lpObj, lpItem->btX, lpItem->btY) == false)
-	{
+	if(::CheckInventoryEmptySpace(lpObj,lpItem->X,lpItem->Y) == FALSE){
 		pMsg.result = 1;
 		DataSend(lpObj->m_Index, (LPBYTE)&pMsg, pMsg.h.size);
+		LogAddTD("[InGameShop][%s][%s] Not enough Space for Item %d %d",lpObj->AccountID,lpObj->Name,lpMsg->UniqueCode,lpMsg->AuthCode);
 		return;
 	}
 
-	if(this->DeleteItemFromInventory(lpObj, lpMsg->UniqueCode, lpMsg->AuthCode) == true)
+	if(this->DeleteItemFromInventory(lpObj, lpMsg->UniqueCode, lpMsg->AuthCode) == TRUE)
 	{
+		if(lpItem->ItemCategory == 1){
+			if(this->CheckPeriodItem(lpMsg->ItemID)){
+				g_CashItemPeriodSystem.GDReqPeriodItemInsert(lpObj, lpMsg->ItemID, lpItem->Durability);
+			}
+		} else if(lpItem->ItemCategory == 2){
+			ItemSerialCreateSend(lpObj->m_Index, 236, NULL, NULL, lpMsg->ItemID, 0, 0, 0, 0, 0, lpItem->Durability, 0, 0);
+		} else {
+			ItemSerialCreateSend(lpObj->m_Index, 235, NULL, NULL, lpMsg->ItemID, 0, lpItem->Durability, 0, 0, 0, lpObj->m_Index, 0, 0);
+		}
 
-		if(lpItem->btItemType == 1)
-		{
-			g_CashItemPeriodSystem.GDReqPeriodItemInsert(lpObj, lpMsg->ItemID, lpItem->dwItemPeriodTime);
-		}
-		else if(lpItem->btItemType == 2)
-		{
-			ItemSerialCreateSend(lpObj->m_Index, 236, NULL, NULL, lpMsg->ItemID, lpItem->btItemLevel, 
-				lpItem->btItemDurability, lpItem->btItemSkill, lpItem->btItemLuck, lpItem->btItemOption,
-				lpItem->dwItemPeriodTime, lpItem->btItemExOption, lpItem->btItemSetOption);
-		}
-		else
-		{
-			ItemSerialCreateSend(lpObj->m_Index, 235, NULL, NULL, lpMsg->ItemID, lpItem->btItemLevel, 
-				lpItem->btItemDurability, lpItem->btItemSkill, lpItem->btItemLuck, lpItem->btItemOption,
-				lpObj->m_Index, lpItem->btItemExOption, lpItem->btItemSetOption);
-		}
 		pMsg.result = 0;
 		DataSend(lpObj->m_Index, (LPBYTE)&pMsg, pMsg.h.size);
 		this->GCCashPoint(lpObj);
 		GDReqInGameShopItemListSave(lpObj->m_Index);
 		GDReqInGameShopPointSave(lpObj->m_Index);
-		LogAddTD("[InGameShop] (%s)(%s) Used Item %d/%d/%d", lpObj->AccountID, lpObj->Name, lpMsg->UniqueCode, lpMsg->AuthCode, lpMsg->ItemID);
+		LogAddTD("[InGameShop][%s][%s] Used Item Code: %d, Auth: %d, Item ID: %d", lpObj->AccountID, lpObj->Name, lpMsg->UniqueCode, lpMsg->AuthCode, lpMsg->ItemID);
 	}
 	return;
 }
@@ -759,15 +483,17 @@ void CCashShop::CGCashInventoryItemUse(LPOBJ lpObj, PMSG_REQ_INGAMESHOP_ITEMUSE 
 INGAMESHOP_ITEMLIST * CCashShop::SearchItemFromInventory(LPOBJ lpObj, int UniqueCode, int AuthCode)
 {
 	INGAMESHOP_ITEMLIST * lpItem = NULL;
-	for(int i=0;i<30;++i)
-	{
-		if(lpObj->ShopInventory[i].UniqueCode == UniqueCode && lpObj->ShopInventory[i].AuthCode == AuthCode)
-		{
-			lpItem = this->SearchItemList(lpObj->ShopInventory[i].ItemCode1, lpObj->ShopInventory[i].ItemCode2, lpObj->ShopInventory[i].ItemCode3);
-		}
-		else if(lpObj->GiftInventory[i].UniqueCode == UniqueCode && lpObj->GiftInventory[i].AuthCode == AuthCode)
-		{
-			lpItem = this->SearchItemList(lpObj->GiftInventory[i].ItemCode1, lpObj->GiftInventory[i].ItemCode2, lpObj->GiftInventory[i].ItemCode3);
+	for(int X=0; X < 30;++X){
+		if(lpObj->ShopInventory[X].UniqueCode == UniqueCode 
+		&& lpObj->ShopInventory[X].AuthCode == AuthCode){
+
+			lpItem = this->SearchItemList(lpObj->ShopInventory[X].ItemCode1, 
+			lpObj->ShopInventory[X].ItemCode2, lpObj->ShopInventory[X].ItemCode3);
+		} else if(lpObj->GiftInventory[X].UniqueCode == UniqueCode 
+		&& lpObj->GiftInventory[X].AuthCode == AuthCode){
+
+			lpItem = this->SearchItemList(lpObj->GiftInventory[X].ItemCode1,
+			lpObj->GiftInventory[X].ItemCode2, lpObj->GiftInventory[X].ItemCode3);
 		}
 	}
 	return lpItem;
@@ -775,36 +501,38 @@ INGAMESHOP_ITEMLIST * CCashShop::SearchItemFromInventory(LPOBJ lpObj, int Unique
 
 bool CCashShop::DeleteItemFromInventory(LPOBJ lpObj, int UniqueCode, int AuthCode)
 {
-	for(int i=0;i<30;++i)
-	{
-		if(lpObj->ShopInventory[i].UniqueCode == UniqueCode && lpObj->ShopInventory[i].AuthCode == AuthCode)
-		{
-			lpObj->ShopInventory[i].AuthCode = 0;
-			lpObj->ShopInventory[i].UniqueCode = 0;
-			lpObj->ShopInventory[i].ItemCode1 = 0;
-			lpObj->ShopInventory[i].ItemCode2 = 0;
-			lpObj->ShopInventory[i].ItemCode3 = 0;
+	for(int X=0; X < 30;++X){
+
+		if(lpObj->ShopInventory[X].UniqueCode == UniqueCode && lpObj->ShopInventory[X].AuthCode == AuthCode){
+			lpObj->ShopInventory[X].AuthCode = 0;
+			lpObj->ShopInventory[X].UniqueCode = 0;
+			lpObj->ShopInventory[X].ItemCode1 = 0;
+			lpObj->ShopInventory[X].ItemCode2 = 0;
+			lpObj->ShopInventory[X].ItemCode3 = 0;
+
+			memcpy(&lpObj->ShopInventory[X],&lpObj->ShopInventory[X+1],sizeof(lpObj->ShopInventory));
+
 			PMSG_REQ_INGAMESHOP_INVENTORY pList = {0};
 			pList.InventoryType = 0x53;
 
 			this->GCCashInventoryItemCount(lpObj, (PMSG_REQ_INGAMESHOP_INVENTORY *)&pList);
-			return true;
-		}
-		else if(lpObj->GiftInventory[i].UniqueCode == UniqueCode && lpObj->GiftInventory[i].AuthCode == AuthCode)
-		{
-			lpObj->GiftInventory[i].AuthCode = 0;
-			lpObj->GiftInventory[i].UniqueCode = 0;
-			lpObj->GiftInventory[i].ItemCode1 = 0;
-			lpObj->GiftInventory[i].ItemCode2 = 0;
-			lpObj->GiftInventory[i].ItemCode3 = 0;
+			return TRUE;
+		} else if(lpObj->GiftInventory[X].UniqueCode == UniqueCode && lpObj->GiftInventory[X].AuthCode == AuthCode){
+			lpObj->GiftInventory[X].AuthCode = 0;
+			lpObj->GiftInventory[X].UniqueCode = 0;
+			lpObj->GiftInventory[X].ItemCode1 = 0;
+			lpObj->GiftInventory[X].ItemCode2 = 0;
+			lpObj->GiftInventory[X].ItemCode3 = 0;
 			PMSG_REQ_INGAMESHOP_INVENTORY pList = {0};
 			pList.InventoryType = 0x47;
+			
+			memcpy(&lpObj->GiftInventory[X],&lpObj->GiftInventory[X+1],sizeof(lpObj->GiftInventory));
 
 			this->GCCashInventoryItemCount(lpObj, (PMSG_REQ_INGAMESHOP_INVENTORY *)&pList);
-			return true;
+			return TRUE;
 		}
 	}
-	return false;
+	return FALSE;
 }
 
 void CCashShop::CGCashItemBuy(LPOBJ lpObj, PMSG_REQ_INGAMESHOP_ITEMBUY *lpMsg)
@@ -816,68 +544,51 @@ void CCashShop::CGCashItemBuy(LPOBJ lpObj, PMSG_REQ_INGAMESHOP_ITEMBUY *lpMsg)
 	BYTE buyFlag = FALSE;
 	INGAMESHOP_ITEMLIST* lpCashItemInfo = NULL;
 
-	if ( this->bCashItemListReload == TRUE )
-		return;
+	if(this->bCashItemListReload == TRUE) return;
 
-	if ( !gObjIsAccontConnect(lpObj->m_Index, lpObj->AccountID))
-	{
-		LogAddC(2, "Trying to buy item with disconnected state (%s)(%d)", lpObj->AccountID, lpObj->m_Index);
-		return;
-	}
+	if(!gObjIsAccontConnect(lpObj->m_Index, lpObj->AccountID)) return;
 
-	if ( lpObj->Connected !=PLAYER_PLAYING && lpObj->Type != OBJ_USER )
-		return;
+	if(lpObj->Connected !=PLAYER_PLAYING && lpObj->Type != OBJ_USER) return;
 
 	lpCashItemInfo = this->SearchItemList(lpMsg->ItemIndex, lpMsg->ItemSubIndex, lpMsg->Category, lpMsg->ItemID, lpMsg->ItemOpt);
 
-	if(lpCashItemInfo == NULL) 
-	{
-		LogAddC(4, "[InGameShop] Unknown Item: Index:%d Sub:%d Category: %d ItemID: %d Opt: %d", 
-			lpMsg->ItemIndex, 
-			lpMsg->ItemSubIndex, 
-			lpMsg->Category, 
-			lpMsg->ItemID, 
-			lpMsg->ItemOpt);
+	if(lpCashItemInfo == NULL){
+		LogAddC(2,"[InGameShop][%s][%s] Unknown Item: Index:%d Sub:%d Category: %d ItemID: %d Opt: %d", 
+			lpObj->AccountID, lpObj->Name, lpMsg->ItemIndex, lpMsg->ItemSubIndex, lpMsg->Category, lpMsg->ItemID,lpMsg->ItemOpt);
 		return;
 	}
 
-	switch ( lpCashItemInfo->btCoinType )
+
+	switch(lpCashItemInfo->BuyType)
 	{
 		case 0:
-			{
-				if(lpObj->m_WCoinC >= lpCashItemInfo->wPrice)
-				{
-					lpObj->m_WCoinC -= lpCashItemInfo->wPrice;
-					buyFlag = TRUE;
-				}
-				break;
+			if(lpObj->m_WCoinC >= lpCashItemInfo->Price){
+				lpObj->m_WCoinC -= lpCashItemInfo->Price;
+				buyFlag = TRUE;
 			}
+		break;
 		case 1:
-			{
-				if(lpObj->m_WCoinP >= lpCashItemInfo->wPrice)
-				{
-					lpObj->m_WCoinP -= lpCashItemInfo->wPrice;
-					buyFlag = TRUE;
-				}
-				break;
+			if(lpObj->m_WCoinP >= lpCashItemInfo->Price){
+				lpObj->m_WCoinP -= lpCashItemInfo->Price;
+				buyFlag = TRUE;
 			}
+		break;
+
 		case 2:
-			{
-				if(lpObj->m_GoblinPoint >= lpCashItemInfo->wPrice)
-				{
-					lpObj->m_GoblinPoint -= lpCashItemInfo->wPrice;
-					buyFlag = TRUE;
-				}
-				break;
+			if(lpObj->m_GoblinPoint >= lpCashItemInfo->Price){
+				lpObj->m_GoblinPoint -= lpCashItemInfo->Price;
+				buyFlag = TRUE;
 			}
+		break;
+			
 	}
 	PMSG_ANS_INGAMESHOP_ITEMBUY pMsg = {-1};
 	PHeadSubSetB((LPBYTE)&pMsg, 0xD2, 0x03, sizeof(pMsg));
+
 	if(buyFlag == TRUE)
 	{
-		if(lpCashItemInfo->wItemPackage != 0)
-		{
-			this->UsePackage(lpObj, lpCashItemInfo->wItemPackage);
+		if(lpCashItemInfo->PackageItem != 0){
+			this->UsePackage(lpObj, lpCashItemInfo->PackageItem);
 	
 			pMsg.Result = 0;
 
@@ -889,9 +600,9 @@ void CCashShop::CGCashItemBuy(LPOBJ lpObj, PMSG_REQ_INGAMESHOP_ITEMBUY *lpMsg)
 			this->GCCashInventoryItemCount(lpObj, (PMSG_REQ_INGAMESHOP_INVENTORY *)&pList);
 			this->GCCashPoint(lpObj);
 		}
-		else if(this->GiveBuyItemToInventory(lpObj, lpCashItemInfo, 1) == true)
+		else if(this->GiveBuyItemToInventory(lpObj,lpCashItemInfo,1) == true)
 		{
-			LogAddTD("[InGameShop] (%s)(%s) Purchase success", lpObj->AccountID, lpObj->Name);
+			LogAddTD("[InGameShop][%s][%s] Item Purchased Successfuly",lpObj->AccountID,lpObj->Name);
 
 			pMsg.Result = 0;
 
@@ -903,11 +614,10 @@ void CCashShop::CGCashItemBuy(LPOBJ lpObj, PMSG_REQ_INGAMESHOP_ITEMBUY *lpMsg)
 			this->GCCashInventoryItemCount(lpObj, (PMSG_REQ_INGAMESHOP_INVENTORY *)&pList);
 			this->GCCashPoint(lpObj);
 		}
+
 		GDReqInGameShopItemListSave(lpObj->m_Index);
 		GDReqInGameShopPointSave(lpObj->m_Index);
-	}
-	else
-	{
+	} else {
 		pMsg.Result = 1;
 		DataSend(lpObj->m_Index, (LPBYTE)&pMsg, pMsg.h.size);
 	}
@@ -916,83 +626,58 @@ void CCashShop::CGCashItemBuy(LPOBJ lpObj, PMSG_REQ_INGAMESHOP_ITEMBUY *lpMsg)
 
 bool CCashShop::UsePackage(LPOBJ lpObj, int PackageID)
 {
-	std::map<int,INGAMESHOP_PACKAGELIST *>::iterator Iter;
-	for(Iter = this->MapPackageList.begin(); Iter != this->MapPackageList.end(); ++Iter)
+	for(int X=0; X < this->iPackItemCount; ++X)
 	{
-		if(Iter->second->PackageID == PackageID)
-		{
+		/*if(Iter->second->PackageID == PackageID){
 			this->GiveBuyItemToInventory(lpObj, Iter->second, 1);
-		}
+		}*/
 	}
 	return true;
 }
 
-BOOL CCashShop::CheckPeriodItemUsed(LPOBJ lpObj, int iItemCode) //GS-CS Fine 100% Decompiled
-{
-	for (int i=0;i<10;++i)
-	{
-		if(lpObj->m_iPeriodItemEffectIndex[i] != -1)
-		{
-			if ( iItemCode== ITEMGET(13,43) || 
-			 iItemCode == ITEMGET(13,44) || 
-			 iItemCode == ITEMGET(13,45) ||
-			 iItemCode == ITEMGET(13,54) ||
-			 iItemCode == ITEMGET(14,72) || //Fine
-			 iItemCode == ITEMGET(14,73) || //Fine
-			 iItemCode == ITEMGET(14,74) || //Fine
-			 iItemCode == ITEMGET(14,75) || //Fine
-			 iItemCode == ITEMGET(14,76) || //Fine
-			 iItemCode == ITEMGET(14,77) ) //Fine
-			{
-				return TRUE;
-			}
-		}
-	}
+BOOL CCashShop::CheckPeriodItemUsed(LPOBJ lpObj, int iItemCode){ //NOT IN USE
 	return FALSE;
 }
 
+BOOL CCashShop::CheckPeriodItem(int iItemCode){
+	if(iItemCode == ITEMGET(13,43) || 
+	iItemCode == ITEMGET(13,44) || 
+	iItemCode == ITEMGET(13,45) ||
+	iItemCode == ITEMGET(13,54) ||
+	iItemCode == ITEMGET(13,59) ||
+	iItemCode == ITEMGET(13,62) ||
+	iItemCode == ITEMGET(13,63) ||
+	iItemCode == ITEMGET(13,93) ||
+	iItemCode == ITEMGET(13,94) ||
+	iItemCode == ITEMGET(13,95) ||
+	iItemCode == ITEMGET(13,96) ||
+	iItemCode == ITEMGET(13,104) ||
+	iItemCode == ITEMGET(13,105) ||
+	iItemCode == ITEMGET(14,72) ||
+	iItemCode == ITEMGET(14,73) ||
+	iItemCode == ITEMGET(14,74) ||
+	iItemCode == ITEMGET(14,75) ||
+	iItemCode == ITEMGET(14,76) ||
+	iItemCode == ITEMGET(14,77)){
+		return TRUE;
+	}
 
-
-BOOL CCashShop::CheckPeriodItem(int iItemCode) //GS-CS Fine 100% Decompiled
-{
-	if ( iItemCode == ITEMGET(13,43) || 
-		 iItemCode == ITEMGET(13,44) || 
-		 iItemCode == ITEMGET(13,45) ||
-		 iItemCode == ITEMGET(13,54) ||
-		 iItemCode == ITEMGET(13,59) || //Seal of Mobility, (Season2 is 13,52 & Season3 is 13,59)
-		 iItemCode == ITEMGET(14,72) ||
-		 iItemCode == ITEMGET(14,73) ||
-		 iItemCode == ITEMGET(14,74) ||
-		 iItemCode == ITEMGET(14,75) ||
-		 iItemCode == ITEMGET(14,76) ||
-		 iItemCode == ITEMGET(14,77) )
-		{
-			return TRUE;
-		}
-
+	LogAddC(2,"[InGameShop] Buff Period Item Invalid %d",iItemCode);
 	return FALSE;
 }
 
 INGAMESHOP_ITEMLIST * CCashShop::SearchItemList(int ItemIndex,int ItemSubIndex,int Category,int ItemID, int ItemOpt)
 {
-	
 	INGAMESHOP_ITEMLIST* lpItemInfo = NULL;
-	std::map<int,INGAMESHOP_ITEMLIST *>::iterator Iter;
 
-	for(Iter = this->MapItemList.begin(); Iter != this->MapItemList.end(); ++Iter)
+	for(int X=0; X < this->iCashItemCount;++X)
 	{
-		lpItemInfo = Iter->second;
-		if(ItemIndex == lpItemInfo->dwItemIndex /*&& ItemSubIndex == lpItemInfo->dwItemSubIndex */
-		&& Category == lpItemInfo->ItemCategory 
-		&& ItemID == ItemGetNumberMake(lpItemInfo->dwItemGroup, lpItemInfo->dwItemType) 
-		&& ItemOpt == lpItemInfo->dwItemOpt)
-		{
+		if(ItemIndex == this->ShopItemList[X].PackageID
+		&& Category == this->ShopItemList[X].Category 
+		&& ItemID == ItemGetNumberMake(this->ShopItemList[X].ItemType, this->ShopItemList[X].ItemIndex) 
+		&& ItemOpt == this->ShopItemList[X].ProductOption){
+			lpItemInfo = &this->ShopItemList[X];
 			break;
-		}
-		else
-		{
-			lpItemInfo = NULL;
-			continue;
 		}
 	}
 
@@ -1001,21 +686,15 @@ INGAMESHOP_ITEMLIST * CCashShop::SearchItemList(int ItemIndex,int ItemSubIndex,i
 
 INGAMESHOP_ITEMLIST * CCashShop::SearchItemList(int UniqueID1, int UniqueID2, int UniqueID3)
 {
-	
 	INGAMESHOP_ITEMLIST* lpItemInfo = NULL;
-	std::map<int,INGAMESHOP_ITEMLIST *>::iterator Iter;
 
-	for(Iter = this->MapItemList.begin(); Iter != this->MapItemList.end(); ++Iter)
+	for(int X=0; X < this->iCashItemCount;++X)
 	{
-		lpItemInfo = Iter->second;
-		if(UniqueID1 == lpItemInfo->wUniqueID1 && UniqueID2 == lpItemInfo->wUniqueID2 && UniqueID3 == lpItemInfo->wUniqueID3)
-		{
+		if(UniqueID1 == this->ShopItemList[X].PackageID 
+		&& UniqueID2 == this->ShopItemList[X].ProductIndex  
+		&& UniqueID3 == this->ShopItemList[X].ProductOption){
+			lpItemInfo = &this->ShopItemList[X];
 			break;
-		}
-		else
-		{
-			lpItemInfo = NULL;
-			continue;
 		}
 	}
 
@@ -1032,10 +711,10 @@ BOOL CCashShop::GiveBuyItemToInventory(LPOBJ lpObj, INGAMESHOP_ITEMLIST *lpItemI
 			{
 				lpObj->ShopInventory[i].UniqueCode = rand()%10000+4400/200;
 				lpObj->ShopInventory[i].AuthCode = rand()%250000+1700/12;
-				lpObj->ShopInventory[i].ItemCode1 = lpItemInfo->wUniqueID1;
-				lpObj->ShopInventory[i].ItemCode2 = lpItemInfo->wUniqueID2;
-				lpObj->ShopInventory[i].ItemCode3 = lpItemInfo->wUniqueID3;
-				LogAddTD("[InGameShop] (%s)(%s) -> Added Item to ShopInventory (%d/%d/%d/%d/%d)", lpObj->AccountID, lpObj->Name,
+				lpObj->ShopInventory[i].ItemCode1 = lpItemInfo->PackageID;
+				lpObj->ShopInventory[i].ItemCode2 = lpItemInfo->ProductIndex;
+				lpObj->ShopInventory[i].ItemCode3 = lpItemInfo->ProductOption;
+				LogAddTD("[InGameShop][%s][%s] Item Added to Shop Inventory [UID:%d, Auth:%d, C1:%d, C2:%d, C3:%d]", lpObj->AccountID, lpObj->Name,
 					lpObj->ShopInventory[i].UniqueCode, lpObj->ShopInventory[i].AuthCode,
 					lpObj->ShopInventory[i].ItemCode1, lpObj->ShopInventory[i].ItemCode2, lpObj->ShopInventory[i].ItemCode3);
 				return TRUE;
@@ -1058,7 +737,7 @@ BOOL CCashShop::GiveBuyItemToInventory(LPOBJ lpObj, INGAMESHOP_PACKAGELIST *lpIt
 				lpObj->ShopInventory[i].ItemCode1 = lpItemInfo->wUniqueID1;
 				lpObj->ShopInventory[i].ItemCode2 = lpItemInfo->wUniqueID2;
 				lpObj->ShopInventory[i].ItemCode3 = lpItemInfo->wUniqueID3;
-				LogAddTD("[InGameShop] (%s)(%s) -> Added Item to ShopInventory (%d/%d/%d/%d/%d)", lpObj->AccountID, lpObj->Name,
+				LogAddTD("[InGameShop][%s][%s] Package Added to Shop Inventory [UID:%d, Auth:%d, C1:%d, C2:%d, C3:%d]", lpObj->AccountID, lpObj->Name,
 					lpObj->ShopInventory[i].UniqueCode, lpObj->ShopInventory[i].AuthCode,
 					lpObj->ShopInventory[i].ItemCode1, lpObj->ShopInventory[i].ItemCode2, lpObj->ShopInventory[i].ItemCode3);
 				return TRUE;

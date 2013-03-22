@@ -131,6 +131,8 @@ void CItem::Convert(int type, BYTE Option1, BYTE Option2, BYTE Option3,  BYTE At
 		this->m_NewOption=0;
 	}
 
+	this->m_ExpirationItem = TRUE;
+
 	if ( ((_type >= ITEMGET(12,3) ) && (_type <= ITEMGET(12,6) ) ) || (_type == ITEMGET(13,30) || _type == ITEMGET(12,41) 
 	|| _type == ITEMGET(12,42) || _type == ITEMGET(12,43) || (_type >= ITEMGET(12,36) && _type <= ITEMGET(12,40))
 	|| (_type >= ITEMGET(12,180) && _type <= ITEMGET(12,183))))
