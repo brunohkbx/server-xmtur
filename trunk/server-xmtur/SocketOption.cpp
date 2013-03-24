@@ -375,6 +375,17 @@ BYTE CSocketOption::CheckItemType(int iItemNumber)//005581B0 -identical //calls 
 		return TRUE;
 	}
 
+	if((iItemNumber >= ITEMGET(0,37) && iItemNumber <= ITEMGET(0,39)) //Swords
+	|| (iItemNumber >= ITEMGET(5,37) && iItemNumber <= ITEMGET(5,40)) //Staffs
+	|| (iItemNumber == ITEMGET(2,20)) //Scepters
+	|| (iItemNumber >= ITEMGET(7,55) && iItemNumber <= ITEMGET(7,60)) //Helms
+	|| (iItemNumber >= ITEMGET(8,55) && iItemNumber <= ITEMGET(8,60)) //Armor
+	|| (iItemNumber >= ITEMGET(9,55) && iItemNumber <= ITEMGET(9,60)) //Pants
+	|| (iItemNumber >= ITEMGET(10,55) && iItemNumber <= ITEMGET(10,60)) //Gloves
+	|| (iItemNumber >= ITEMGET(11,55) && iItemNumber <= ITEMGET(11,60))){ //Boots
+		return TRUE;
+	}
+
 	return FALSE;
 }
 

@@ -1400,16 +1400,257 @@ BOOL CProbabilityItemBag::DropRaklionSelupanMonsterReward(int aIndex, BYTE btMap
 			}
 		}
 
-		if ( this->BagObject[DropItemNum].m_isexitem != 0 )
-		{
+		if(this->BagObject[DropItemNum].m_isexitem != 0){
 			loc12 = NewOptionRand(0);
-			//Option2 = 0;
-			//Option1 = 1;
-			//level = 0;
 		}
 
 		ItemSerialCreateSend(lpObj->m_Index, btMapNumber, x, y, type, level, dur, Option1, Option2, Option3, lpObj->m_Index, loc12, 0);
 		LogAddTD("[ RAKLION ][ Reward ] Selupan Item Drop [%s][%s] : (%d)(%d/%d) Item:(%s)%d Level:%d op1:%d op2:%d op3:%d ExOp:%d",
+				lpObj->AccountID, lpObj->Name, btMapNumber, x, y, ItemAttribute[type].Name, type, level, Option1, Option2, Option3, loc12);
+
+	}
+	return TRUE;
+}
+
+BOOL CProbabilityItemBag::DropMedussaMonsterReward(int aIndex, BYTE btMapNumber, BYTE cX, BYTE cY) //004B31D0
+{
+	if ( this->m_bLoad == FALSE )
+		return FALSE;
+
+	float dur = 0; //2
+	int type = 0;//3
+	int level = 0;//4
+	int x = 0;//5
+	int y = 0;//6
+	int Option1 = 0;//7
+	int Option2 = 0;//8
+	int Option3 = 0;//9
+	int DropItemNum = 0;//10
+	int ExOption = 0;//11
+	int loc12 = 0;
+	LPOBJ lpObj = &gObj[aIndex];
+
+	if ( this->GetBagCount() > 0 )
+	{
+		DropItemNum =  rand() % this->GetBagCount();
+		dur = 0;
+
+		if ( cX == 0 && cY == 0 )
+		{
+			x = lpObj->X;
+			y = lpObj->Y;
+		}
+		else
+		{
+			x = cX;
+			y = cY;
+		}
+
+		level = this->GetLevel(DropItemNum);
+		type = ItemGetNumberMake(this->BagObject[DropItemNum].m_type, this->BagObject[DropItemNum].m_index);
+
+		if ( type == -1 )
+		{
+			return FALSE;
+		}
+
+		if ( this->BagObject[DropItemNum].m_isskill != 0 )
+		{
+			Option1 =1;
+		}
+
+		if ( this->BagObject[DropItemNum].m_isluck != 0 )
+		{
+			Option2 = 0;
+
+			if ( (rand()%2) == 0 )
+			{
+				Option2 = 1;
+			}
+		}
+
+		if ( this->BagObject[DropItemNum].m_isoption != 0 )
+		{
+			if ( rand()%5 < 1 )
+			{
+				Option3 = 3;
+			}
+			else
+			{
+				Option3 = rand()%3;
+			}
+		}
+
+		if(this->BagObject[DropItemNum].m_isexitem != 0){
+			loc12 = NewOptionRand(0);
+		}
+
+		ItemSerialCreateSend(lpObj->m_Index, btMapNumber, x, y, type, level, dur, Option1, Option2, Option3, lpObj->m_Index, loc12, 0);
+		LogAddTD("[ SWAMPOFPEACE ][ Reward ] Medussa Item Drop [%s][%s] : (%d)(%d/%d) Item:(%s)%d Level:%d op1:%d op2:%d op3:%d ExOp:%d",
+				lpObj->AccountID, lpObj->Name, btMapNumber, x, y, ItemAttribute[type].Name, type, level, Option1, Option2, Option3, loc12);
+
+	}
+	return TRUE;
+}
+
+
+BOOL CProbabilityItemBag::DropSilverSealedBoxReward(int aIndex, BYTE btMapNumber, BYTE cX, BYTE cY) //004B31D0
+{
+	if ( this->m_bLoad == FALSE )
+		return FALSE;
+
+	float dur = 0; //2
+	int type = 0;//3
+	int level = 0;//4
+	int x = 0;//5
+	int y = 0;//6
+	int Option1 = 0;//7
+	int Option2 = 0;//8
+	int Option3 = 0;//9
+	int DropItemNum = 0;//10
+	int ExOption = 0;//11
+	int loc12 = 0;
+	LPOBJ lpObj = &gObj[aIndex];
+
+	if ( this->GetBagCount() > 0 )
+	{
+		DropItemNum =  rand() % this->GetBagCount();
+		dur = 0;
+
+		if ( cX == 0 && cY == 0 )
+		{
+			x = lpObj->X;
+			y = lpObj->Y;
+		}
+		else
+		{
+			x = cX;
+			y = cY;
+		}
+
+		level = this->GetLevel(DropItemNum);
+		type = ItemGetNumberMake(this->BagObject[DropItemNum].m_type, this->BagObject[DropItemNum].m_index);
+
+		if ( type == -1 )
+		{
+			return FALSE;
+		}
+
+		if ( this->BagObject[DropItemNum].m_isskill != 0 )
+		{
+			Option1 =1;
+		}
+
+		if ( this->BagObject[DropItemNum].m_isluck != 0 )
+		{
+			Option2 = 0;
+
+			if ( (rand()%2) == 0 )
+			{
+				Option2 = 1;
+			}
+		}
+
+		if ( this->BagObject[DropItemNum].m_isoption != 0 )
+		{
+			if ( rand()%5 < 1 )
+			{
+				Option3 = 3;
+			}
+			else
+			{
+				Option3 = rand()%3;
+			}
+		}
+
+		if(this->BagObject[DropItemNum].m_isexitem != 0){
+			loc12 = NewOptionRand(0);
+		}
+
+		ItemSerialCreateSend(lpObj->m_Index, btMapNumber, x, y, type, level, dur, Option1, Option2, Option3, lpObj->m_Index, loc12, 0);
+		LogAddTD("[ SEALEDBOX ][ Reward ] Silver Box Item Drop [%s][%s] : (%d)(%d/%d) Item:(%s)%d Level:%d op1:%d op2:%d op3:%d ExOp:%d",
+				lpObj->AccountID, lpObj->Name, btMapNumber, x, y, ItemAttribute[type].Name, type, level, Option1, Option2, Option3, loc12);
+
+	}
+	return TRUE;
+}
+
+
+BOOL CProbabilityItemBag::DropGoldenSealedBoxReward(int aIndex, BYTE btMapNumber, BYTE cX, BYTE cY) //004B31D0
+{
+	if ( this->m_bLoad == FALSE )
+		return FALSE;
+
+	float dur = 0; //2
+	int type = 0;//3
+	int level = 0;//4
+	int x = 0;//5
+	int y = 0;//6
+	int Option1 = 0;//7
+	int Option2 = 0;//8
+	int Option3 = 0;//9
+	int DropItemNum = 0;//10
+	int ExOption = 0;//11
+	int loc12 = 0;
+	LPOBJ lpObj = &gObj[aIndex];
+
+	if ( this->GetBagCount() > 0 )
+	{
+		DropItemNum =  rand() % this->GetBagCount();
+		dur = 0;
+
+		if ( cX == 0 && cY == 0 )
+		{
+			x = lpObj->X;
+			y = lpObj->Y;
+		}
+		else
+		{
+			x = cX;
+			y = cY;
+		}
+
+		level = this->GetLevel(DropItemNum);
+		type = ItemGetNumberMake(this->BagObject[DropItemNum].m_type, this->BagObject[DropItemNum].m_index);
+
+		if ( type == -1 )
+		{
+			return FALSE;
+		}
+
+		if ( this->BagObject[DropItemNum].m_isskill != 0 )
+		{
+			Option1 =1;
+		}
+
+		if ( this->BagObject[DropItemNum].m_isluck != 0 )
+		{
+			Option2 = 0;
+
+			if ( (rand()%2) == 0 )
+			{
+				Option2 = 1;
+			}
+		}
+
+		if ( this->BagObject[DropItemNum].m_isoption != 0 )
+		{
+			if ( rand()%5 < 1 )
+			{
+				Option3 = 3;
+			}
+			else
+			{
+				Option3 = rand()%3;
+			}
+		}
+
+		if(this->BagObject[DropItemNum].m_isexitem != 0){
+			loc12 = NewOptionRand(0);
+		}
+
+		ItemSerialCreateSend(lpObj->m_Index, btMapNumber, x, y, type, level, dur, Option1, Option2, Option3, lpObj->m_Index, loc12, 0);
+		LogAddTD("[ SEALEDBOX ][ Reward ] Golden Box Item Drop [%s][%s] : (%d)(%d/%d) Item:(%s)%d Level:%d op1:%d op2:%d op3:%d ExOp:%d",
 				lpObj->AccountID, lpObj->Name, btMapNumber, x, y, ItemAttribute[type].Name, type, level, Option1, Option2, Option3, loc12);
 
 	}

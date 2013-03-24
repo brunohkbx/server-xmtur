@@ -3043,8 +3043,39 @@ void gObjMonsterDieGiveItem(LPOBJ lpObj, LPOBJ lpTargetObj)
 			}
 		}
 		return;
-	}		
+	}	
 
+	if ( lpObj->Class == 561 && lpObj->Connected == 3 )	// Season 4.5 addon
+	{
+		//if (Configs.MedussaItemDrop != 0)
+		//{
+			int ItemDropRate = rand()%10000;
+
+			if ( ItemDropRate <= Configs.RaklionSelupanItemDropRate )
+			{
+				int iMaxHitUser = gObjMonsterTopHitDamageUser(lpObj);
+
+				LogAddTD("[ MEDUSSA ][ Reward ] SwampOfPeace ItemDrop MaxHitUser [%s][%s]",
+					lpTargetObj->AccountID, lpTargetObj->Name);
+
+				BYTE cDropX = lpObj->X;
+				BYTE cDropY = lpObj->Y;
+
+				for(int i = 0; i < Configs.SelupanItemDrop; i++)
+				{
+					if ( !gObjGetRandomItemDropLocation(lpObj->MapNumber, cDropX, cDropY, 2, 2, 10))
+					{
+						cDropX = lpObj->X;
+						cDropY = lpObj->Y;
+					}
+
+					MedussaBossMonsterItemBagOpen(lpTargetObj, lpObj->MapNumber, cDropX, cDropY);
+				}
+				
+			}
+		//}
+		return;
+	}	
 
 	if ( lpObj->m_btCsNpcType )
 		return;

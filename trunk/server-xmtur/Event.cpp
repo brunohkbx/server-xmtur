@@ -1072,6 +1072,24 @@ void RaklionBossMonsterItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE 
 	RaklionSelupanItemBag->DropRaklionSelupanMonsterReward(lpObj->m_Index, btMapNumber, cX, cY);
 }
 
+void MedussaBossMonsterItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE cY)
+{
+	MedussaItemBag->DropMedussaMonsterReward(lpObj->m_Index, btMapNumber, cX, cY);
+}
+
+
+void GoldenBoxItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE cY)
+{
+	GoldenBoxItemBag->DropGoldenSealedBoxReward(lpObj->m_Index, btMapNumber, cX, cY);
+}
+
+void SilverBoxItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE cY)
+{
+	SilverBoxItemBag->DropSilverSealedBoxReward(lpObj->m_Index, btMapNumber, cX, cY);
+}
+
+
+
 //004A0D90  /> \55            PUSH EBP
 void LuckyCoint10ItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE cY)
 {

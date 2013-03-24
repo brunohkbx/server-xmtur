@@ -798,9 +798,6 @@ void ProtocolCore(BYTE protoNum, BYTE * aRecv, int aLen, int aIndex, BOOL Encryp
 						case 0x0B:
 							g_CashShop.CGCashInventoryItemUse(lpObj, (PMSG_REQ_INGAMESHOP_ITEMUSE *)aRecv);
 							break;
-						default:
-							LogAddC(2, "InGameShop Unknown Packet: %X %X", lpDef->h.headcode, lpDef->subcode);
-							LogAddHeadHex(gObj[aIndex].AccountID, (char*)aRecv, aLen);
 					}
 				}
 				//illusion temple
@@ -3254,7 +3251,7 @@ BOOL CGItemDropRequest(PMSG_ITEMTHROW * lpMsg, int aIndex, BOOL drop_type) //004
 		if ( bIsItem == TRUE )
 		{
 			strcpy(szItemName, lpObj->pInventory[lpMsg->Ipos].GetName());
-
+			
 			if ( type == ITEMGET(14,11))
 			{
 				::gObjInventoryDeleteItem(aIndex, lpMsg->Ipos);
@@ -3597,6 +3594,51 @@ BOOL CGItemDropRequest(PMSG_ITEMTHROW * lpMsg, int aIndex, BOOL drop_type) //004
 					return FALSE;
 				}
 			}
+			
+			else if(type == ITEMGET(14,124)){
+				gObjInventoryDeleteItem(aIndex, lpMsg->Ipos);
+				SilverBoxItemBagOpen(lpObj,lpObj->MapNumber,lpObj->X,lpObj->Y);
+			}
+			
+			else if(type == ITEMGET(14,123)){
+				gObjInventoryDeleteItem(aIndex, lpMsg->Ipos);
+				GoldenBoxItemBagOpen(lpObj,lpObj->MapNumber,lpObj->X,lpObj->Y);
+			}
+
+			else if(type >= ITEMGET(14,141) && type <= ITEMGET(14,144)){
+
+				
+				gObjInventoryDeleteItem(aIndex, lpMsg->Ipos);
+				int RandomItem = rand() % 5;
+				switch(RandomItem){
+
+					case 5:
+						MapC[lpObj->MapNumber].MoneyItemDrop(90000,lpObj->X,lpObj->Y);
+						LogAddTD("[GensBoxDrop][%s][%s] Win Zen",lpObj->AccountID,lpObj->Name);
+						break;
+					case 0:
+						ItemSerialCreateSend(lpObj->m_Index,lpObj->MapNumber,lpObj->X,lpObj->Y,ITEMGET(14,13),0,0,0,0,0,lpObj->m_Index,0,0); //Bless
+						LogAddTD("[GensBoxDrop][%s][%s] Win Bless",lpObj->AccountID,lpObj->Name);
+						break;
+					case 1:
+						ItemSerialCreateSend(lpObj->m_Index,lpObj->MapNumber,lpObj->X,lpObj->Y,ITEMGET(14,14),0,0,0,0,0,lpObj->m_Index,0,0); //Soul
+						LogAddTD("[GensBoxDrop][%s][%s] Win Soul",lpObj->AccountID,lpObj->Name);
+						break;
+					case 2:
+						ItemSerialCreateSend(lpObj->m_Index,lpObj->MapNumber,lpObj->X,lpObj->Y,ITEMGET(14,16),0,0,0,0,0,lpObj->m_Index,0,0); //Life
+						LogAddTD("[GensBoxDrop][%s][%s] Win Life",lpObj->AccountID,lpObj->Name);
+						break;
+					case 3:
+						ItemSerialCreateSend(lpObj->m_Index,lpObj->MapNumber,lpObj->X,lpObj->Y,ITEMGET(12,15),0,0,0,0,0,lpObj->m_Index,0,0); //Chaos
+						LogAddTD("[GensBoxDrop][%s][%s] Win Chaos",lpObj->AccountID,lpObj->Name);
+						break;
+					case 4:
+						ItemSerialCreateSend(lpObj->m_Index,lpObj->MapNumber,lpObj->X,lpObj->Y,ITEMGET(14,12),0,0,0,0,0,lpObj->m_Index,0,0); //Creation
+						LogAddTD("[GensBoxDrop][%s][%s] Win Creation",lpObj->AccountID,lpObj->Name);
+						break;
+				}
+			}
+
 			else if ( type == ITEMGET(14,52) ) //Season 2.5 add-on GM Box identical
 			{
 				gObjInventoryDeleteItem(aIndex, lpMsg->Ipos);

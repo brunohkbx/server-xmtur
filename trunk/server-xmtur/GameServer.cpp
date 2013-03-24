@@ -171,11 +171,10 @@ BOOL GameServerStart(void)
 	SetTimer(ghWnd, WM_LOG_DATE_CHANGE, 60000, NULL);
 	SetTimer(ghWnd, WM_CONNECT_DATASERVER, 10000, NULL);
 
-
 	SetTimer(ghWnd, WM_SECOND_MSG_PROCESS, 1000, NULL);
 	SetTimer(ghWnd, WM_GS_CLOSE, 1000, NULL);
-	SetTimer(ghWnd, WM_MONSTER_AND_MSG_PROC, 500, NULL);
 
+	SetTimer(ghWnd, WM_MONSTER_AND_MSG_PROC, 500, NULL);
 
 	SetTimer(ghWnd, WM_MOVE_MONSTER_PROC, 300, NULL);
 	SetTimer(ghWnd, WM_EVENT_RUN_PROC, 100, NULL);
@@ -262,10 +261,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				   SendMessage(hWnd, WM_CLOSE, 0, 0);
 				   break;
 				case IDM_CLOSE_PLAYER:
-					{
-						Ccloseplayer closeplayer;
-						closeplayer.Load("closeplayer.txt");
-					}
 					break;
 				case IDM_ALL_USER_CLOSE:
 					gObjAllDisconnect();
@@ -280,14 +275,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					ShopDataLoad();
 					break;
 				case IDM_MAP_SERVER_INFO_RELOAD:
-					g_MapServerManager.LoadData(gDirPath.GetNewPath("MapServerInfo.dat") );
+					//g_MapServerManager.LoadData(gDirPath.GetNewPath("MapServerInfo.dat") );
 					break;
 					
 				case IDM_CASTLE_SIEGE_RELOAD: //GS-CS Decompiled 100%
 					if( g_CastleSiege.Ready(g_MapServerManager.GetMapSvrGroup()) == TRUE )
 					{
-						if( g_CastleSiege.LoadData(gDirPath.GetNewPath("MuCastleData.dat")) )
-						{
+						if(g_CastleSiege.LoadData(gDirPath.GetNewPath("MuCastleData.dat"))){
 							g_CastleSiege.LoadPreFixData(gDirPath.GetNewPath("commonserver.cfg"));
 							g_CastleSiege.SetDataLoadState(CASTLESIEGE_DATALOAD_2);
 						}
@@ -295,7 +289,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					break;
 
 				case IDM_IP_LOAD:
-					acceptIP.Load(gDirPath.GetNewPath("Iplist.dat"));
+					acceptIP.Load(gDirPath.GetNewPath("IPList.dat"));
 					break;
 				case IDM_OPTION_RELOAD:
 					ReadCommonServerInfo();
@@ -312,26 +306,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					ShowWindow(g_hCsLogDlgProc, SW_SHOWNORMAL);
 					break;
 
-				case IDM_MAP1:
-					gCurPaintMapNumber = 0;	// Lorencia
-					gCurPaintType=1;
-					break;
-				case IDM_MAP2:
-					gCurPaintType=1;
-					gCurPaintMapNumber = 1;	// Dungeon
-					break;
-				case IDM_MAP3:
-					gCurPaintType=1;
-					gCurPaintMapNumber = 2;	// Devias
-					break;
-				case IDM_MAP4:
-					gCurPaintType=1;
-					gCurPaintMapNumber = 3;	// Noria
-					break;
-				case IDM_CRYWOLF:
-					gCurPaintType=1;
-					gCurPaintMapNumber = 34;	// Crywolf
-					break;
 				case IDM_DRAGON_EVENT:
 					if (  DragonEvent->GetState() != 0 )
 						DragonEvent->End();
@@ -375,82 +349,82 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					}
 					break;
 				case IDM_RELOAD_ALL_EVENT:
-					ReadEventInfo(MU_EVENT_ALL );
+					ReadEventInfo(MU_EVENT_ALL);
 					break;
 				case IDM_RELOAD_DEVILSQUARE:
-					ReadEventInfo(MU_EVENT_DEVILSQUARE );
+					ReadEventInfo(MU_EVENT_DEVILSQUARE);
 					break;
 				case IDM_RELOAD_BLOODCASTLE:
-					ReadEventInfo(MU_EVENT_BLOODCASTLE );
+					ReadEventInfo(MU_EVENT_BLOODCASTLE);
 					break;
 				case IDM_RELOAD_UNDERWORLD_ATTACK:
-					ReadEventInfo(MU_EVENT_ATTACKEVENTTROOP );
+					ReadEventInfo(MU_EVENT_ATTACKEVENTTROOP);
 					break;
 				case IDM_RELOAD_GOLDENTROOP_ATTACK:
-					ReadEventInfo(MU_EVENT_GOLDENTROOP );
+					ReadEventInfo(MU_EVENT_GOLDENTROOP);
 					break;
 				case IDM_RELOAD_WHITEMAGE_ATTACK:
-					ReadEventInfo(MU_EVENT_WHITEMAGETROOP );
+					ReadEventInfo(MU_EVENT_WHITEMAGETROOP);
 					break;
 				case IDM_RELOAD_LOVE_PANGPANG:
-					ReadEventInfo(MU_EVENT_LOVEPANGPANG );
+					ReadEventInfo(MU_EVENT_LOVEPANGPANG);
 					break;
 				case IDM_RELOAD_FIRECRACKER:
-					ReadEventInfo(MU_EVENT_FIRECRACKER );
+					ReadEventInfo(MU_EVENT_FIRECRACKER);
 					break;
 				case IDM_RELOAD_XMAS_STAR:
-					ReadEventInfo(MU_EVENT_XMASSTAR );
+					ReadEventInfo(MU_EVENT_XMASSTAR);
 					break;
 				case IDM_RELOAD_HEART_OF_LOVE:
-					ReadEventInfo(MU_EVENT_HEARTOFLOVE );
+					ReadEventInfo(MU_EVENT_HEARTOFLOVE);
 					break;
 				case IDM_RELOAD_NPC_SAY_HAPPY_NEW_YEAR:
-					ReadEventInfo(MU_EVENT_SAY_HAPPYNEWYEAR );
+					ReadEventInfo(MU_EVENT_SAY_HAPPYNEWYEAR);
 					break;
 				case IDM_RELOAD_NPC_SAY_MERRY_XMAS:
-					ReadEventInfo(MU_EVENT_SAY_MERRYXMAS );
+					ReadEventInfo(MU_EVENT_SAY_MERRYXMAS);
 					break;
 				case IDM_RELOAD_CHAOSCASTLE:
-					ReadEventInfo(MU_EVENT_CHAOSCASTLE );
+					ReadEventInfo(MU_EVENT_CHAOSCASTLE);
 					break;
 				case IDM_RELOAD_CHRISTMAS_RIBBONBOX:
-					ReadEventInfo(MU_EVENT_CHRISTMAS_RIBBONBOX );
+					ReadEventInfo(MU_EVENT_CHRISTMAS_RIBBONBOX);
 					break;
 				case IDM_RELOAD_VALENTINE_DAY_CHOCOLATE_BOX:
-					ReadEventInfo(MU_EVENT_VALENTINESDAY_CHOCOLATEBOX );
+					ReadEventInfo(MU_EVENT_VALENTINESDAY_CHOCOLATEBOX);
 					break;
 				case IDM_RELOAD_WHITE_DAY_CANDY_BOX:
-					ReadEventInfo(MU_EVENT_WHITEDAY_CANDYBOX  );
+					ReadEventInfo(MU_EVENT_WHITEDAY_CANDYBOX);
 					break;
 				case IDM_RELOAD_ALL_ETC_OPTION:
-					ReadGameEtcInfo(MU_ETC_ALL );
+					ReadGameEtcInfo(MU_ETC_ALL);
 					break;
 				case IDM_RELOAD_CREATE_CHARACTER:
-					ReadGameEtcInfo(MU_ETC_CREATECHARACTER );
+					ReadGameEtcInfo(MU_ETC_CREATECHARACTER);
 					break;
 				case IDM_RELOAD_GUILD:
-					ReadGameEtcInfo(MU_ETC_GUILD );
+					ReadGameEtcInfo(MU_ETC_GUILD);
 					break;
 				case IDM_RELOAD_TRADE:
-					ReadGameEtcInfo(MU_ETC_TRADE );
+					ReadGameEtcInfo(MU_ETC_TRADE);
 					break;
 				case IDM_RELOAD_CHAOSBOX:
-					ReadGameEtcInfo(MU_ETC_USECHAOSBOX );
+					ReadGameEtcInfo(MU_ETC_USECHAOSBOX);
 					break;
 				case IDM_RELOAD_PERSONAL_SHOP:
-					ReadGameEtcInfo(MU_ETC_PERSONALSHOP );
+					ReadGameEtcInfo(MU_ETC_PERSONALSHOP);
 					break;
 				case IDM_RELOAD_PK_ITEM_DROP:
-					ReadGameEtcInfo(MU_ETC_PKITEMDROP );
+					ReadGameEtcInfo(MU_ETC_PKITEMDROP);
 					break;
 				case IDM_RELOAD_ITEM_DROP_RATE:
-					ReadGameEtcInfo(MU_ETC_ITEMDROPRATE );
+					ReadGameEtcInfo(MU_ETC_ITEMDROPRATE);
 					break;
 				case IDM_RELOAD_SPEEDHACK:
-					ReadGameEtcInfo(MU_ETC_SPEEDHACK );
+					ReadGameEtcInfo(MU_ETC_SPEEDHACK);
 					break;
 				case IDM_RELOAD_GAMEGUARD_CHECKSUM_CHECK:
-					ReadGameEtcInfo(MU_ETC_GAMEGUARD );
+					ReadGameEtcInfo(MU_ETC_GAMEGUARD);
 					break;
 				default:
 					return DefWindowProc(hWnd, message, wParam, lParam);
@@ -486,8 +460,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			ExDataClientMsgProc(wParam, lParam);
 			break;
 		case WM_START_SERVER:
-			if ( gServerReady == 2 )
-				GameServerStart();
+			if(gServerReady == 2) GameServerStart();
 			break;
 		case WM_TIMER:
 			switch ( wParam )
@@ -532,10 +505,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					g_IllusionTempleEvent.Run();
 					g_Raklion.Run();
 					g_XMasAttackEvent.Run();
-					
-					//Cash shop
-					//g_CashShop.CheckShopServerConnectState();
-					
+
 					Doppelganger.CheckMonsterPassed();
 					DuelManager.Run();
 					break;
@@ -573,7 +543,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					break;
 				case WM_SECOND_MSG_PROCESS:
 					{
-						for (int n=0; n < MAX_NUMBER_MAP;n++){
+						/*for (int n=0; n < MAX_NUMBER_MAP;n++){
 							MapC[n].WeatherVariationProcess();
 						}
 
@@ -586,7 +556,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 						DragonEvent->Run();
 						AttackEvent->Run();
 						gEledoradoEvent.Run();
-						g_EventManager.Run();
+						g_EventManager.Run();*/
 					}
 					break;
 				case WM_GS_CLOSE:
@@ -625,7 +595,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					g_CastleSiege.SendCastleStateSync();
 					g_CastleSiegeSync.AdjustTributeMoney();
 					g_Crywolf.CrywolfSecondAct();
-
 					break;
 				case WM_SET_DATE:
 					gSetDate();
