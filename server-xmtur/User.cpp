@@ -2238,9 +2238,9 @@ BOOL gObjSetCharacter(LPBYTE lpdata, int aIndex)
 		memset(lpObj->m_Quest, (BYTE)-1, sizeof(lpObj->m_Quest));
 	}
 
-	if ( ::g_QuestInfo.GetQuestState(lpObj, 2) == 2 && Configs.FixMarlonQuestRemove == 0)
+	if ( ::g_QuestInfo.GetQuestState(lpObj, 2) == 2)
 	{
-		if ( lpObj->Level < QUEST_MINLEVEL_PLUSSTAT )
+		if ( lpObj->Level < QUEST_MINLEVEL_PLUSSTAT && Configs.FixMarlonQuestRemove == 0)
 		{
 			::g_QuestInfo.ReSetQuestState(lpObj, 2);
 			LogAddTD("[%s][%s] Find Invalid QuestInfo (%d)",
@@ -2252,9 +2252,9 @@ BOOL gObjSetCharacter(LPBYTE lpdata, int aIndex)
 		}
 	}
 
-	if ( ::g_QuestInfo.GetQuestState(lpObj, 3) == 2 && Configs.FixMarlonQuestRemove == 0)
+	if ( ::g_QuestInfo.GetQuestState(lpObj, 3) == 2)
 	{
-		if ( lpObj->Level < QUEST_MINLEVEL_PLUSSTAT )
+		if ( lpObj->Level < QUEST_MINLEVEL_PLUSSTAT && Configs.FixMarlonQuestRemove == 0)
 		{
 			::g_QuestInfo.ReSetQuestState(lpObj, 3);
 			LogAddTD("[%s][%s] Find Invalid QuestInfo (%d)",
@@ -5245,7 +5245,7 @@ bool gObjLevelUp(LPOBJ lpObj, __int64 & addexp, int iMonsterType, int iEventType
 		lpObj->LevelUpPoint += Configs.NormalPoints;
 	}
 
-	if ( lpObj->PlusStatQuestClear != false )
+	if ( lpObj->PlusStatQuestClear != FALSE)
 	{
 		lpObj->LevelUpPoint += Configs.MarlonPoints;
 		LogAddTD("[%s][%s] LevelUp PlusStatQuest Clear AddStat %d",	lpObj->AccountID, lpObj->Name, lpObj->LevelUpPoint);
@@ -14154,11 +14154,11 @@ void gObjViewportListCreate(short aIndex)
 		return;
 	}
 
-	if(lpObj->Connected < PLAYER_PLAYING){
+	if(gObj[aIndex].Connected < PLAYER_PLAYING){
 		return;
 	}
 
-	if(lpObj->RegenOk > 0){
+	if(gObj[aIndex].RegenOk > 0){
 		return;
 	}
 
