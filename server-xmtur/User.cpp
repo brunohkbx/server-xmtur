@@ -4161,6 +4161,9 @@ BOOL gObjJoominCheck(int aIndex, char* szInJN)
 {
 	LPOBJ lpObj = &gObj[aIndex];
 	
+	if(Configs.RemovePersonalID == TRUE){
+		return TRUE;
+	}
 	switch ( Configs.Language )
 	{
 		case 1:

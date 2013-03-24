@@ -624,6 +624,7 @@ public:
 	/////////////////////////
 	//Fixes
 	int DisableCheckSum;
+	int RemovePersonalID;
 
 	//Items
 	int EnableExcellentWithAncient;
