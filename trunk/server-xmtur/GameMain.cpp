@@ -548,7 +548,7 @@ void CConfigs::LoadConfigs(){
 	this->ML_Inner_Energy= GetPrivateProfileInt("Master_InnerStrength","Master_InnerStrength_Energy",100,CONFIG_FILE);
 	this->ML_Inner_Vitality = GetPrivateProfileInt("Master_InnerStrength","Master_InnerStrength_Vitality",20,CONFIG_FILE);
 	this->ML_Inner_Timer= GetPrivateProfileInt("Master_InnerStrength","Master_InnerStrength_Timer",60,CONFIG_FILE);
-	this->Inner_Timer_Divisor = GetPrivateProfileInt("InnerStrength","Master_InnerStrength_Timer_Divisor",10,CONFIG_FILE);
+	this->ML_Inner_Timer_Divisor = GetPrivateProfileInt("InnerStrength","Master_InnerStrength_Timer_Divisor",10,CONFIG_FILE);
 
 	//ItemDrop
 	this->ExcDropRate = GetPrivateProfileInt("ItemDropRate","Excellent_DropRate",2000,CONFIG_FILE);

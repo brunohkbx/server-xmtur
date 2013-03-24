@@ -74,7 +74,7 @@ int CMasterLevelSystem::MasterLevelUp(LPOBJ lpObj, __int64 Experience)
 
 	if(lpObj->MLevel >= 200)
 	{
-		GCServerMsgStringSend(lMsg.Get(1136), lpObj->m_Index, 1); //You have reached maximum level?
+		GCServerMsgStringSend(lMsg.Get(MSGGET(4, 112)), lpObj->m_Index, 1);
 		return FALSE;
 	}
 
