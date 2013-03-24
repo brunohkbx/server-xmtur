@@ -153,6 +153,9 @@ extern CProbabilityItemBag * LuckyCoin20; //test
 extern CProbabilityItemBag * LuckyCoin30; //test
 
 
+extern CProbabilityItemBag * MedussaItemBag; //test
+extern CProbabilityItemBag * SilverBoxItemBag;
+extern CProbabilityItemBag * GoldenBoxItemBag;
 extern CGamblingItemBag	*pGamblingSystemItemBag;
 
 

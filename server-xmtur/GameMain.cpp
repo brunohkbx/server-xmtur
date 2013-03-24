@@ -159,6 +159,13 @@ CProbabilityItemBag * XMasEventC;
 CProbabilityItemBag * LuckyCoin10;
 CProbabilityItemBag * LuckyCoin20;
 CProbabilityItemBag * LuckyCoin30;
+
+
+CProbabilityItemBag * MedussaItemBag;
+
+CProbabilityItemBag * SilverBoxItemBag;
+CProbabilityItemBag * GoldenBoxItemBag;
+
 CGamblingItemBag * pGamblingSystemItemBag=NULL;	
 
 
@@ -2575,17 +2582,6 @@ void LoadItemBag() //0053E2F0
 
 	RaklionSelupanItemBag->Init("eventitembag52.txt");
 
-	//Gambling System
-	if(pGamblingSystemItemBag != NULL) delete pGamblingSystemItemBag;
-	pGamblingSystemItemBag	= new CGamblingItemBag; 
-
-	if(pGamblingSystemItemBag == NULL){
-		MsgBox("CProbabilityItemBag %s", lMsg.Get(110));
-		return;
-	}
-
-	pGamblingSystemItemBag->GamblingItemBagInit(gDirPath.GetNewPath("GamblingSystem.txt"));
-
 	//LuckyCoin10
 	if ( LuckyCoin10 != NULL )
 		delete LuckyCoin10;
@@ -2773,6 +2769,52 @@ void LoadItemBag() //0053E2F0
 	}
 
 	XMasEventC->Init("eventitembag55.txt");
+
+	//Medussa ItemBag
+	if(MedussaItemBag != NULL) delete MedussaItemBag;
+	MedussaItemBag = new CProbabilityItemBag; 
+	if(MedussaItemBag == NULL){
+		// Memory allocation error
+		MsgBox("CProbabilityItemBag %s", lMsg.Get(MSGGET(0, 110)));
+		return;
+	}
+
+	MedussaItemBag->Init("eventitembag59.txt");
+
+	//Silver Box
+	if(SilverBoxItemBag != NULL) delete SilverBoxItemBag;
+	SilverBoxItemBag = new CProbabilityItemBag; 
+	if(SilverBoxItemBag == NULL){
+		// Memory allocation error
+		MsgBox("CProbabilityItemBag %s", lMsg.Get(MSGGET(0, 110)));
+		return;
+	}
+
+	SilverBoxItemBag->Init("eventitembag60.txt");
+
+	//Golden Box
+	if(GoldenBoxItemBag != NULL) delete GoldenBoxItemBag;
+	GoldenBoxItemBag = new CProbabilityItemBag; 
+	if(GoldenBoxItemBag == NULL){
+		// Memory allocation error
+		MsgBox("CProbabilityItemBag %s", lMsg.Get(MSGGET(0, 110)));
+		return;
+	}
+
+	GoldenBoxItemBag->Init("eventitembag61.txt");
+
+	//Gambling System
+	if(pGamblingSystemItemBag != NULL) delete pGamblingSystemItemBag;
+	pGamblingSystemItemBag	= new CGamblingItemBag; 
+
+	if(pGamblingSystemItemBag == NULL){
+		MsgBox("CProbabilityItemBag %s", lMsg.Get(110));
+		return;
+	}
+
+	pGamblingSystemItemBag->GamblingItemBagInit(gDirPath.GetNewPath("GamblingSystem.txt"));
+
+
 }
 
 void SetMapName()

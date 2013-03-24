@@ -299,6 +299,9 @@ void EGAnsRegLuckyCoinItem(int iIndex);
 void EGAnsRegLuckyCoinItemResult(PMSG_ANS_LUCKYCOIN_REGCOUNT_RESULT * lpMsg);
 void EGAnsRegLuckyCoinItemPosition(int iIndex, int Ipos);
 void EGAnsRegLuckyCoinItemPositionResult(PMSG_ANS_LUCKYCOIN_REGCOUNT_RESULT * lpMsg);
+void MedussaBossMonsterItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE cY);
+void GoldenBoxItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE cY);
+void SilverBoxItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE cY);
 BYTE GamblingSystemItemBagOpen(OBJECTSTRUCT* lpObj, BYTE btMapNumber, BYTE cX, BYTE cY, BYTE btItemType);
 extern LPOBJ pEventObj;
 

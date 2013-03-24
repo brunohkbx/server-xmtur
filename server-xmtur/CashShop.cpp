@@ -168,10 +168,7 @@ void CCashShop::LoadPackages(LPSTR pchFilename)
 			if(iType == 1)
 			{
 				if(!strcmp("end", TokenString)) break;
-
-
 				//FALTA TERMINAR AUN!! PARTE DE PACKAGES (PAQUETES DE VARIOS ITEMSSSS)
-
 				LogAddTD("[InGameShop][Package Item List] Add Package Item: Pack: %d, Seq: %d", 0,0);
 			}
 		}

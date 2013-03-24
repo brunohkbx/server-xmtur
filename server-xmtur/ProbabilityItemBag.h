@@ -44,11 +44,16 @@ public:
 	BOOL DropPCBangPurpleChaosBoxReward(int aIndex, BYTE btMapNumber, BYTE cX, BYTE cY);
 
 	BOOL DropIllusionTempleEventReward(int aIndex, BYTE btMapNumber, BYTE cX, BYTE cY);
+
 	BOOL DropItem(int aIndex, BYTE btMapNumber, BYTE cX, BYTE cY);
 	void DropSetItem(int aIndex, int itemnum, BYTE btMapNumber, int cX, int cY);
 	int DropItem(int aIndex, BYTE btMapNumber, BYTE cX, BYTE cY, int * iDropZen);
 
 	BOOL DropRaklionSelupanMonsterReward(int aIndex, BYTE btMapNumber, BYTE cX, BYTE cY);
+
+	BOOL DropMedussaMonsterReward(int aIndex, BYTE btMapNumber, BYTE cX, BYTE cY);
+	BOOL DropSilverSealedBoxReward(int aIndex, BYTE btMapNumber, BYTE cX, BYTE cY);
+	BOOL DropGoldenSealedBoxReward(int aIndex, BYTE btMapNumber, BYTE cX, BYTE cY);
 
 private:
 	int GetBagCount(){return this->m_iBagObjectCount;}

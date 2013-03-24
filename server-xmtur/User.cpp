@@ -380,12 +380,11 @@ void MonsterAndMsgProc()
 	{
 		lpObj = &gObj[n];
 
-		if ( lpObj->Connected == PLAYER_PLAYING  )
+		if( lpObj->Connected == PLAYER_PLAYING)
 		{
 			if ( lpObj->Type == OBJ_MONSTER || lpObj->Type == OBJ_NPC) 
 			{
-				if(lpObj->m_iCurrentAI != 0)
-				{
+				if(lpObj->m_iCurrentAI != 0){
 					continue;
 				}
 				gObjMonsterProcess(lpObj);
@@ -397,19 +396,17 @@ void MonsterAndMsgProc()
 				CreateFrustrum(lpObj->X, lpObj->Y, n);
 			}
 
-			if ( lpObj->Type == OBJ_USER )
-			{
+			if(lpObj->Type == OBJ_USER){
 				gDarkSpirit[n].Run();
 			}
 		}
-		else if ( lpObj->Connected >= PLAYER_LOGGED )
+		else if(lpObj->Connected >= PLAYER_LOGGED)
 		{
-			if ( lpObj->Type == OBJ_USER )
+			if(lpObj->Type == OBJ_USER)
 			{
 				gObjMsgProc(lpObj);
 
-				if ( lpObj->Connected == PLAYER_PLAYING )
-				{
+				if(lpObj->Connected == PLAYER_PLAYING){
 					CreateFrustrum(lpObj->X, lpObj->Y, n);
 				}
 			}
@@ -437,6 +434,7 @@ void MonsterAndMsgProc()
 			}
 		}
 	}
+
 	TMonsterSkillManager::MonsterSkillProc();
 }
 
@@ -14152,39 +14150,32 @@ void gObjViewportListCreate(short aIndex)
 	LPOBJ lpObj;
 	int mapnum;
 
-	if(OBJMAX_RANGE(aIndex) == 0)
-	{
+	if(OBJMAX_RANGE(aIndex) == 0){
 		return;
 	}
 
-	lpObj = &gObj[aIndex];
-
-	if(lpObj->Connected < PLAYER_PLAYING)
-	{
+	if(lpObj->Connected < PLAYER_PLAYING){
 		return;
 	}
 
-	if(lpObj->RegenOk > 0)
-	{
+	if(lpObj->RegenOk > 0){
 		return;
 	}
 
-	mapnum = lpObj->MapNumber;
+	mapnum = gObj[aIndex].MapNumber;
 	gItemLoop2 = 0;
 
-	if(lpObj->Type == OBJ_USER)
+	if(gObj[aIndex].Type == OBJ_USER)
 	{
-		MapClass * lpMap = &MapC[mapnum];
-
 		for(n = 0; n < MAX_MAPITEM; n++)
 		{
-			if(lpMap->m_cItem[n].live)
+			if(MapC[mapnum].m_cItem[n].live)
 			{
 				gItemLoop2++;
 
-				if(lpMap->m_cItem[n].m_State == 1 || lpMap->m_cItem[n].m_State == 2)
+				if(MapC[mapnum].m_cItem[n].m_State == 1 || MapC[mapnum].m_cItem[n].m_State == 2)
 				{
-					if(gObjCheckViewport(aIndex,lpMap->m_cItem[n].px,lpMap->m_cItem[n].py) == 1)
+					if(gObjCheckViewport(aIndex,MapC[mapnum].m_cItem[n].px,MapC[mapnum].m_cItem[n].py) == 1)
 					{
 						result = ViewportAdd(aIndex,n,5);
 					}
@@ -14201,42 +14192,36 @@ void gObjViewportListCreate(short aIndex)
 	}
 
 	int a = 1;
-	LPOBJ lpTempObj;
-
-	if(lpObj->Type == OBJ_USER)
+	
+	if(gObj[aIndex].Type == OBJ_USER)
 	{
-		for(n = 0; n < OBJMAX; n++)
-		{
-			lpTempObj = &gObj[n];
-
-			if(lpTempObj->Connected == PLAYER_PLAYING && aIndex != n)
+		for(n = 0; n < OBJMAX;n++){
+			if(gObj[n].Connected == PLAYER_PLAYING && aIndex != n)
 			{
-				if(lpTempObj->m_State == 1 || lpTempObj->m_State == 2)
+				if(gObj[n].m_State == 1 || gObj[n].m_State == 2)
 				{
-					if(mapnum == lpTempObj->MapNumber)
+					if(mapnum == gObj[n].MapNumber)
 					{
-						if(gObjCheckViewport(aIndex,lpTempObj->X,lpTempObj->Y) == 1)
+						if(gObjCheckViewport(aIndex,gObj[n].X,gObj[n].Y) == 1)
 						{
-							result = ViewportAdd(aIndex,n,lpTempObj->Type);
+							result = ViewportAdd(aIndex,n,gObj[n].Type);
 							result = ViewportAdd2(n,aIndex,gObj[aIndex].Type);
 						}
 					}
 				}
 			}
 		}
-	} else if(lpObj->Type == OBJ_MONSTER || lpObj->Type == OBJ_NPC || lpObj->Type == OBJ_NPC)
+	} else if(gObj[aIndex].Type == OBJ_MONSTER || gObj[aIndex].Type == OBJ_NPC)
 	{
 		for(n = OBJ_MAXMONSTER; n < OBJMAX; n++)
 		{
-			lpTempObj = &gObj[n];
-
-			if(lpTempObj->Connected == PLAYER_PLAYING && aIndex != n)
+			if(gObj[n].Connected == PLAYER_PLAYING && aIndex != n)
 			{
-				if(lpTempObj->m_State == 1 || lpTempObj->m_State == 2)
+				if(gObj[n].m_State == 1 || gObj[n].m_State == 2)
 				{
-					if(mapnum == lpTempObj->MapNumber)
+					if(mapnum == gObj[n].MapNumber)
 					{
-						if(gObjCheckViewport(aIndex,lpTempObj->X,lpTempObj->Y) == 1)
+						if(gObjCheckViewport(aIndex,gObj[n].X,gObj[n].Y) == 1)
 						{
 							result = ViewportAdd(aIndex,n,gObj[n].Type);
 							result = ViewportAdd2(n,aIndex,gObj[aIndex].Type);
@@ -14929,12 +14914,12 @@ void gObjStateSetCreate(int aIndex)
 	//season4.5 add-on
 	LPOBJ lpObj2 = &gObj[aIndex];
 
-	if(gObjCheckIsInPCBang(lpObj2) != FALSE)
+	/*if(gObjCheckIsInPCBang(lpObj2) != FALSE)
 	{
 		gObjCalCharacter(lpObj2->m_Index);
 		GCReFillSend(lpObj2->m_Index, lpObj2->AddLife + lpObj2->MaxLife, 0xFE, 0, lpObj2->iMaxShield + lpObj2->iAddShield);
 		GCManaSend(lpObj2->m_Index, lpObj2->AddMana + lpObj2->MaxMana, 0xFE, 0, lpObj2->MaxBP + lpObj2->AddBP);
-	}
+	}*/
 }
 
 struct PMSG_CHARREGEN
@@ -16795,8 +16780,7 @@ void gObjViewportListProtocolCreate(LPOBJ lpObj)
 
 void gObjViewportListProtocol(short aIndex)
 {
-	if(gObj[aIndex].Connected < PLAYER_PLAYING)
-	{
+	if(gObj[aIndex].Connected < PLAYER_PLAYING){
 		return;
 	}
 
