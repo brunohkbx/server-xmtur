@@ -349,6 +349,7 @@ void CConfigs::LoadConfigs(){
 	this->EnableExcellentWithSocket = GetPrivateProfileInt("Items","EnableExcellentWithSocket",0,CONFIG_FILE);
 	this->JewelOfLifeMaxOption = GetPrivateProfileInt("Fixes","RemoveOptionsLimit",0,CONFIG_FILE);
 	this->RemovePotionLimit = GetPrivateProfileInt("Fixes","RemovePotionLimit",0,CONFIG_FILE);
+	this->RemovePersonalID = GetPrivateProfileInt("Fixes","RemovePersonalID",0,CONFIG_FILE);
 	this->FixMarlonQuestRemove = GetPrivateProfileInt("Fixes","RemoveMarlonQuestReset",0,CONFIG_FILE);
 	this->FixPStoreLevel5Remove = GetPrivateProfileInt("Fixes","RemovePShopItemsCheckLeve5",0,CONFIG_FILE);
 	this->FixSerial0Items = GetPrivateProfileInt("Fixes","FixSerial0ItemsCheck",0,CONFIG_FILE);

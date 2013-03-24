@@ -68,6 +68,7 @@ int logincounttest;
 #include "Commands.h"
 #include "PartySystem.h"
 #include "PropertyItem.h"
+#include "GameMain.h"
 
 int tempindex;
 int iCount;
@@ -1981,12 +1982,14 @@ void CGPCharDel(PMSG_CHARDELETE * lpMsg,int aIndex)
 	memset(szJoomin, 0, sizeof(szJoomin));
 	memcpy(szJoomin, lpMsg->LastJoominNumber, 10);
 
+	
 	if ( gObjJoominCheck(aIndex, szJoomin) == FALSE )
 	{
 		pResult.result = 2;
 		DataSend(aIndex, (LPBYTE)&pResult, pResult.h.size);
 		return;
 	}
+	
 
 	PHeadSetB((LPBYTE)&pCDel, 0x05, sizeof(pCDel));
 	pCDel.Number = aIndex;
