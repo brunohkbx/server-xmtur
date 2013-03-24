@@ -399,7 +399,8 @@ void ReqWarehouseInUse(int aIndex){
 	PMSG_REQ_WAREHOUSEINUSE pMsg;
 	pMsg.h.set((LPBYTE)&pMsg,0xAA,0x02,sizeof(pMsg));
 	pMsg.aIndex = lpObj->m_Index;
-	memcpy(pMsg.Account,lpObj->AccountID,sizeof(pMsg.Account)-1);
+	pMsg.Account[10] = 0;
+	memcpy(pMsg.Account,lpObj->AccountID,10);
 	cDBSMng.Send((char*)&pMsg,pMsg.h.size);
 
 	lpObj->MultiVautFloodTime = 0;
@@ -449,7 +450,8 @@ void DSGetMarryInfo(int aIndex){
 	PMSG_REQ_MARRYINFO pMsg;
 	pMsg.h.set((LPBYTE)&pMsg,0xA9,0x01,sizeof(pMsg));
 	pMsg.aIndex = lpObj->m_Index;
-	memcpy(pMsg.Name,lpObj->Name,sizeof(pMsg.Name)-1);
+	pMsg.Name[10] = 0;
+	memcpy(pMsg.Name,lpObj->Name,10);
 	cDBSMng.Send((char*)&pMsg,pMsg.h.size);
 
 	LogAddTD("[MarrySystem][%s][%s] Request Marry Info",lpObj->AccountID,lpObj->Name);
@@ -464,11 +466,16 @@ void DSSetMarryInfo(int aIndex){
 	
 	LPOBJ lpObj = &gObj[aIndex];
 
+
 	PMSG_SET_MARRYINFO pMsg;
 	pMsg.h.set((LPBYTE)&pMsg,0xA9,0x02,sizeof(pMsg));
 	pMsg.aIndex = lpObj->m_Index;
-	memcpy(pMsg.Name,lpObj->Name,sizeof(pMsg.Name)-1);
-	memcpy(pMsg.HusbandWife,lpObj->HusbandWifeName,sizeof(pMsg.HusbandWife)-1);
+	
+	pMsg.Name[10] = 0;
+	pMsg.HusbandWife[10] = 0;
+
+	memcpy(pMsg.Name,lpObj->Name,10);
+	memcpy(pMsg.HusbandWife,lpObj->HusbandWifeName,10);
 	cDBSMng.Send((char*)&pMsg,pMsg.h.size);
 
 	LogAddTD("[MarrySystem][%s][%s] Set Marry Info",lpObj->AccountID,lpObj->Name);
@@ -486,6 +493,9 @@ void DSDeleteMarryInfo(int aIndex){
 	PMSG_SET_MARRYINFO pMsg;
 	pMsg.h.set((LPBYTE)&pMsg,0xA9,0x03,sizeof(pMsg));
 	pMsg.aIndex = lpObj->m_Index;
+	
+	pMsg.Name[10] = 0;
+	pMsg.HusbandWife[10] = 0;
 	memcpy(pMsg.Name,lpObj->Name,sizeof(pMsg.Name)-1);
 	memcpy(pMsg.HusbandWife,lpObj->HusbandWifeName,sizeof(pMsg.HusbandWife)-1);
 	cDBSMng.Send((char*)&pMsg,pMsg.h.size);
@@ -523,7 +533,9 @@ void DSGetExtremePoints(int aIndex){
 	PMSG_REQ_EXTREMEPOINTS pMsg;
 	pMsg.h.set((LPBYTE)&pMsg,0xA8,0x01,sizeof(pMsg));
 	pMsg.aIndex = lpObj->m_Index;
-	memcpy(pMsg.Account,lpObj->AccountID,sizeof(pMsg.Account)-1);
+	
+	pMsg.Account[10] = 0;
+	memcpy(pMsg.Account,lpObj->AccountID,10);
 	cDBSMng.Send((char*)&pMsg,pMsg.h.size);
 
 	LogAddTD("[GetExtremePoints][%s][%s] Request Extreme Points",lpObj->AccountID,lpObj->Name);
@@ -542,7 +554,8 @@ void DSSaveExtremePoints(int aIndex){
 	pMsg.h.set((LPBYTE)&pMsg,0xA8,0x02,sizeof(pMsg));
 	pMsg.aIndex = lpObj->m_Index;
 	pMsg.Points = lpObj->ExtremePoints;
-	memcpy(pMsg.Account,lpObj->AccountID,sizeof(pMsg.Account)-1);
+	pMsg.Account[10] = 0;
+	memcpy(pMsg.Account,lpObj->AccountID,10);
 	cDBSMng.Send((char*)&pMsg,pMsg.h.size);
 
 	LogAddTD("[SaveExtremePoints][%s][%s] Save Extreme Points %d",lpObj->AccountID,lpObj->Name,lpObj->ExtremePoints);
@@ -573,7 +586,8 @@ void DGJoinGensRequest(int aIndex, int GensType){
 	pMsg.Type = GensType;
 	pMsg.GuildNumber = lpObj->GuildNumber;
 	pMsg.aIndex = aIndex;
-	memcpy(pMsg.Name,lpObj->Name,sizeof(pMsg.Name)-1);
+	pMsg.Name[10] = 0;
+	memcpy(pMsg.Name,lpObj->Name,10);
 	LogAddTD("[GensSystem][%s][%s] Enter Gens Request %d",lpObj->AccountID,lpObj->Name,GensType);
 	
 	cDBSMng.Send((char*)&pMsg,pMsg.h.size);
@@ -677,7 +691,8 @@ void DGUpdateGensInfo(int aIndex){
 		pMsg.Rank = lpObj->GensRank;
 		pMsg.Prize = lpObj->GensPrize;
 		pMsg.aIndex = aIndex;
-		memcpy(pMsg.Name,lpObj->Name,sizeof(pMsg.Name)-1);
+		pMsg.Name[10] = 0;
+		memcpy(pMsg.Name,lpObj->Name,10);
 		LogAddTD("[GensSystem][%s][%s] Save Gens Information %d,%d",lpObj->AccountID,lpObj->Name,lpObj->GensFamily,lpObj->GensRank);
 	
 		cDBSMng.Send((char*)&pMsg,pMsg.h.size);
@@ -704,7 +719,8 @@ void DGDeleteGensInfo(int aIndex){
 	pMsg.h.set((LPBYTE)&pMsg,0xB9,0x03,sizeof(pMsg));
 
 	pMsg.aIndex = aIndex;
-	memcpy(pMsg.Name,lpObj->Name,sizeof(pMsg.Name)-1);
+	pMsg.Name[10] = 0;
+	memcpy(pMsg.Name,lpObj->Name,10);
 	LogAddTD("[GensSystem][%s][%s] Leave Gens Family %d,%d",lpObj->AccountID,lpObj->Name,lpObj->GensFamily,lpObj->GensRank);
 	
 	cDBSMng.Send((char*)&pMsg,pMsg.h.size);
@@ -730,7 +746,8 @@ void DGGetGensInfo(int aIndex){
 	pMsg.h.set((LPBYTE)&pMsg,0xB9,0x01,sizeof(pMsg));
 
 	pMsg.aIndex = aIndex;
-	memcpy(pMsg.Name,lpObj->Name,sizeof(pMsg.Name)-1);
+	pMsg.Name[10] = 0;
+	memcpy(pMsg.Name,lpObj->Name,10);
 	LogAddTD("[GensSystem][%s][%s] Request Gens Information",lpObj->AccountID,lpObj->Name);
 	
 	cDBSMng.Send((char*)&pMsg,pMsg.h.size);
@@ -766,7 +783,8 @@ void JGPQuestManagerList(int aIndex){
 	pMsg.h.set((LPBYTE)&pMsg,0xB5,sizeof(pMsg));
 
 	pMsg.aIndex = aIndex;
-	memcpy(pMsg.Name,lpObj->Name,sizeof(pMsg.Name)-1);
+	pMsg.Name[10] = 0;
+	memcpy(pMsg.Name,lpObj->Name,10);
 	LogAddTD("[QuestManager][%s][%s] Get Quest List",lpObj->AccountID,lpObj->Name);
 	
 	cDBSMng.Send((char*)&pMsg,pMsg.h.size);
@@ -794,7 +812,8 @@ void DGDeleteQuestList(int aIndex, int Type, int Index){
 	pMsg.h.set((LPBYTE)&pMsg,0xB7,sizeof(pMsg));
 
 	pMsg.aIndex = aIndex;
-	memcpy(pMsg.Name,lpObj->Name,sizeof(pMsg.Name)-1);
+	pMsg.Name[10] = 0;
+	memcpy(pMsg.Name,lpObj->Name,10);
 	pMsg.Type = Type;
 	pMsg.Index = Index;
 	LogAddTD("[QuestManager][%s][%s] Quest Deleted %d,%d",lpObj->AccountID,lpObj->Name,Type,Index);
@@ -817,7 +836,8 @@ void DGInsertQuestList(int aIndex, int Type, int Index){
 	pMsg.h.set((LPBYTE)&pMsg,0xB8,sizeof(pMsg));
 
 	pMsg.aIndex = aIndex;
-	memcpy(pMsg.Name,lpObj->Name,sizeof(pMsg.Name)-1);
+	pMsg.Name[10] = 0;
+	memcpy(pMsg.Name,lpObj->Name,10);
 	pMsg.Type = Type;
 	pMsg.Index = Index;
 	LogAddTD("[QuestManager][%s][%s] Quest Added %d,%d",lpObj->AccountID,lpObj->Name,Type,Index);
@@ -893,7 +913,9 @@ void DGQuestManagerSaveList(int aIndex){
 	}
 
 	pMsg.aIndex = aIndex;
-	memcpy(pMsg.szName,lpObj->Name,sizeof(pMsg.szName)-1);
+	
+	pMsg.szName[10] = 0;
+	memcpy(pMsg.szName,lpObj->Name,10);
 	
 	cDBSMng.Send((char*)&pMsg,pMsg.h.size);
 
