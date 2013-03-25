@@ -1137,7 +1137,7 @@ void JGPGetCharList(BYTE *lpRecv)
 		return;
 	}
 
-	gObj[aIndex].Magumsa = lpCount->Magumsa;
+	gObj[aIndex].Magumsa =  lpCount->Magumsa;
 	pCLCount.MaxClass = gObj[aIndex].Magumsa+2;
 	pCLCount.MaxClass += 1; //Summoner Slot
 	pCLCount.MoveCnt = lpCount->MoveCnt;

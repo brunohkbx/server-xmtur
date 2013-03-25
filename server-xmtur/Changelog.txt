@@ -17,10 +17,15 @@
  - Varios Fixes en otros Detalles
  - Removidos Mensajes del Siege y Deep Event
  - Fixed DuelManager::MoveDuelers (Change Player1 to Player2 in Var Definition)
+ 
+25/03/2013
+ - Fixed Summon del DL
 
 //////////////////////////////////////////////////////////////////////////////
 //  Bugs Pendientes
 
  - Falta Agregar Medussa Event (Plugin 1.00.90 XTR)
  - Season5 CashShop
+ - Comprobar creacion de DL, MG y Summoner
+		Posible error en linea 483 user.h y linea 024 DSProtocol.h
  
