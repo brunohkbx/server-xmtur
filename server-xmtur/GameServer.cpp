@@ -543,7 +543,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					break;
 				case WM_SECOND_MSG_PROCESS:
 					{
-						/*for (int n=0; n < MAX_NUMBER_MAP;n++){
+						for (int n=0; n < MAX_NUMBER_MAP;n++){
 							MapC[n].WeatherVariationProcess();
 						}
 
@@ -556,7 +556,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 						DragonEvent->Run();
 						AttackEvent->Run();
 						gEledoradoEvent.Run();
-						g_EventManager.Run();*/
+						g_EventManager.Run();
 					}
 					break;
 				case WM_GS_CLOSE:

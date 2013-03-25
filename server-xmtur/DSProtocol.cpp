@@ -2206,6 +2206,12 @@ void GJSetCharacterInfo(LPOBJ lpObj, int aIndex, BOOL bMapServerMove)
 		GDSetWarehouseList(aIndex);
 	}
 
+	//Fix Max Zen
+	if(lpObj->Money > 2000000000 || lpObj->Money < 0){
+		LogAddTD("[SaveCharInfo][%s][%s] Fix Money Amount",lpObj->AccountID,lpObj->Name);
+		lpObj->Money = 2000000000;
+	}
+
 	SDHP_DBCHAR_INFOSAVE pCSave;
  
 	pCSave.h.c = 0xC2;

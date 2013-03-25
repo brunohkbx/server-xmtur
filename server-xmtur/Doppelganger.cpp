@@ -718,10 +718,11 @@ void CDoppelganger::ClearMonsters()
 {
 	int Map = this->EventMap - 65;
 
-	for(int X=0; X < this->MonstersCount;X++){
+	for(int X=0; X < DOPPELGANGER_MAX_MONSTERS;X++){
 		if(this->CurrentMonster[X] > 0){
 			if(gObj[this->CurrentMonster[X]].MapNumber == this->EventMap){
 				gObjDel(this->CurrentMonster[X]);
+				this->CurrentMonster[X] = -1;
 			}
 		}
 	}
@@ -731,6 +732,7 @@ void CDoppelganger::ClearMonsters()
 		if(this->Larvas[X] > 0){
 			if(gObj[this->Larvas[X]].MapNumber == this->EventMap){
 				gObjDel(this->Larvas[X]);
+				this->Larvas[X] = -1;
 			}
 		}
 	}
@@ -740,6 +742,7 @@ void CDoppelganger::ClearMonsters()
 		if(this->SiverChestIndex[X] != NULL){
 			if(gObj[this->SiverChestIndex[X]].MapNumber == this->EventMap){
 				gObjDel(this->SiverChestIndex[X]);
+				this->SiverChestIndex[X] = -1;
 			}
 		}
 	}
@@ -748,15 +751,13 @@ void CDoppelganger::ClearMonsters()
 		if(this->MonsterBoss[X] != NULL){
 			if(gObj[this->MonsterBoss[X]].MapNumber == this->EventMap){
 				gObjDel(this->MonsterBoss[X]);
+				this->MonsterBoss[X] = -1;
 			}
 		}
 	}
 	
-	memset(this->CurrentMonster,-1,sizeof(this->CurrentMonster));
-	memset(this->MonsterBoss,-1,sizeof(this->MonsterBoss));
-	memset(this->SiverChestIndex,-1,sizeof(this->SiverChestIndex));
-	memset(this->Larvas,-1,sizeof(this->Larvas));
 	this->GoldenChestIndex = -1;
+	this->MonstersCount = 0;
 
 	LogAddTD("[Doppelganger] Monster Cleared");
 }
@@ -765,9 +766,9 @@ void CDoppelganger::MonstersProcess(){
 
 	int MapNumber = this->EventMap - 65;
 	int Monster = 533;
-	if(this->MonstersCount < 50){
+	if(this->MonstersCount < DOPPELGANGER_MAX_MONSTERS){
 
-		for(int i=0; i < 50;i++){
+		for(int i=0; i < DOPPELGANGER_MAX_MONSTERS;i++){
 
 			Monster++;
 			if(Monster == 540) Monster = 533;
