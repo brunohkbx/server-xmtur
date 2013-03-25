@@ -480,7 +480,7 @@ struct OBJECTSTRUCT
 
 	DWORD	ukn_30; //
 
-	BYTE	Magumsa;
+	unsigned char	Magumsa;
 
 	DWORD	AutoSaveTime;
 
