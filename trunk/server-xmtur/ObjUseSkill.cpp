@@ -2689,22 +2689,18 @@ void CObjUseSkill::SkillRecallParty(int aIndex, int skill_level) //
 
 					if(g_CastleSiege.GetCastleState() == CASTLESIEGE_STATE_STARTSIEGE)
 					{
-						if(lpPartyObj->m_btCsJoinSide != lpObj->m_btCsJoinSide)
-						{
+						if(lpPartyObj->m_btCsJoinSide != lpObj->m_btCsJoinSide){
 							continue;
 						}
 					}
 
 					int movelevel = gMoveCommand.GetMoveLevel(lpObj->MapNumber,lpObj->X,lpObj->Y,lpPartyObj->Class);
-					int bCheckMainToMove = gMoveCommand.CheckMainToMove(lpPartyObj);
-					int bCheckEquipmentToMove = gMoveCommand.CheckEquipmentToMove(lpPartyObj,lpObj->MapNumber);
-					int bCheckInterfaceToMove = gMoveCommand.CheckInterfaceToMove(lpPartyObj);
+					BOOL bCheckMainToMove = gMoveCommand.CheckMainToMove(lpPartyObj);
+					BOOL bCheckEquipmentToMove = gMoveCommand.CheckEquipmentToMove(lpPartyObj,lpObj->MapNumber);
+					BOOL bCheckInterfaceToMove = gMoveCommand.CheckInterfaceToMove(lpPartyObj);
 
-					if(lpPartyObj->Level >= movelevel
-						&& movelevel != -1
-						&& bCheckMainToMove != false
-						&& bCheckEquipmentToMove != false
-						&& bCheckInterfaceToMove != false)
+					if(lpPartyObj->Level >= movelevel && movelevel >= 0 && bCheckMainToMove != FALSE
+					&& bCheckEquipmentToMove != FALSE && bCheckInterfaceToMove != FALSE)
 					{
 						int addx;
 						int addy;

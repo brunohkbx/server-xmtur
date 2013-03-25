@@ -13,6 +13,8 @@
 #include "CashItemPeriodSystem.h"
 #include "IllusionTempleEvent.h"
 #include "RaklionBattleUserMng.h"
+#include "ImperialGuardian.h"
+#include "Doppelganger.h"
 
 CMoveCommand gMoveCommand;
 
@@ -259,6 +261,17 @@ BOOL CMoveCommand::CheckMainToMove(LPOBJ lpObj)
 	}
 
 
+	if ( DOPPELGANGER_MAP_RANGE(lpObj->MapNumber) != FALSE )
+	{
+		return FALSE;
+	}
+
+	
+	if ( IMPERIAL_MAP_RANGE(lpObj->MapNumber) != FALSE )
+	{
+		return FALSE;
+	}
+
 	if ( lpObj->MapNumber == MAP_INDEX_KANTURU_BOSS )
 	{
 		return FALSE;
@@ -331,12 +344,12 @@ BOOL CMoveCommand::CheckEquipmentToMove(LPOBJ lpObj, int iTargetMapNumber)
 
 BOOL CMoveCommand::CheckInterfaceToMove(LPOBJ lpObj)
 {
-	if ( lpObj->m_IfState.use == 1 )
+	if(lpObj->m_IfState.use == 1)
 	{
 		return FALSE;
 	}
 
-	if ( lpObj->m_bPShopOpen == true )
+	if(lpObj->m_bPShopOpen == TRUE)
 	{
 		return FALSE;
 	}

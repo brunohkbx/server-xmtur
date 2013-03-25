@@ -1,4 +1,4 @@
-
+#define DOPPELGANGER_MAX_MONSTERS 40
 #define DOPPELGANGER_MAP_RANGE(mapnumber) ( ((mapnumber) < MAP_INDEX_DOPPELGANGER1)?FALSE:((mapnumber) > MAP_INDEX_DOPPELGANGER4 )?FALSE:TRUE )
 
 struct MONSTERS_INFO
@@ -107,7 +107,7 @@ public:
 	//int MonstersCount[4];
 	int MonstersCount;
 	int MonsterPassed;
-	int CurrentMonster[255];
+	int CurrentMonster[DOPPELGANGER_MAX_MONSTERS];
 
 	int SiverChestIndex[2];
 	int GoldenChestIndex;

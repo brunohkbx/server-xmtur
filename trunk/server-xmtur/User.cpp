@@ -14147,38 +14147,46 @@ void gObjViewportClose(LPOBJ lpObj)
 	gObjClearViewport(lpObj);
 }
 
+
 void gObjViewportListCreate(short aIndex)
 {
 	int result,n;
 	LPOBJ lpObj;
 	int mapnum;
 
-	if(OBJMAX_RANGE(aIndex) == 0){
+	if(OBJMAX_RANGE(aIndex) == 0)
+	{
 		return;
 	}
 
-	if(gObj[aIndex].Connected < PLAYER_PLAYING){
+	lpObj = &gObj[aIndex];
+
+	if(lpObj->Connected < PLAYER_PLAYING)
+	{
 		return;
 	}
 
-	if(gObj[aIndex].RegenOk > 0){
+	if(lpObj->RegenOk > 0)
+	{
 		return;
 	}
 
-	mapnum = gObj[aIndex].MapNumber;
+	mapnum = lpObj->MapNumber;
 	gItemLoop2 = 0;
 
-	if(gObj[aIndex].Type == OBJ_USER)
+	if(lpObj->Type == OBJ_USER)
 	{
+		MapClass * lpMap = &MapC[mapnum];
+
 		for(n = 0; n < MAX_MAPITEM; n++)
 		{
-			if(MapC[mapnum].m_cItem[n].live)
+			if(lpMap->m_cItem[n].live)
 			{
 				gItemLoop2++;
 
-				if(MapC[mapnum].m_cItem[n].m_State == 1 || MapC[mapnum].m_cItem[n].m_State == 2)
+				if(lpMap->m_cItem[n].m_State == 1 || lpMap->m_cItem[n].m_State == 2)
 				{
-					if(gObjCheckViewport(aIndex,MapC[mapnum].m_cItem[n].px,MapC[mapnum].m_cItem[n].py) == 1)
+					if(gObjCheckViewport(aIndex,lpMap->m_cItem[n].px,lpMap->m_cItem[n].py) == 1)
 					{
 						result = ViewportAdd(aIndex,n,5);
 					}
@@ -14195,36 +14203,41 @@ void gObjViewportListCreate(short aIndex)
 	}
 
 	int a = 1;
-	
-	if(gObj[aIndex].Type == OBJ_USER)
+	LPOBJ lpTempObj;
+
+	if(lpObj->Type == OBJ_USER 	)
 	{
-		for(n = 0; n < OBJMAX;n++){
-			if(gObj[n].Connected == PLAYER_PLAYING && aIndex != n)
+		for(n = 0; n < OBJMAX; n++)
+		{
+			lpTempObj = &gObj[n];
+
+			if(lpTempObj->Connected == PLAYER_PLAYING && aIndex != n)
 			{
-				if(gObj[n].m_State == 1 || gObj[n].m_State == 2)
+				if(lpTempObj->m_State == 1 || lpTempObj->m_State == 2)
 				{
-					if(mapnum == gObj[n].MapNumber)
+					if(mapnum == lpTempObj->MapNumber)
 					{
-						if(gObjCheckViewport(aIndex,gObj[n].X,gObj[n].Y) == 1)
+						if(gObjCheckViewport(aIndex,lpTempObj->X,lpTempObj->Y) == 1)
 						{
-							result = ViewportAdd(aIndex,n,gObj[n].Type);
+							result = ViewportAdd(aIndex,n,lpTempObj->Type);
 							result = ViewportAdd2(n,aIndex,gObj[aIndex].Type);
 						}
 					}
 				}
 			}
 		}
-	} else if(gObj[aIndex].Type == OBJ_MONSTER || gObj[aIndex].Type == OBJ_NPC)
-	{
+	} else if(lpObj->Type == OBJ_MONSTER || lpObj->Type == OBJ_NPC){
 		for(n = OBJ_MAXMONSTER; n < OBJMAX; n++)
 		{
-			if(gObj[n].Connected == PLAYER_PLAYING && aIndex != n)
+			lpTempObj = &gObj[n];
+
+			if(lpTempObj->Connected == PLAYER_PLAYING && aIndex != n)
 			{
-				if(gObj[n].m_State == 1 || gObj[n].m_State == 2)
+				if(lpTempObj->m_State == 1 || lpTempObj->m_State == 2)
 				{
-					if(mapnum == gObj[n].MapNumber)
+					if(mapnum == lpTempObj->MapNumber)
 					{
-						if(gObjCheckViewport(aIndex,gObj[n].X,gObj[n].Y) == 1)
+						if(gObjCheckViewport(aIndex,lpTempObj->X,lpTempObj->Y) == 1)
 						{
 							result = ViewportAdd(aIndex,n,gObj[n].Type);
 							result = ViewportAdd2(n,aIndex,gObj[aIndex].Type);
@@ -15331,7 +15344,16 @@ void gObjSetState()
 							lpObj->MapNumber = MAP_INDEX_DEVIAS;
 							MapC[lpObj->MapNumber].GetMapPos(lpObj->MapNumber,(short &)lpObj->X,(short &)lpObj->Y);
 						}
- 
+						else if(IMPERIAL_MAP_RANGE(lpObj->MapNumber))
+						{
+							lpObj->MapNumber = MAP_INDEX_DEVIAS;
+							MapC[lpObj->MapNumber].GetMapPos(lpObj->MapNumber,(short &)lpObj->X,(short &)lpObj->Y);
+						}
+						else if(DOPPELGANGER_MAP_RANGE(lpObj->MapNumber))
+						{
+							lpObj->MapNumber = MAP_INDEX_ELBELAND;
+							MapC[lpObj->MapNumber].GetMapPos(lpObj->MapNumber,(short &)lpObj->X,(short &)lpObj->Y);
+						}
 						else if(lpObj->MapNumber == MAP_INDEX_CASTLEHUNTZONE)
 						{
 							int mgt = 106;

@@ -46,9 +46,9 @@ public:
 	int Load(char* filename);
 	int LoadMoveLevel(char* filename);
 	int GetMoveLevel(int mapnumber, int x, int y, int Class);
-	int CheckMainToMove(LPOBJ lpObj);
-	int CheckEquipmentToMove(LPOBJ lpObj, int iTargetMapNumber);
-	int CheckInterfaceToMove(LPOBJ lpObj);
+	BOOL CheckMainToMove(LPOBJ lpObj);
+	BOOL CheckEquipmentToMove(LPOBJ lpObj, int iTargetMapNumber);
+	BOOL CheckInterfaceToMove(LPOBJ lpObj);
 	int Move(LPOBJ lpObj, char* mapname);
 	int MoveFree2Kalima(LPOBJ lpObj);
 	BOOL CheckMoveMapBound(int iMapIndex);
