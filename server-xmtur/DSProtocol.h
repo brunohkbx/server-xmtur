@@ -21,7 +21,7 @@ struct SDHP_CHARLISTCOUNT
 	short Number;	// 4
 	BYTE Count;	// 6
 	int DbNumber;	// 8
-	unsigned char Magumsa;	// C
+	BYTE Magumsa;	// C
 	char AccountId[11];	// D
 	BYTE MoveCnt;	// 18
 };

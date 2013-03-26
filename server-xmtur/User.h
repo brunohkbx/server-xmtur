@@ -201,8 +201,8 @@ enum STAT_FRUIT_USING_RESULT {
 #define OBJ_NPC	3
 #define MAX_PARTY_LEVEL_DIFFERENCE	130
 #define MAX_MAGIC 60
-#define MAX_VIEWPORT 75
-#define MAX_VIEWPORT_MONSTER 75
+#define MAX_VIEWPORT 30
+#define MAX_VIEWPORT_MONSTER 30
 #define MAX_ROAD_PATH_TABLE 16
 #define PLAYER_EMPTY  0
 #define PLAYER_CONNECTED 1
@@ -480,7 +480,7 @@ struct OBJECTSTRUCT
 
 	DWORD	ukn_30; //
 
-	unsigned char	Magumsa;
+	BYTE	Magumsa;
 
 	DWORD	AutoSaveTime;
 
