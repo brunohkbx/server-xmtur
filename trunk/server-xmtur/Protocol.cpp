@@ -14228,6 +14228,7 @@ void GCSendDuelScore(int aIndex1, int aIndex2)
 
 void GCSendGetItemInfoForParty(int aIndex, CMapItem * lpItem) 
 {
+
 	LPOBJ lpObj = &gObj[aIndex];
 
 	if ( lpObj->PartyNumber >= 0)

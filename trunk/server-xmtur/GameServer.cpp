@@ -51,6 +51,24 @@ CWhatsUpDummyServer gWhatsUpDummyServer;
 void GameServer_FirstMsg(void * lpParam){
 	while(TRUE){
 
+		for(int n = 0; n < OBJMAX; n++)
+		{
+			gObjStateSetCreate(n);
+			gObjViewportListDestroy(n);
+			gObjViewportListCreate(n);
+			gObjViewportListProtocol(n);
+
+			if(gObj[n].Type == OBJ_USER && gObj[n].Connected == PLAYER_PLAYING){
+				
+				gObjUnionUpdateProc(n);
+			
+				if(Configs.DoPShopOpen != FALSE){
+					PShop_ViewportListRegenarate(n);
+					gObj[n].m_bPShopItemChange = FALSE;
+				}
+			}
+		}
+
 		gObjSetState();
 		GameServerInfoSend();
 
