@@ -90,7 +90,7 @@ void CImperialGuardian::EnterEvent(int aIndex){
 		return;
 	}
 
-	if(this->State!= IMPERIAL_NONE){
+	if(this->BattleStatus != IMPERIAL_NONE){
 		pMsg.Result = 1;
 		pMsg.EntryTime = ((this->Timer / 60) / 1000);
 		DataSend(aIndex, (LPBYTE)&pMsg, pMsg.h.size);
@@ -247,10 +247,9 @@ void CImperialGuardian::SendTimer(){
 		this->Timer -= 1; //Resta tiempo al Timer
 	}
 
-
 	if(this->Timer == 0){
 
-		if(this->BattleStatus == IMPERIAL_STANDBY ){
+		if(this->BattleStatus == IMPERIAL_STANDBY){
 			this->SetState(IMPERIAL_START); 
 		} else {
 			LogAddTD("[ImperialGuardian] Time is Over");
@@ -682,19 +681,17 @@ void CImperialGuardian::LoadMonsters()
 
 	int MapGroup = 0;
 	
-	while(true){
+	while(TRUE){
 		
-		Token = GetToken();
+		Token = (SMDToken)GetToken();
 		int MapGroup = (int)TokenNumber;
-			
-		if(Token == 2) break;
-		if(!strcmp("end",TokenString)) break; 
+		if(Token == END) break;
 
 		if(Token == 1)
 		{
 			int Number = 0;
 
-			while(true){
+			while(TRUE){
 				
 				if(MapGroup < 7){
 
@@ -722,7 +719,6 @@ void CImperialGuardian::LoadMonsters()
 	}
 
 	fclose(SMDFile);
-
 	LogAddTD("[ImperialGuardian] ..\\Data\\Events\\ImperialGuardian_Monsters.dat file Loaded"); 
 }
 

@@ -194,20 +194,14 @@ enum STAT_FRUIT_USING_RESULT {
 #define R_WIND			5
 #define R_WATER			6
 
-
 #define OBJ_EMPTY -1
 #define OBJ_MONSTER 2
 #define OBJ_USER 1
 #define OBJ_NPC	3
 #define MAX_PARTY_LEVEL_DIFFERENCE	130
 #define MAX_MAGIC 60
-<<<<<<< .mine
 #define MAX_VIEWPORT 75
-#define MAX_VIEWPORT_MONSTER 20
-=======
-#define MAX_VIEWPORT 30
-#define MAX_VIEWPORT_MONSTER 30
->>>>>>> .r30
+#define MAX_VIEWPORT_MONSTER 75
 #define MAX_ROAD_PATH_TABLE 16
 #define PLAYER_EMPTY  0
 #define PLAYER_CONNECTED 1
@@ -558,7 +552,7 @@ struct OBJECTSTRUCT
 	float	Mana;
 	float	MaxMana;
 
-	WORD	Leadership;
+	unsigned short	Leadership;
 	WORD	AddLeadership;
 
 	WORD	ChatLitmitTime;

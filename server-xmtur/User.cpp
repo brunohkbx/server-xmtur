@@ -14864,25 +14864,6 @@ void gObjSetState()
 	{
 		lpObj = &gObj[n];
 
-		//Agregado por Zero!
-		if(lpObj->Connected == PLAYER_PLAYING){
-
-			gObjStateSetCreate(lpObj->m_Index);
-			gObjViewportListDestroy(lpObj->m_Index);
-			gObjViewportListCreate(lpObj->m_Index);
-			gObjViewportListProtocol(lpObj->m_Index);
-
-			if(lpObj->Type == OBJ_USER){
-				
-				gObjUnionUpdateProc(lpObj->m_Index);
-			
-				if(Configs.DoPShopOpen != FALSE){
-					PShop_ViewportListRegenarate(lpObj->m_Index);
-					lpObj->m_bPShopItemChange = FALSE;
-				}
-			}
-		}
-
 		if(lpObj->Connected > PLAYER_LOGGED)
 		{
 			if(lpObj->m_State == 1)
