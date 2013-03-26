@@ -2694,13 +2694,13 @@ void CObjUseSkill::SkillRecallParty(int aIndex, int skill_level) //
 						}
 					}
 
-					//int movelevel = gMoveCommand.GetMoveLevel(lpPartyObj->MapNumber,lpPartyObj->X,lpPartyObj->Y,lpPartyObj->Class);
+					int movelevel = gMoveCommand.GetMoveLevel(lpPartyObj->MapNumber,lpPartyObj->X,lpPartyObj->Y,lpPartyObj->Class);
 					BOOL bCheckMainToMove = gMoveCommand.CheckMainToMove(lpPartyObj);
 					BOOL bCheckEquipmentToMove = gMoveCommand.CheckEquipmentToMove(lpPartyObj,lpObj->MapNumber);
 					BOOL bCheckInterfaceToMove = gMoveCommand.CheckInterfaceToMove(lpPartyObj);
 
 
-					if(/*lpPartyObj->Level >= movelevel && movelevel >= 0 &&*/ bCheckMainToMove != FALSE
+					if(lpPartyObj->Level >= movelevel && movelevel >= 0 && bCheckMainToMove != FALSE
 					&& bCheckEquipmentToMove != FALSE && bCheckInterfaceToMove != FALSE)
 					{
 						int addx;
