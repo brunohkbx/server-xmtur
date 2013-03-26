@@ -124,15 +124,15 @@ void MapClass::GetMapPos(short Map, short& ox, short& oy)
 		{
 			Map = 33;
 		}
-		if ( Map == 34 )
+		else if ( Map == 34 )
 		{
 			Map = 34;
 		}
-		if( Map == 51)
+		else if( Map == 51)
 		{
 			Map = 51;
 		}
-		if( Map > 4 && Map != 7 )
+		else if( Map > 4 && Map != 7 )
 		{
 			Map = 0;
 		}

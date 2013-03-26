@@ -2957,13 +2957,13 @@ void ItemSerialCreateRecv(SDHP_ITEMCREATERECV * lpMsg)
 
 			BYTE btItemPos = gObjInventoryInsertItem(lpMsg->aIndex, pCreateItem);
 
-			g_PropItems.MakePropertyItem(&gObj[lpMsg->aIndex],(CItem *)&pCreateItem,lpMsg->lootindex);
+			//g_PropItems.MakePropertyItem(&gObj[lpMsg->aIndex],(CItem *)&pCreateItem,lpMsg->lootindex);
 
 			if(btItemPos == (BYTE)-1){
 				LogAddTD("[CashShop] Error : Failed To Insert Item Type:%d, TypeIndex:%d to [%s][%s]", iItemType, iItemIndex, gObj[lpMsg->aIndex].AccountID, gObj[lpMsg->aIndex].Name);
 			} else{
 				GCInventoryItemOneSend(lpMsg->aIndex, btItemPos);
-				g_PropItems.SendPropertyInfo(&gObj[lpMsg->aIndex],pCreateItem.m_Type,pCreateItem.m_Number,btItemPos);
+				//g_PropItems.SendPropertyInfo(&gObj[lpMsg->aIndex],pCreateItem.m_Type,pCreateItem.m_Number,btItemPos);
 			}
 		}
 	}

@@ -4101,7 +4101,7 @@ void CGInventoryItemMove(PMSG_INVENTORYITEMMOVE * lpMsg, int aIndex) //00446250
 		result = gObjInventoryMoveItem(aIndex, source, target, DurSSend, DurTSend, lpMsg->sFlag, lpMsg->tFlag, (LPBYTE)&ItemInfo);
 		::GCItemMoveResultSend(aIndex, result, target, (LPBYTE)&ItemInfo);
 
-		if(lpMsg->tFlag == 2){
+		/*if(lpMsg->tFlag == 2){
 			if(gObj[aIndex].pWarehouse[target].m_ExpirationItem == 1){
 				g_PropItems.SendPropertyInfo(&gObj[aIndex], 
 				gObj[aIndex].pWarehouse[target].m_Type,
@@ -4113,7 +4113,7 @@ void CGInventoryItemMove(PMSG_INVENTORYITEMMOVE * lpMsg, int aIndex) //00446250
 				gObj[aIndex].pInventory[target].m_Type,
 				gObj[aIndex].pInventory[target].m_Number, target);
 			}
-		}
+		}*/
 
 		if ( DurSSend != FALSE )
 			::GCItemDurSend(aIndex, source, lpObj->pInventory[source].m_Durability, FALSE);
@@ -14317,8 +14317,7 @@ void GCSendEffectInfo(int aIndex, BYTE btType)
 
 void CGRequestPetItemCommand(PMSG_REQUEST_PET_ITEM_COMMAND * lpMsg, int aIndex) 
 {
-	if ( !gObjIsConnectedGP(aIndex))
-	{
+	if(!gObjIsConnected(aIndex)){
 		LogAddTD("error-L2 : Index %s %d", __FILE__, __LINE__);
 		return;
 	}

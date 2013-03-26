@@ -201,8 +201,13 @@ enum STAT_FRUIT_USING_RESULT {
 #define OBJ_NPC	3
 #define MAX_PARTY_LEVEL_DIFFERENCE	130
 #define MAX_MAGIC 60
+<<<<<<< .mine
+#define MAX_VIEWPORT 75
+#define MAX_VIEWPORT_MONSTER 20
+=======
 #define MAX_VIEWPORT 30
 #define MAX_VIEWPORT_MONSTER 30
+>>>>>>> .r30
 #define MAX_ROAD_PATH_TABLE 16
 #define PLAYER_EMPTY  0
 #define PLAYER_CONNECTED 1
@@ -1137,45 +1142,7 @@ struct OBJECTSTRUCT
 
 typedef OBJECTSTRUCT * LPOBJ;
 
-class BILL_CLASS
-{
-public:
-
-	BILL_CLASS();
-	void Init();
-
-	BOOL SetBill(BYTE certify_type, BYTE pay, DWORD end_time, char* ends_days)	// line : 228
-	{
-		BOOL bRet=0;
-
-		if ( this->cCertifyType == -1 )
-		{
-			bRet = 1;
-		}
-
-		this->cCertifyType = certify_type;
-		this->PayCode = pay;
-		this->EndTime = end_time;
-		strcpy(this->EndsDays, ends_days);
-		return bRet;
-	}
-
-	BYTE GetPayCode() {return this->PayCode;}
-	char* GetEndsDays() {return &this->EndsDays[0];}
-	int GetEndTime() { return this->EndTime;}
-	int GetCertify() {return this->cCertifyType;}
-
-private:
-	char cCertifyType;	// 0
-	BYTE PayCode;	// 1
-	int EndTime;	// 4
-	char EndsDays[13];	// 8
-};
-
 #include "Protocol.h"
-
-//extern OBJECTSTRUCT gObj[OBJMAX];
-extern BILL_CLASS m_ObjBill[OBJMAX];
 
 extern int gObjCSFlag;
 extern int gItemLoop;
@@ -1183,7 +1150,6 @@ extern int gItemLoop2;
 extern int gItemLoopMax;
 extern int gObjTotalUser;
 extern int gDisconnect;
-extern int aaaaaaaaa;
 extern int gCurConnectUser; 
 extern int skillSuccess;
 extern int GuildInfoOfs;

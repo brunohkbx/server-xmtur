@@ -48,6 +48,16 @@ CRingAttackEvent g_RingAttackEvent;
 CXMasAttackEvent g_XMasAttackEvent;
 CWhatsUpDummyServer gWhatsUpDummyServer;
 
+void GameServer_FirstMsg(void * lpParam){
+	while(TRUE){
+
+		gObjSetState();
+		GameServerInfoSend();
+
+		Sleep(1000);
+	}
+}
+
 
 HINSTANCE hInst;
 HWND ghWnd;
@@ -165,7 +175,10 @@ BOOL GameServerStart(void)
 	CreateIOCP(Configs.GameServer_Port);
 
 	SetTimer(ghWnd, WM_LOG_PAINT, 2000, NULL);
-	SetTimer(ghWnd, WM_FIRST_MSG_PROCESS, 1000, NULL);
+
+	_beginthread(GameServer_FirstMsg,0,NULL);
+
+	//SetTimer(ghWnd, WM_FIRST_MSG_PROCESS, 1000, NULL);
 
 	SetTimer(ghWnd, WM_SET_DATE, 60000, NULL);
 	SetTimer(ghWnd, WM_LOG_DATE_CHANGE, 60000, NULL);
@@ -515,30 +528,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				case WM_AI_MONSTER_PROC:
 					TMonsterAI::MonsterAIProc();
 					break;
+
 				case WM_FIRST_MSG_PROCESS:
 					{
-						for(int n=0;n<OBJMAX;n++){
-							gObjStateSetCreate(n);
-							gObjViewportListDestroy(n);
-							gObjViewportListCreate(n);
-							gObjViewportListProtocol(n);
-						}
-
-						if(Configs.DoPShopOpen != FALSE){
-							for(int n= OBJ_STARTUSERINDEX;n<OBJMAX;n++){
-								PShop_ViewportListRegenarate(n);
-								if(gObjIsConnected(n) != PLAYER_EMPTY){
-									gObj[n].m_bPShopItemChange = false;
-								}
-							}
-						}
-
-						for(int n=OBJ_STARTUSERINDEX;n<OBJMAX;n++){
-							gObjUnionUpdateProc(n);
-						}
-
-						gObjSetState();
-						GameServerInfoSend();
+						
 					}
 					break;
 				case WM_SECOND_MSG_PROCESS:

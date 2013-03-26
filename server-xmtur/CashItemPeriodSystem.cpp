@@ -244,9 +244,6 @@ BOOL CCashItemPeriodSystem::SetPeriodItemEffect(LPOBJ lpObj, int iItemCode, BYTE
 }
 
 
-
-
-
 BOOL CCashItemPeriodSystem::ClearPeriodItemEffect(LPOBJ lpObj)
 {
 	int iItemInfoIndex =0 ;

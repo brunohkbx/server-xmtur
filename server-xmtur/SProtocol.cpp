@@ -269,26 +269,7 @@ void GJPAccountBlock(short number, LPSTR Id, int DBNumber, int UserNumber, int B
 //00438040  - identical
 void GJPBillCeckRecv(SDHP_BILLSEARCH_RESULT * lpMsg)
 {
-	int aIndex = lpMsg->Number ;
-	char szId[11];
-	char EndsDays[13];
-
-	szId[10] = 0;
-
-	memcpy(szId, lpMsg->Id, sizeof(lpMsg->Id));
-
-	if (gObjIsAccontConnect(aIndex, szId) == 0 )
-	{
-		return ;
-	}
-
-	memset(EndsDays, 0, sizeof(EndsDays));
-	memcpy(EndsDays, lpMsg->EndsDays, sizeof(lpMsg->EndsDays));
-
-	if ( m_ObjBill[aIndex].SetBill( lpMsg->cCertifyType , lpMsg->PayCode, lpMsg->EndTime , EndsDays) == TRUE )
-	{
-		gObjAddMsgSendDelay(&gObj[aIndex], 1000, aIndex, 100, 0);
-	}
+	return;
 }
 
 //00438140 - identical

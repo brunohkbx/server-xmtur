@@ -88,7 +88,7 @@ int CMasterLevelSystem::MasterLevelUp(LPOBJ lpObj, __int64 Experience)
 	if(Experience > 0)
 	{
 		gObjSetExpPetItem(lpObj->m_Index, Experience);
-		LogAddTD("ML Experience : Map[%d]-(%d,%d) [%s][%s](%d) %I64d %I64d", lpObj->MapNumber, lpObj->X, lpObj->Y, lpObj->AccountID, lpObj->Name, lpObj->MLevel, lpObj->MLExp, Experience);
+		//LogAddTD("ML Experience : Map[%d]-(%d,%d) [%s][%s](%d) %I64d %I64d", lpObj->MapNumber, lpObj->X, lpObj->Y, lpObj->AccountID, lpObj->Name, lpObj->MLevel, lpObj->MLExp, Experience);
 
 		if(lpObj->MLExp + Experience < lpObj->MLNextExp)
 		{

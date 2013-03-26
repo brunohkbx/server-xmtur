@@ -113,12 +113,10 @@ OBJECTSTRUCT_CLASS::OBJECTSTRUCT_CLASS() // (0050F940 -> classes related)
 OBJECTSTRUCT_CLASS::~OBJECTSTRUCT_CLASS() // (0050FA10 -> classes related)
 {
 	delete	[]	ObjectStruct; // memory freed up
-	ObjectStruct	=	NULL; // pointer changed to 0
+	ObjectStruct = NULL; // pointer changed to 0
 }
 
 OBJECTSTRUCT_CLASS	g_OBJECTSTRUCT_CLASS; //extern
-
-BILL_CLASS m_ObjBill[OBJMAX];
 
 HANDLE hThread_gObjMove;
 BYTE gObjMonsterInventoryInsertItem(LPOBJ lpObj, int type, int index, int level, int op1=0, int op2=0, int op3=0);
@@ -1714,19 +1712,6 @@ TMonsterSkillElementInfo::TMonsterSkillElementInfo()
 	this->Reset();
 }
 
-BILL_CLASS::BILL_CLASS()
-{
-	this->Init();
-}
-
-void BILL_CLASS::Init()
-{
-	this->cCertifyType=-1;
-	this->PayCode=0;
-	this->EndTime=0;
-	this->EndsDays[0]=0;
-}
-
 void gObjSetBP(int aIndex)
 {
 	int Strength = gObj[aIndex].Strength + gObj[aIndex].AddStrength;
@@ -2584,11 +2569,6 @@ BOOL gObjSetCharacter(LPBYTE lpdata, int aIndex)
 	::gEledoradoEvent.CheckGoldDercon(lpObj->MapNumber);
 	::GCCheckMainExeKeySend(aIndex);
 
-	if ( m_ObjBill[aIndex].GetCertify() >= 0 && m_ObjBill[aIndex].GetCertify() < 3 )
-	{
-		gLCount[m_ObjBill[aIndex].GetCertify()].Add();
-	}
-
 	if ( bAllItemExist == false )
 	{
 		PMSG_NOTICE pNotice;
@@ -3394,9 +3374,8 @@ short gObjAdd(SOCKET aSocket, char* ip, int aIndex)
 	gObj[aIndex].SaveTimeForStatics = GetTickCount() + 3600000;
 	gObj[aIndex].m_iPcBangConnectionType = 0; //season4.5 add-on
 	gObj[aIndex].m_PcBangPointSystem.RESET(); //season 4.5 add-on
-	m_ObjBill[aIndex].Init();
 	strcpy(gObj[aIndex].Ip_addr, ip);
-	LogAddTD("connect : [%d][%s]", aIndex, ip);
+	LogAddTD("Connect [%d][%s]", aIndex, ip);
 	gObjCount++;
 	
 	if ( gObjCount >= OBJMAX )
@@ -3605,92 +3584,6 @@ void gObjTradeSave(LPOBJ lpObj, int index)
 
 void gObjBillRequest(LPOBJ lpObj)
 {
-	char szMsg[128] = "";
-
-	if ( m_ObjBill[lpObj->m_Index].GetPayCode() == 0 )
-	{
-		if ( m_ObjBill[lpObj->m_Index].GetCertify() == 0 )
-		{
-			wsprintf(szMsg, lMsg.Get(MSGGET(4, 85)), m_ObjBill[lpObj->m_Index].GetEndTime());
-		}
-		else if ( m_ObjBill[lpObj->m_Index].GetCertify() == 1 )
-		{
-			if ( m_ObjBill[lpObj->m_Index].GetEndTime() != 0 )
-			{
-				wsprintf(szMsg, lMsg.Get(MSGGET(4, 86)), m_ObjBill[lpObj->m_Index].GetEndTime());
-			}
-		}
-	}
-	else if ( m_ObjBill[lpObj->m_Index].GetPayCode() == 1 )
-	{
-		char szTemp[20];
-		szTemp[4] = 0;
-		strncpy(szTemp, m_ObjBill[lpObj->m_Index].GetEndsDays(), 4);
-		int Day = atoi(szTemp);
-
-		strncpy(szTemp, m_ObjBill[lpObj->m_Index].GetEndsDays()+4, 2);
-		szTemp[2] = 0;
-		int Month = atoi(szTemp);
-
-		strncpy(szTemp, m_ObjBill[lpObj->m_Index].GetEndsDays()+6, 2);
-		szTemp[2] = 0;
-		int Year = atoi(szTemp);
-
-		if ( m_ObjBill[lpObj->m_Index].GetCertify() == 0 )
-		{
-			wsprintf(szMsg, lMsg.Get(MSGGET(4, 87)), Day, Month, Year);
-		}
-		else if ( m_ObjBill[lpObj->m_Index].GetCertify() == 1 )
-		{
-			wsprintf(szMsg, lMsg.Get(MSGGET(4, 88)), Day, Month, Year);
-		}
-	}
-	else if ( m_ObjBill[lpObj->m_Index].GetPayCode() == 3)
-	{
-		char szYear[5] = "";
-		char szMonth[3] = "";
-		char szDay[3] = "";
-		char szHour[3] = "";
-		char szMin[3] = "";
-
-		strncpy(szYear, m_ObjBill[lpObj->m_Index].GetEndsDays(), 4);
-		strncpy(szMonth, m_ObjBill[lpObj->m_Index].GetEndsDays()+4, 2);
-		strncpy(szDay, m_ObjBill[lpObj->m_Index].GetEndsDays()+6, 2);
-		strncpy(szHour, m_ObjBill[lpObj->m_Index].GetEndsDays()+8, 2);
-		strncpy(szMin, m_ObjBill[lpObj->m_Index].GetEndsDays()+10, 2);
-
-		wsprintf(szMsg, lMsg.Get(MSGGET(5, 220)), m_ObjBill[lpObj->m_Index].GetEndTime(), szYear, szMonth, szDay, szHour, szMin);
-
-		LogAddTD("[%s][%s] BillType : (Time) RemainPoint : (%d)", lpObj->AccountID, lpObj->Name, m_ObjBill[lpObj->m_Index].GetEndTime());
-	}
-	else if ( m_ObjBill[lpObj->m_Index].GetPayCode() == 4)
-	{
-		char szYear[5] = "";
-		char szMonth[3] = "";
-		char szDay[3] = "";
-
-		strncpy(szYear, m_ObjBill[lpObj->m_Index].GetEndsDays(), 4);
-		strncpy(szMonth, m_ObjBill[lpObj->m_Index].GetEndsDays()+4, 2);
-		strncpy(szDay, m_ObjBill[lpObj->m_Index].GetEndsDays()+6, 2);
-
-		wsprintf(szMsg, lMsg.Get(MSGGET(5, 221)),  szYear, szMonth,	szDay);
-
-		LogAddTD("[%s][%s] BillType : (Date) RemainDate : (%s-%s-%s)",
-			lpObj->AccountID, lpObj->Name, szYear, szMonth, szDay);
-	}
-	else if ( m_ObjBill[lpObj->m_Index].GetPayCode() == 5)
-	{
-		wsprintf(szMsg, lMsg.Get(MSGGET(5, 222)));
-		LogAddTD("[%s][%s] BillType : (NoCharge)", lpObj->AccountID, lpObj->Name);
-	}
-	else
-	{
-		wsprintf(szMsg, lMsg.Get(MSGGET(4, 89)));
-	}
-
-
-	LogAdd(szMsg);
-	GCServerMsgStringSend(szMsg, lpObj->m_Index, 1);
 }
 
 short gObjMemFree(int index)
@@ -3878,8 +3771,9 @@ BOOL gObjGameClose(int aIndex)
 			__FILE__, 
 			__LINE__);
 	}
-	//Cash shop
-	//g_CashItemPeriodSystem.ClearPeriodItemEffect(lpObj,-1);
+
+	//CashShop
+	g_CashItemPeriodSystem.ClearPeriodItemEffect(lpObj);
 	g_CashItemPeriodSystem.GDReqPeriodItemUpdate(lpObj);
 	g_CashItemPeriodSystem.ClearPeriodItemEffect(lpObj);
 
@@ -3891,14 +3785,13 @@ BOOL gObjGameClose(int aIndex)
 		lpObj->m_Index, 
 		lpObj->AccountID, lpObj->Name);
 
-	if(lpObj->Name)
-	{
+	if(lpObj->Name){
 		WhisperCash.DelCash(lpObj->Name);
 	}
 
 	g_CashShop.DeleteUser(lpObj);
 
-	//Cash shop
+	//CashShop
 	for(int i=0;i<10;++i)
 	{
 		if(lpObj->m_iPeriodItemEffectIndex[i] != -1)
@@ -3914,11 +3807,6 @@ BOOL gObjGameClose(int aIndex)
 
 	memset(lpObj->Name, 0, sizeof(lpObj->Name)-1);
 	lpObj->Connected = PLAYER_LOGGED;
-
-	if ( m_ObjBill[aIndex].GetCertify() >= 0 && m_ObjBill[aIndex].GetCertify() < 3)
-	{
-		gLCount[m_ObjBill[aIndex].GetCertify()].Delete();
-	}
 
 	return TRUE;
 }
@@ -4761,7 +4649,6 @@ void gObjStateProc(LPOBJ lpObj, int aMsgCode, int aIndex, int SubCode)
 			}
 			break;
 
-	//Season 2.5 add-on for third wings
 		case 12:
 			{
 				gObjAttack(lpObj, &gObj[aIndex], 0, 0, 0, SubCode, 0);
@@ -4804,8 +4691,7 @@ void gObjStateProc(LPOBJ lpObj, int aMsgCode, int aIndex, int SubCode)
 //Identical
 void gObjStateAttackProc(LPOBJ lpObj, int aMsgCode, int aIndex, int SubCode, int SubCode2) //004EB240
 {
-	if ( OBJMAX_RANGE(aIndex) == FALSE )
-	{
+	if(!OBJMAX_RANGE(aIndex)){
 		LogAdd("error : %s %d", __FILE__, __LINE__ );
 		return;
 	}
@@ -5194,7 +5080,7 @@ bool gObjLevelUp(LPOBJ lpObj, __int64 & addexp, int iMonsterType, int iEventType
 		return false;
 	}
 
-	LogAddTD("Experience : Map[%d]-(%d,%d) [%s][%s](%d) %I64u %I64d MonsterIndex : %d, EventType : %d", lpObj->MapNumber,lpObj->X,lpObj->Y,lpObj->AccountID,lpObj->Name,lpObj->Level,lpObj->Experience - addexp,addexp,iMonsterType,iEventType);
+	//LogAddTD("Experience : Map[%d]-(%d,%d) [%s][%s](%d) %I64u %I64d MonsterIndex : %d, EventType : %d", lpObj->MapNumber,lpObj->X,lpObj->Y,lpObj->AccountID,lpObj->Name,lpObj->Level,lpObj->Experience - addexp,addexp,iMonsterType,iEventType);
 
 	if(lpObj->Level >= MAX_CHAR_LEVEL && lpObj->Experience >= Configs.LevelExperience[lpObj->Level-1]){
 		lpObj->Experience = Configs.LevelExperience[-1+lpObj->Level];
@@ -6268,15 +6154,12 @@ void gObjUserDie(LPOBJ lpObj, LPOBJ lpTargetObj)
 
 	if(Configs.PkItemDrop == 0)
 	{
-		if(lpTargetObj->m_PK_Level >= 4 && Configs.PkLimitFree == 0)
+		if(lpTargetObj->m_PK_Level >= 4)
 		{
 			itemdrop = 1;
 		}
-	}
-
-	if(Configs.Language == 0)
-	{
-		if(lpTargetObj->Type == OBJ_USER && Configs.PkLimitFree == 0)
+	
+		if(lpTargetObj->Type == OBJ_USER)
 		{
 			itemdrop = 1;
 		}
@@ -12080,26 +11963,8 @@ BYTE gObjInventoryMoveItem(int aIndex, BYTE source, BYTE target, int& durSsend, 
 					max_count = 250;
 				}
 			}
-			else if(sitem->m_Type >= ITEMGET(14,0) && sitem->m_Type <= ITEMGET(14,8) || sitem->m_Type >= ITEMGET(14,38) && sitem->m_Type <= ITEMGET(14,40))
-			{
-				if(titem->m_Durability < 3.0f && Configs.RemovePotionLimit == 0)
-				{
-					max_count = 3;
-				}
-			}
-			else if(sitem->m_Type == ITEMGET(4,15) || sitem->m_Type == ITEMGET(4,7))
-			{
-				if(titem->m_Durability < 255.0f)
-				{
-					max_count = 255;
-				}
-			}
-			//Elite Potions
-			else if((sitem->m_Type == ITEMGET(14,70) || sitem->m_Type == ITEMGET(14,71) 
-				|| sitem->m_Type >= ITEMGET(14,94)) && titem->m_Durability < 50.0f  && Configs.RemovePotionLimit == 0)
-			{
-				max_count = 50;
-			}
+			
+			
 			//Cherry Blossom Mix
 			else if((sitem->m_Type == ITEMGET(14,88)) && titem->m_Durability < 10.0f) //Season 3 add-on
 			{
@@ -12113,18 +11978,53 @@ BYTE gObjInventoryMoveItem(int aIndex, BYTE source, BYTE target, int& durSsend, 
 			{
 				max_count = 50;
 			}
-			//Cherry Blossom Effect Item
-			else if((sitem->m_Type == ITEMGET(14,85)) && titem->m_Durability < 3.0f && Configs.RemovePotionLimit == 0) //Season 3 add-on
+			else if(sitem->m_Type == ITEMGET(4,15) || sitem->m_Type == ITEMGET(4,7) && titem->m_Durability < 255.0f)
 			{
-				max_count = 3;
+				max_count = 255;
+			} 
+			else if((sitem->m_Type == ITEMGET(14,70) || sitem->m_Type == ITEMGET(14,71) || sitem->m_Type >= ITEMGET(14,94))){
+					
+				if(Configs.RemovePotionLimit == 0){
+					if(titem->m_Durability < 50.0f){
+						max_count = 50;
+					}
+				} else {
+					max_count = 255;
+				}
 			}
-			else if((sitem->m_Type == ITEMGET(14,86)) && titem->m_Durability < 3.0f && Configs.RemovePotionLimit == 0) //Season 3 add-on
+			else if(sitem->m_Type >= ITEMGET(14,0) && sitem->m_Type <= ITEMGET(14,8) || sitem->m_Type >= ITEMGET(14,38) && sitem->m_Type <= ITEMGET(14,40))
 			{
-				max_count = 3;
+				if(Configs.RemovePotionLimit == 0){
+					if(titem->m_Durability < 3.0f){
+						max_count = 3;
+					}
+				} else { 
+					max_count = 255;
+				}
+			} 
+			else if((sitem->m_Type == ITEMGET(14,85)) && titem->m_Durability < 3.0f) //Cherry Blossom Effect Item
+			{
+				if(Configs.RemovePotionLimit == 0){
+					max_count = 3;
+				} else {
+					max_count = 255;
+				}
 			}
-			else if((sitem->m_Type == ITEMGET(14,87)) && titem->m_Durability < 3.0f && Configs.RemovePotionLimit == 0) //Season 3 add-on
+			else if((sitem->m_Type == ITEMGET(14,86)) && titem->m_Durability < 3.0f)
 			{
-				max_count = 3;
+				if(Configs.RemovePotionLimit == 0){
+					max_count = 3;
+				} else {
+					max_count = 255;
+				}
+			}
+			else if((sitem->m_Type == ITEMGET(14,87)) && titem->m_Durability < 3.0f)
+			{
+				if(Configs.RemovePotionLimit == 0){
+					max_count = 3;
+				} else {
+					max_count = 255;
+				}
 			}
 
 			if(max_count != 0)
@@ -14154,22 +14054,14 @@ void gObjViewportListCreate(short aIndex)
 	LPOBJ lpObj;
 	int mapnum;
 
-	if(OBJMAX_RANGE(aIndex) == 0)
-	{
-		return;
-	}
-
+	if(OBJMAX_RANGE(aIndex) == 0) return;
+	
 	lpObj = &gObj[aIndex];
 
-	if(lpObj->Connected < PLAYER_PLAYING)
-	{
-		return;
-	}
+	if(lpObj->Connected < PLAYER_PLAYING) return;
 
-	if(lpObj->RegenOk > 0)
-	{
-		return;
-	}
+	if(lpObj->RegenOk > 0) return;
+	
 
 	mapnum = lpObj->MapNumber;
 	gItemLoop2 = 0;
@@ -14972,6 +14864,25 @@ void gObjSetState()
 	{
 		lpObj = &gObj[n];
 
+		//Agregado por Zero!
+		if(lpObj->Connected == PLAYER_PLAYING){
+
+			gObjStateSetCreate(lpObj->m_Index);
+			gObjViewportListDestroy(lpObj->m_Index);
+			gObjViewportListCreate(lpObj->m_Index);
+			gObjViewportListProtocol(lpObj->m_Index);
+
+			if(lpObj->Type == OBJ_USER){
+				
+				gObjUnionUpdateProc(lpObj->m_Index);
+			
+				if(Configs.DoPShopOpen != FALSE){
+					PShop_ViewportListRegenarate(lpObj->m_Index);
+					lpObj->m_bPShopItemChange = FALSE;
+				}
+			}
+		}
+
 		if(lpObj->Connected > PLAYER_LOGGED)
 		{
 			if(lpObj->m_State == 1)
@@ -15017,23 +14928,18 @@ void gObjSetState()
 				}
 	
 
-				if(lpObj->MapNumber == MAP_INDEX_KANTURU_BOSS && lpObj->Type == OBJ_MONSTER)
-				{
+				if(lpObj->MapNumber == MAP_INDEX_KANTURU_BOSS && lpObj->Type == OBJ_MONSTER){
 					continue;
 				}
 	
-				if(lpObj->m_iCurrentAI != 0 && lpObj->m_iRegenType != 0)
-				{
+				if(lpObj->m_iCurrentAI != 0 && lpObj->m_iRegenType != 0){
 					continue;
 				}
-	
 
-				if(lpObj->MapNumber == MAP_INDEX_CRYWOLF_FIRSTZONE)
-				{
+				if(lpObj->MapNumber == MAP_INDEX_CRYWOLF_FIRSTZONE){
 					if(g_CrywolfSync.GetCrywolfState() == 3)
 					{
-						if(lpObj->Type >= OBJ_MONSTER)
-						{
+						if(lpObj->Type >= OBJ_MONSTER){
 							continue;
 						}
 					}
@@ -19115,7 +19021,8 @@ BOOL gObjItemRandomOption3Up(LPOBJ lpObj, int source, int target)
 
 	if(lpObj->pInventory[target].m_Option3 == 0)
 	{
-		if(lpObj->pInventory[target].m_Type >= ITEMGET(12,3) && lpObj->pInventory[target].m_Type <= ITEMGET(12,6) || lpObj->pInventory[target].m_Type == ITEMGET(12,42))
+		if(lpObj->pInventory[target].m_Type >= ITEMGET(12,3) && lpObj->pInventory[target].m_Type <= ITEMGET(12,6) 
+			|| lpObj->pInventory[target].m_Type == ITEMGET(12,42))
 		{
 			lpObj->pInventory[target].m_NewOption &= 0xDF;
 
@@ -19126,16 +19033,12 @@ BOOL gObjItemRandomOption3Up(LPOBJ lpObj, int source, int target)
 		}
 	}
 
-
 	if(lpObj->pInventory[target].m_Option3 < Configs.JewelOfLifeMaxOption)
 	{
-		if(_r < Configs.LifeRate)
-		{
+		if(_r < Configs.LifeRate){
 			lpObj->pInventory[target].m_Option3 = 0;
-		}
-		else
-		{
-			if( (lpObj->pInventory[target].m_Option3) == FALSE)
+		} else {
+			if((lpObj->pInventory[target].m_Option3) == FALSE)
 			{
 				if(lpObj->pInventory[target].m_Type >= ITEMGET(12,36) && lpObj->pInventory[target].m_Type <= ITEMGET(12,40) 
 				|| lpObj->pInventory[target].m_Type == ITEMGET(12,43)
@@ -19158,12 +19061,10 @@ BOOL gObjItemRandomOption3Up(LPOBJ lpObj, int source, int target)
 						}
 						break;
 						
-						case 1:
-						{
+						case 1:{
 							loc3 = rand()%1000;
 
-							if(loc2 < 300)
-							{
+							if(loc2 < 300){
 								lpObj->pInventory[target].m_NewOption |= 0x20;
 							}
 						}
@@ -19171,6 +19072,7 @@ BOOL gObjItemRandomOption3Up(LPOBJ lpObj, int source, int target)
 					}
 				}
 			}
+
 			lpObj->pInventory[target].m_Option3++;
 		}
 	}
