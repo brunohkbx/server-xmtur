@@ -267,7 +267,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ENG|Win32'">
     <OutDir>.\GameServer___Win32_ENG\</OutDir>
     <IntDir>.\GameServer___Win32_ENG\</IntDir>
-    <LinkIncremental>true</LinkIncremental>
+    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='PHICS|Win32'">
     <ClCompile>
@@ -844,9 +844,9 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ENG|Win32'">
     <ClCompile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <FunctionLevelLinking>false</FunctionLevelLinking>
-      <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;INTERNATIONAL_ENGLISH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -858,7 +858,9 @@
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <ObjectFileName>.\GameServer___Win32_ENG\</ObjectFileName>
       <ProgramDataBaseFileName>.\GameServer___Win32_ENG\</ProgramDataBaseFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <MinimalRebuild>true</MinimalRebuild>
     </ClCompile>
     <Midl>
       <SuppressStartupBanner>true</SuppressStartupBanner>

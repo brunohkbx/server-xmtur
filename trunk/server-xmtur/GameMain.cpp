@@ -510,7 +510,7 @@ void CConfigs::LoadConfigs(){
 	this->SoulSpecialRate = GetPrivateProfileInt("JewelsSuccess","JoSSpecialSuccessRate",50,CONFIG_FILE);
 	this->SoulSocketRate = GetPrivateProfileInt("JewelsSuccess","JoSSocketSuccessRate",60,CONFIG_FILE);
 	this->SoulLuckRate = GetPrivateProfileInt("JewelsSuccess","JoSWLuckAddSuccessRate",20,CONFIG_FILE);
-	this->LifeRate = GetPrivateProfileInt("JewelsSuccess","JoLifeSuccessRate",50,CONFIG_FILE);
+	this->LifeRate = 100 - GetPrivateProfileInt("JewelsSuccess","JoLifeSuccessRate",50,CONFIG_FILE);
 
 	//Skill Level
 	this->Skill1 = GetPrivateProfileInt("SkillsLevel","TwistingSlash_MinLevel",80,CONFIG_FILE);
