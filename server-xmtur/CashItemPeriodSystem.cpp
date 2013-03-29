@@ -28,8 +28,6 @@ CCashItemPeriodSystem::~CCashItemPeriodSystem()
 	return;
 }
 
-
-
 void CCashItemPeriodSystem::Initialize()
 {
 	this->iItemPeriodInfoCount = 0;
@@ -383,9 +381,6 @@ void CCashItemPeriodSystem::GDReqPeriodItemInquiry(LPOBJ lpObj)
 	cDBSMng.Send((char *)&pMsg, sizeof(PMSG_REQ_PERIODITEM_INQUIRY));
 }
 
-
-
-
 struct PMSG_REQ_PERIODITEM_UPDATE
 {
 	PBMSG_HEAD2 head;	// C1:D0:07
@@ -397,19 +392,17 @@ struct PMSG_REQ_PERIODITEM_UPDATE
 	char chCharacterName[11];	// 18
 };
 
-
-
-
 void CCashItemPeriodSystem::GDReqPeriodItemUpdate(LPOBJ lpObj)
 {
+	return;
+
 	PMSG_REQ_PERIODITEM_UPDATE pMsg;
 	ITEMPERIOD_INFO* lpItemInfo = NULL;
 
 	for(int i=0;i<10;++i)
 	{
-
-		if ( lpObj->m_iPeriodItemEffectIndex[i] < 0 || lpObj->m_iPeriodItemEffectIndex[i] >=MAX_ITEM_PERIOD_INFO )
-			return;
+		if(lpObj->m_iPeriodItemEffectIndex[i] == -1) continue;
+		if(lpObj->m_iPeriodItemEffectIndex[i] >=MAX_ITEM_PERIOD_INFO) continue;
 
 		lpItemInfo = &this->ItemPeriodInfo[lpObj->m_iPeriodItemEffectIndex[i]];
 
@@ -427,11 +420,10 @@ void CCashItemPeriodSystem::GDReqPeriodItemUpdate(LPOBJ lpObj)
 }
 
 
-
-
-
 void CCashItemPeriodSystem::DGAnsPeriodItemInsert(PMSG_ANS_PERIODITEM_INSERT * aRecv)
 {
+	return;
+
 	int iIndex = aRecv->iUserIndex;
 	LPOBJ lpObj = &gObj[iIndex];
 	BYTE btResult = FALSE;
@@ -517,7 +509,7 @@ void CCashItemPeriodSystem::DGAnsPeriodItemUpdate(PMSG_ANS_PERIODITEM_UPDATE *aR
 	int iUserIndex = aRecv->iUserIndex;
 	int PeriodIndex = -1;
 
-	if ( iUserIndex < 0 || iUserIndex > OBJMAX )
+	if(iUserIndex < 0 || iUserIndex > OBJMAX)
 		return;
 
 	LPOBJ lpObj = &gObj[iUserIndex];
@@ -525,7 +517,7 @@ void CCashItemPeriodSystem::DGAnsPeriodItemUpdate(PMSG_ANS_PERIODITEM_UPDATE *aR
 
 	for(int i=0;i<10;++i)
 	{
-		if ( lpObj->m_iPeriodItemEffectIndex[i] < 0 || lpObj->m_iPeriodItemEffectIndex[i] >=MAX_ITEM_PERIOD_INFO )
+		if (lpObj->m_iPeriodItemEffectIndex[i] < 0 || lpObj->m_iPeriodItemEffectIndex[i] >=MAX_ITEM_PERIOD_INFO )
 			continue;
 
 		lpItemInfo = &this->ItemPeriodInfo[lpObj->m_iPeriodItemEffectIndex[i]];
@@ -537,11 +529,9 @@ void CCashItemPeriodSystem::DGAnsPeriodItemUpdate(PMSG_ANS_PERIODITEM_UPDATE *aR
 		}
 	}
 
-	switch ( aRecv->btResult )
-	{
+	switch(aRecv->btResult){
 		case 3:
-			if ( this->ClearPeriodItemEffect(lpObj) == TRUE )
-			{		
+			if(this->ClearPeriodItemEffect(lpObj) == TRUE){		
 				LogAddTD("[CashShop][PeriodItemUpdate Ans] Remove Item Effect - ID : %s, Name : %s, ItemCode : %d, Result : %d",
 					lpObj->AccountID, lpObj->Name, aRecv->iItemCode, aRecv->btResult);
 			}

@@ -1,5 +1,3 @@
-//GameServer 1.00.77 JPN - Completed
-//GameServer 1.00.90 JPN - Completed -> All hidden functions and registers fixed *-* but initial .cpp classes(objectstruct, bill etc) wrong position :(
 #include "Stdafx.h"
 #include "User.h"
 #include "LogProc.h"
@@ -66,7 +64,6 @@
 #include "Raklion.h"
 #include "RaklionUtil.h"
 #include "RaklionBattleUserMng.h"
-#include "PcBangPointSystem.h"
 #include "CastleSiegeSync.h"
 #include "QuestManager.h"
 #include "ImperialGuardian.h"
@@ -84,149 +81,39 @@ int GuildUserCount;
 int GuildUserOfs;
 int GuildInfoCount;
 int GuildInfoOfs;
-int skillSuccess;
 int gCurConnectUser;
 int gDisconnect;
 int gObjTotalUser;
-int gItemLoopMax;
-int gItemLoop;
-int gItemLoop2;
-int gObjCSFlag;
 int gObjCount;
 int gObjMonCount;
 int gObjCallMonCount;
+short RoadPathTable[MAX_ROAD_PATH_TABLE] = { -1, -1, 0, -1, 1, -1, 1, 0, 1, 1, 0, 1, -1, 1, -1, 0 };
+int  gServerMaxUser=500;
+BOOL g_EnergyCheckOff=1;
 
 CViewportGuild ViewGuildMng;
 
 MessageStateMachine gSMMsg[OBJMAX][MAX_MONSTER_SEND_MSG];	
 ExMessageStateMachine gSMAttackProcMsg[OBJMAX][MAX_MONSTER_SEND_ATTACK_MSG];
 
-OBJECTSTRUCT* ObjectStruct = NULL; // pointer changed to 0
+OBJECTSTRUCT* ObjectStruct = NULL;
 OBJECTSTRUCT* gObj;
 
-OBJECTSTRUCT_CLASS::OBJECTSTRUCT_CLASS() // (0050F940 -> classes related)
-{
-	ObjectStruct = new	OBJECTSTRUCT[OBJMAX+1]; // memory dynamically allocated
-	gObj	=	&ObjectStruct[1]; //Move Data -> Start from 1 (It's like the 0 position doesn't exist)
+OBJECTSTRUCT_CLASS::OBJECTSTRUCT_CLASS(){
+	ObjectStruct = new	OBJECTSTRUCT[OBJMAX+1];
+	gObj = &ObjectStruct[1];
 }
 
-OBJECTSTRUCT_CLASS::~OBJECTSTRUCT_CLASS() // (0050FA10 -> classes related)
-{
-	delete	[]	ObjectStruct; // memory freed up
-	ObjectStruct = NULL; // pointer changed to 0
+OBJECTSTRUCT_CLASS::~OBJECTSTRUCT_CLASS(){
+	delete	[]	ObjectStruct;
+	ObjectStruct = NULL;
 }
 
-OBJECTSTRUCT_CLASS	g_OBJECTSTRUCT_CLASS; //extern
+OBJECTSTRUCT_CLASS	g_OBJECTSTRUCT_CLASS;
 
 HANDLE hThread_gObjMove;
 BYTE gObjMonsterInventoryInsertItem(LPOBJ lpObj, int type, int index, int level, int op1=0, int op2=0, int op3=0);
-CPCBangPointTimer g_PCBangPointTimer;
 
-struct PWMSG_COUNT
-{
-	struct PWMSG_HEAD h;
-	BYTE count;
-};
-
-struct PBMSG_COUNT
-{
-	struct PBMSG_HEAD h;
-	BYTE count;
-};
-
-struct PMSG_ITEMVIEWPORTCREATE
-{
-	BYTE NumberH;
-	BYTE NumberL;
-	BYTE px;
-	BYTE py;
-	BYTE ItemInfo[MAX_ITEM_INFO];
-};
-
-struct PMSG_VIEWPORTCREATE
-{
-	BYTE NumberH;
-	BYTE NumberL;
-	BYTE X;
-	BYTE Y;
-	BYTE CharSet[18];
-	char Id[10];
-	BYTE TX;
-	BYTE TY;
-	BYTE DirAndPkLevel;
-	BYTE btViewSkillStateCount;
-	BYTE btViewSkillState[MAX_STATE_COUNT];
-};
-
-struct PMSG_VIEWPORTCREATE_CHANGE
-{
-	BYTE NumberH;
-	BYTE NumberL;
-	BYTE X;
-	BYTE Y;
-	BYTE SkinH;
-	BYTE SkinL;
-	char Id[10];
-	BYTE TX;
-	BYTE TY;
-	BYTE DirAndPkLevel;
-	BYTE CharSet[18]; //Season 2.5 add-on
-	BYTE btViewSkillStateCount;
-	BYTE btViewSkillState[MAX_STATE_COUNT];
-};
-
-struct PMSG_VIEWPORTDESTROY
-{
-	BYTE NumberH;
-	BYTE NumberL;
-};
-
-struct PMSG_MONSTER_VIEWPORTCREATE
-{
-	BYTE NumberH;
-	BYTE NumberL;
-	BYTE Type_HI;
-	BYTE Type_LO;
-	BYTE X;
-	BYTE Y;
-	BYTE TX;
-	BYTE TY;
-	BYTE Path;
-	BYTE btViewSkillStateCount;
-	BYTE btViewSkillState[MAX_STATE_COUNT];
-};
-
-struct PMSG_CALLMONSTER_VIEWPORTCREATE
-{
-	BYTE NumberH;
-	BYTE NumberL;
-	BYTE Type_HI;
-	BYTE Type_LO;
-	BYTE X;
-	BYTE Y;
-	BYTE TX;
-	BYTE TY;
-	BYTE Path;
-	BYTE Id[10];
-	BYTE btViewSkillStateCount;
-	BYTE btViewSkillState[MAX_STATE_COUNT];
-};
-
-struct PMSG_GUILDVIEWPORT_USER
-{
-	BYTE NumberH;
-	BYTE NumberL;
-	BYTE GNumberH;
-	BYTE GNumberL;
-};
-
-struct PMSG_GUILDVIEWPORT
-{
-	BYTE NumberH;
-	BYTE NumberL;
-	char GuildName[8];
-	BYTE Mark[32];
-};
 
 BYTE GuildInfoBuf[10000];
 BYTE GuildUserBuf[10000];
@@ -244,30 +131,15 @@ PMSG_ITEMVIEWPORTCREATE pItemViewportCreate;
 PMSG_VIEWPORTDESTROY pItemViewportDestroy;
 #pragma pack()
 
-short RoadPathTable[MAX_ROAD_PATH_TABLE] = { -1, -1, 0, -1, 1, -1, 1, 0, 1, 1, 0, 1, -1, 1, -1, 0 };
 
-int  gServerMaxUser=500;
-
-BOOL g_EnergyCheckOff=1;
-
-struct PMSG_EX_SKILL_COUNT
+void gObjSkillUseProcTime500(LPOBJ lpObj)
 {
-	struct PBMSG_HEAD h;
-	BYTE NumberH;
-	BYTE NumberL;
-	BYTE Type;
-	BYTE Count;
-};
+	if(lpObj->SkillHellFire2State != 0){
 
-void gObjSkillUseProcTime500(LPOBJ lpObj) //
-{
-	if ( lpObj->SkillHellFire2State != 0 )
-	{
-		DWORD dwCurrentTick = GetTickCount(); //2
+		DWORD dwCurrentTick = GetTickCount();
 		lpObj->SkillHellFire2Count = (dwCurrentTick - lpObj->SkillHellFire2Time) / 500;
 
-		if ( lpObj->SkillHellFire2Count > 12 )
-		{
+		if(lpObj->SkillHellFire2Count > 12){
 			lpObj->SkillHellFire2Count = 12;
 		}
 
@@ -3150,7 +3022,7 @@ BOOL gObjSetMonster(int aIndex, int MonsterClass)
 
 	lpObj->Class = MonsterClass;
 	Level = lpObj->Level;
-	LPMONSTER_ATTRIBUTE lpm = gMAttr.GetAttr( lpObj->Class);
+	LPMONSTER_ATTRIBUTE lpm = gMAttr.GetAttr(lpObj->Class);
 
 	if ( lpm == NULL )
 	{
@@ -3160,8 +3032,7 @@ BOOL gObjSetMonster(int aIndex, int MonsterClass)
 
 	strncpy(gObj[aIndex].Name, lpm->m_Name , 10 );
 
-	if (lpm->m_Level == 0)
-	{
+	if(lpm->m_Level == 0){
 		LogAdd(lMsg.Get( MSGGET(1, 254)), lpObj->Class, __FILE__, __LINE__);
 	}
 
@@ -3306,48 +3177,34 @@ void gObjDestroy(SOCKET aSocket,int client)
 	gObj[client].Connected = PLAYER_EMPTY;
 }
 
+
 short gObjAddSearch(SOCKET aSocket, char* ip)
 {
-	int count;
-	int totalcount = 0;
+	int Count;
+	int TotalCount = 0;
 
-	if ( gDisconnect == 1 )
-	{
+	if(gDisconnect == 1){
 		return -1;
 	}
 
-	if ( gObjTotalUser > gServerMaxUser )
-	{
-		if (acceptIP.IsIp(ip) == 0 )
-		{
+	if(gObjTotalUser > gServerMaxUser ){
+		if(acceptIP.IsIp(ip) == 0){
 			GCJoinSocketResult(4, aSocket);
 			return -1;
 		}
 	}
 
-	count = gObjCount;
-	
-	while ( true )
-	{
-		if ( gObj[count].Connected == PLAYER_EMPTY )
-		{
-			return count;
-		}
+	for(int X=OBJ_STARTUSERINDEX; X < OBJMAX;X++){
+		if(gObj[X].Connected == PLAYER_EMPTY) return X;
+		
+		if(X > gObjCount) gObjCount = X+1;
 
-		count++;
-
-		if ( count >= OBJMAX )
-		{
-			count = OBJ_STARTUSERINDEX;
-		}
-		totalcount++;
-		if ( totalcount >= OBJMAXUSER )
-		{
-			break;
-		}
+		if(gObjCount > OBJMAX) gObjCount = 0;
 	}
+	
 	return -1;
 }
+
 
 short gObjAdd(SOCKET aSocket, char* ip, int aIndex)
 {
@@ -3372,8 +3229,6 @@ short gObjAdd(SOCKET aSocket, char* ip, int aIndex)
 	gObj[aIndex].Type = OBJ_USER;
 	gObj[aIndex].m_HackToolCheck.Clear(1000); //season4 add-on
 	gObj[aIndex].SaveTimeForStatics = GetTickCount() + 3600000;
-	gObj[aIndex].m_iPcBangConnectionType = 0; //season4.5 add-on
-	gObj[aIndex].m_PcBangPointSystem.RESET(); //season 4.5 add-on
 	strcpy(gObj[aIndex].Ip_addr, ip);
 	LogAddTD("Connect [%d][%s]", aIndex, ip);
 	gObjCount++;
@@ -3386,27 +3241,12 @@ short gObjAdd(SOCKET aSocket, char* ip, int aIndex)
 	return aIndex;
 }
 
-void PCBANG_POINT_SYSTEM::RESET()
-{
-	this->m_bPcBangPointEnable = 0;
-	this->m_bPcBangCommonRule = 0;
-	this->m_sPcBangCommonRuleTime = g_sPCBangFirstRuleTime;
-	this->m_sPcBangGainPoint = g_sPCBangFirstRuleTimePoint;
-	this->m_iPcBangAccumulatedPoint = 0;
-	this->m_bPcBangInfoSet = 0;
-	this->m_dwPcBangPointTick = 0;
-	this->m_sPcBangResetYear = 2001;
-	this->m_sPcBangResetMonth = 1;
-	this->m_sPcBangResetDay = 1;
-	this->m_sPcBangResetHour = 0;
-}
 
 short gObjMonsterRecall(int iMapNumber)
 {
 	int number = gObjAddMonster(iMapNumber);
 
-	if ( number < 0 )
-	{
+	if(number < 0){
 		return -1;
 	}
 	return -1;
@@ -3665,8 +3505,6 @@ BOOL gObjGameClose(int aIndex)
 			lpObj->AccountID, lpObj->Name);
 		return FALSE;
 	}
-
-	lpObj->m_PCBangPointTimer.Clear(); //season4.5 add-on
 
 	if ( lpObj->m_RecallMon >= 0 )
 	{
@@ -4276,8 +4114,6 @@ BOOL gObjSetAccountLogin(int aIndex, char* szId, int aUserNumber, int aDBNumber,
 
 	 //Season 4.5 addon start
 	gObj[aIndex].ukn_30 = ukn_30;
-	gObj[aIndex].m_iPcBangRoom = PcBangRoom;
-	g_PCBangPointSystem.SetPointUser(aIndex,PcBangRoom);
 	return TRUE;
 
 }
@@ -8466,10 +8302,6 @@ int gObjMonsterExpSingle(LPOBJ lpObj, LPOBJ lpTargetObj, int dmg, int tot_dmg, b
 		exp = int(exp * Configs.AddExperience);
 	}
 
-	if(g_MasterLevelSystem.CheckIsMasterLevelCharacter(lpObj) == FALSE)//Season 4.5 addon
-	{
-		g_PCBangPointSystem.AddExperience(lpObj,exp);
-	}
 
 	if ( g_CrywolfSync.GetOccupationState() == 1 && Configs.CrywolfApplyMvpPenalty != FALSE)
 	{
@@ -8739,11 +8571,6 @@ void gObjExpParty(LPOBJ lpObj , LPOBJ lpTargetObj, int AttackDamage, int MSBFlag
 				if(g_MasterLevelSystem.CheckIsMasterLevelCharacter(lpPartyObj) == FALSE)
 				{
 					exp = int(exp * Configs.AddExperience);
-				}
-
-				if(g_MasterLevelSystem.CheckIsMasterLevelCharacter(lpPartyObj) == FALSE)//Season 4.5 addon
-				{
-					g_PCBangPointSystem.AddExperience(lpPartyObj,exp);
 				}
 
 				if ( g_CrywolfSync.GetOccupationState() == 1 && Configs.CrywolfApplyMvpPenalty != FALSE)
@@ -9334,6 +9161,12 @@ void gObjLifeCheck(LPOBJ lpTargetObj, LPOBJ lpObj, int AttackDamage, int DamageS
 		{
 			return;
 		}
+		if(lpTargetObj->Class == 524  || lpTargetObj->Class == 525 ||
+		lpTargetObj->Class == 527 || lpTargetObj->Class == 528) //Imperial Fort Gates
+		{
+			return;
+		}
+
 
 		if(lpCallObj->Type == OBJ_USER)
 		{
@@ -11817,11 +11650,6 @@ BYTE gObjInventoryMoveItem(int aIndex, BYTE source, BYTE target, int& durSsend, 
 				return -1;
 			}
 
-			if(g_PCBangPointSystem.GetItemIndex(sitem->m_Type) != FALSE) //season4.5 add-on
-			{
-				return -1;
-			}
-
 			if(sitem->m_Type == ITEMGET(13,20)) //Season 2.5 add-on (possible fix)
 			{
 				if(sitem->m_Level == 1 || sitem->m_Level == 2)
@@ -12355,11 +12183,6 @@ BYTE gObjInventoryMoveItem(int aIndex, BYTE source, BYTE target, int& durSsend, 
 					}
 
 					if(lpObj->pInventory[source].m_Type == ITEMGET(13,42)) //Season 2.5 add-on
-					{
-						return -1;
-					}
-
-					if(g_PCBangPointSystem.GetItemIndex(lpObj->pInventory[source].m_Type) != FALSE) //season 4.5 add-on
 					{
 						return -1;
 					}
@@ -13024,10 +12847,6 @@ BYTE gObjInventoryTradeMove(LPOBJ lpObj, BYTE source, BYTE target)
 		return -1;
 	}*/
 
-	if(g_PCBangPointSystem.GetItemIndex(lpObj->pInventory[source].m_Type) != FALSE) //season4.5 add-on
-	{
-		return -1;
-	}
 
 	if(lpObj->pInventory[source].m_QuestItem) //Season 2.5 add-on
 	{
@@ -13865,31 +13684,27 @@ void gObjMakePreviewCharSet(int aIndex)
 
 void gObjViewportPaint(HWND hWnd, short aIndex)
 {
-	int n;
 	HDC hdc;
 	char szTemp[256];
-	int count = 0;
-	int count2 = 0;
-	int count3 = 0;
-	int playerc = 0;
-	int totalplayer = 0;
+	int TotalMonsters = 0;
+	int TotalPlayers = 0;
 
 	if (!OBJMAX_RANGE(aIndex)) return;
 
 	hdc = GetDC(hWnd);
 
-	for(int n=0; n < OBJMAX;n++){
-		if(gObj[n].Type == OBJ_USER && gObj[n].Connected != PLAYER_EMPTY){
-			totalplayer++;
-		} else if ( gObj[n].Connected != PLAYER_EMPTY ) {
-			count++;
+	for(int X=0; X < OBJMAX;X++){
+		if(gObj[X].Type == OBJ_USER && gObj[X].Connected != PLAYER_EMPTY){
+			TotalPlayers++;
+		} else if ( gObj[X].Connected != PLAYER_EMPTY ) {
+			TotalMonsters++;
 		}
 	}				
 
 
-	gObjTotalUser = totalplayer;
+	gObjTotalUser = TotalPlayers;
 
-	wsprintf(szTemp, "Monsters: (%d/%d), Players: (%d/%d)",count,OBJ_MAXMONSTER, gObjTotalUser, gServerMaxUser);
+	wsprintf(szTemp, "Monsters: (%d/%d), Players: (%d/%d)",TotalMonsters,OBJ_MAXMONSTER,gObjTotalUser,gServerMaxUser);
 
 	TextOut(hdc, 20, 0, szTemp, strlen(szTemp));
 	ReleaseDC(hWnd, hdc);
@@ -14050,91 +13865,85 @@ void gObjViewportClose(LPOBJ lpObj)
 
 void gObjViewportListCreate(short aIndex)
 {
-	int result,n;
+	
 	LPOBJ lpObj;
-	int mapnum;
+	int MapNumber;
 
 	if(OBJMAX_RANGE(aIndex) == 0) return;
 	
 	lpObj = &gObj[aIndex];
 
 	if(lpObj->Connected < PLAYER_PLAYING) return;
-
 	if(lpObj->RegenOk > 0) return;
 	
+	MapNumber = lpObj->MapNumber;
 
-	mapnum = lpObj->MapNumber;
-	gItemLoop2 = 0;
+	if(lpObj->Type == OBJ_USER){
+		MapClass * lpMap = &MapC[MapNumber];
 
-	if(lpObj->Type == OBJ_USER)
-	{
-		MapClass * lpMap = &MapC[mapnum];
-
-		for(n = 0; n < MAX_MAPITEM; n++)
-		{
-			if(lpMap->m_cItem[n].live)
-			{
-				gItemLoop2++;
-
-				if(lpMap->m_cItem[n].m_State == 1 || lpMap->m_cItem[n].m_State == 2)
-				{
-					if(gObjCheckViewport(aIndex,lpMap->m_cItem[n].px,lpMap->m_cItem[n].py) == 1)
-					{
-						result = ViewportAdd(aIndex,n,5);
+		for(int X=0; X < MAX_MAPITEM;X++){
+			if(lpMap->m_cItem[X].live){
+				if(lpMap->m_cItem[X].m_State == 1 || lpMap->m_cItem[X].m_State == 2){
+					if(gObjCheckViewport(aIndex,lpMap->m_cItem[X].px,lpMap->m_cItem[X].py) == 1){
+						ViewportAdd(aIndex,X,5);
 					}
 				}
 			}
 		}
 	}
 
-	if(aIndex == 0)
-	{
-		gItemLoopMax = gItemLoop2;
-		gItemLoop = gItemLoop2;
+	if(aIndex == 0){
 		gCurPaintPlayer = aIndex;
 	}
 
-	int a = 1;
 	LPOBJ lpTempObj;
 
-	if(lpObj->Type == OBJ_USER 	)
+	if(lpObj->Type == OBJ_USER)
 	{
-		for(n = 0; n < OBJMAX; n++)
+		for(int X=0; X < OBJMAX;X++)
 		{
-			lpTempObj = &gObj[n];
+			lpTempObj = &gObj[X];
 
-			if(lpTempObj->Connected == PLAYER_PLAYING && aIndex != n)
-			{
-				if(lpTempObj->m_State == 1 || lpTempObj->m_State == 2)
-				{
-					if(mapnum == lpTempObj->MapNumber)
-					{
-						if(gObjCheckViewport(aIndex,lpTempObj->X,lpTempObj->Y) == 1)
-						{
-							result = ViewportAdd(aIndex,n,lpTempObj->Type);
-							result = ViewportAdd2(n,aIndex,gObj[aIndex].Type);
-						}
-					}
+			if(aIndex == X) continue;
+			if(lpTempObj->Connected != PLAYER_PLAYING) continue;
+			if(MapNumber != lpTempObj->MapNumber) continue;
+
+			if(lpTempObj->m_State == 1 || lpTempObj->m_State == 2){
+				if(gObjCheckViewport(aIndex,lpTempObj->X,lpTempObj->Y) == 1){
+					ViewportAdd(aIndex,X,gObj[X].Type);
+					ViewportAdd2(X,aIndex,gObj[aIndex].Type);
 				}
 			}
 		}
 	} else if(lpObj->Type == OBJ_MONSTER || lpObj->Type == OBJ_NPC){
-		for(n = OBJ_MAXMONSTER; n < OBJMAX; n++)
-		{
-			lpTempObj = &gObj[n];
 
-			if(lpTempObj->Connected == PLAYER_PLAYING && aIndex != n)
-			{
-				if(lpTempObj->m_State == 1 || lpTempObj->m_State == 2)
-				{
-					if(mapnum == lpTempObj->MapNumber)
-					{
-						if(gObjCheckViewport(aIndex,lpTempObj->X,lpTempObj->Y) == 1)
-						{
-							result = ViewportAdd(aIndex,n,gObj[n].Type);
-							result = ViewportAdd2(n,aIndex,gObj[aIndex].Type);
-						}
-					}
+		
+		for(int X=OBJ_MAXMONSTER; X < gObjCallMonCount;X++){
+			lpTempObj = &gObj[X];
+			
+			if(aIndex == X) continue;
+			if(lpTempObj->Connected != PLAYER_PLAYING) continue;
+			if(MapNumber != lpTempObj->MapNumber) continue;
+
+			if(lpTempObj->m_State == 1 || lpTempObj->m_State == 2){
+				if(gObjCheckViewport(aIndex,lpTempObj->X,lpTempObj->Y) == 1){
+					ViewportAdd(aIndex,X,gObj[X].Type);
+					ViewportAdd2(X,aIndex,gObj[aIndex].Type);
+				}
+			}
+		}
+
+		for(int X=OBJ_STARTUSERINDEX; X < gObjCount;X++){
+			lpTempObj = &gObj[X];
+			
+			if(aIndex == X) continue;
+			if(lpTempObj->Connected != PLAYER_PLAYING) continue;
+			if(MapNumber != lpTempObj->MapNumber) continue;
+
+			if(lpTempObj->m_State == 1 || lpTempObj->m_State == 2){
+				if(gObjCheckViewport(aIndex,lpTempObj->X,lpTempObj->Y) == 1){
+					ViewportAdd(aIndex,X,gObj[X].Type);
+					ViewportAdd2(X,aIndex,gObj[aIndex].Type);
 				}
 			}
 		}
@@ -14348,8 +14157,7 @@ void gObjViewportListDestroy(short aIndex)
 	LPOBJ lpObj;
 	int MVL;
 
-	if(OBJMAX_RANGE(aIndex) == 0)
-	{
+	if(OBJMAX_RANGE(aIndex) == 0){
 		return;
 	}
 
@@ -14372,6 +14180,11 @@ void gObjViewportListDestroy(short aIndex)
 		if(lpObj->VpPlayer[n].state == 1 || lpObj->VpPlayer[n].state == 2)
 		{
 			tObjNum = lpObj->VpPlayer[n].number;
+
+			if(OBJMAX_RANGE(tObjNum) == 0){
+				lpObj->VpPlayer[n].state = 3;
+				continue;
+			}
 
 			switch(lpObj->VpPlayer[n].type)
 			{
@@ -14405,23 +14218,18 @@ void gObjViewportListDestroy(short aIndex)
 				}
 				break;
 			default : 
-				if(gObj[tObjNum].m_State == 1)
-				{
-					if(gObj[tObjNum].Live == 0)
-					{
+				if(gObj[tObjNum].m_State == 1){
+					if(gObj[tObjNum].Live == 0){
 						lpObj->VpPlayer[n].state = 3;
 					}
 				}
 
 				if(gObj[tObjNum].Connected  == PLAYER_EMPTY ||
-					gObj[tObjNum].m_State == 8 ||
-					gObj[tObjNum].Teleport != 0 ||
-					gObj[tObjNum].m_State == 32)
-				{
+				gObj[tObjNum].m_State == 8 ||
+				gObj[tObjNum].Teleport != 0 ||
+				gObj[tObjNum].m_State == 32){
 					lpObj->VpPlayer[n].state = 3;
-				}
-				else
-				{
+				} else {
 					if(gObjCheckViewport(aIndex,gObj[tObjNum].X,gObj[tObjNum].Y) == 0)
 					{
 						lpObj->VpPlayer[n].state = 3;
@@ -15028,6 +14836,12 @@ void gObjSetState()
 							continue;
 						}
 					}
+				}
+
+				if(IMPERIAL_MAP_RANGE(lpObj->MapNumber))
+				{
+					gObjDel(lpObj->m_Index);
+					continue;
 				}
 
 				if(lpObj->m_Attribute == 60)
@@ -15853,8 +15667,7 @@ void gObjSecondProc()
 			gObjNProtectGGCheckSum(n);
 		}
 
-		g_PCBangPointSystem.AddPoint(lpObj); //season4.5 add-on
-
+		
 		if(lpObj->Connected == PLAYER_CONNECTED ||	lpObj->Connected == PLAYER_LOGGED || lpObj->Connected == PLAYER_PLAYING)
 		{
 			if(lpObj->Type == OBJ_USER)

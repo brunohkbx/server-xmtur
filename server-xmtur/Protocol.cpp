@@ -14319,19 +14319,16 @@ void GCSendEffectInfo(int aIndex, BYTE btType)
 void CGRequestPetItemCommand(PMSG_REQUEST_PET_ITEM_COMMAND * lpMsg, int aIndex) 
 {
 	if(!gObjIsConnected(aIndex)){
-		LogAddTD("error-L2 : Index %s %d", __FILE__, __LINE__);
 		return;
 	}
 
-	if ( !OBJMAX_RANGE(aIndex))
-	{
+	if (!OBJMAX_RANGE(aIndex)){
 		return;
 	}
 
 	LPOBJ lpObj = &gObj[aIndex];
 
-	if ( lpMsg->PetType )
-	{
+	if(lpMsg->PetType){
 		return;
 	}
 
@@ -16999,47 +16996,14 @@ void GCReqEnterKanturuBossMap(PMSG_REQ_ENTER_KANTURU_BOSS_MAP* lpMsg, int iIndex
 
 
 	g_KanturuEntranceNPC.NotifyResultEnterKanturuBossMap(iIndex);
-
 }
 
 void CGReqPCBangShopBuy(PMSG_REQ_PCBANG_SHOP_BUY* lpMsg, int iIndex) //season 4.5 add-on 004700E0
 {
-	if(lpMsg == NULL)
-	{
-		return;
-	}
-
-	if ( OBJMAX_RANGE(iIndex) == FALSE )
-	{
-		return;
-	}
-
-	if(PacketCheckTime(&gObj[iIndex]) == FALSE)
-	{
-		PMSG_POINT_BUY_ITEM pMsg;
-		PHeadSubSetB((LPBYTE)&pMsg, 0xD1, 0x05, sizeof(pMsg));
-		pMsg.Result = 6;
-		pMsg.ItemPos = 0xFF;
-		DataSend(iIndex,(LPBYTE)&pMsg,pMsg.h.size);
-		return;
-	}
-
-	g_PCBangPointSystem.PCBangBuyItem(iIndex, lpMsg->btPosition);
 }
 
 void CGReqPCBangShopOpen(PMSG_REQ_PCBANG_SHOP_OPEN* lpMsg, int iIndex) //season 4.5 add-on 004701C0
 {
-	if(lpMsg == NULL)
-	{
-		return;
-	}
-
-	if ( OBJMAX_RANGE(iIndex) == FALSE )
-	{
-		return;
-	}
-
-	g_PCBangPointSystem.PCBangShopOpen(iIndex);
 }
 
 void CGReqWerewolfMove(PMSG_REQ_WEREWOLF_MOVE* lpMsg, int iIndex) 

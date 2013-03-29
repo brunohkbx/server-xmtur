@@ -51,23 +51,30 @@ CWhatsUpDummyServer gWhatsUpDummyServer;
 void GameServer_FirstMsg(void * lpParam){
 	while(TRUE){
 
-		for(int n = 0; n < OBJMAX; n++)
-		{
-			gObjStateSetCreate(n);
-			gObjViewportListDestroy(n);
-			gObjViewportListCreate(n);
-			gObjViewportListProtocol(n);
+		int LastOnline = OBJ_STARTUSERINDEX;
 
-			if(gObj[n].Type == OBJ_USER && gObj[n].Connected == PLAYER_PLAYING){
-				
-				gObjUnionUpdateProc(n);
+		for(int X = 0; X < OBJMAX; X++)
+		{
+			gObjStateSetCreate(X);
+			gObjViewportListDestroy(X);
+			gObjViewportListCreate(X);
+			gObjViewportListProtocol(X);
+
+			if(gObj[X].Type == OBJ_USER && gObj[X].Connected == PLAYER_PLAYING){
+				LastOnline++;
+				gObjUnionUpdateProc(X);
 			
 				if(Configs.DoPShopOpen != FALSE){
-					PShop_ViewportListRegenarate(n);
-					gObj[n].m_bPShopItemChange = FALSE;
+					PShop_ViewportListRegenarate(X);
+					gObj[X].m_bPShopItemChange = FALSE;
 				}
 			}
 		}
+
+		/*if(LastOnline < gObjCount){
+			gObjCount = LastOnline + 1;
+			LogAddTD("[GameServer] Last Online Index Seted to %d",gObjCount);
+		}*/
 
 		gObjSetState();
 		GameServerInfoSend();
@@ -132,10 +139,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 	AllServerStart();
 
-	while(GetMessage(&msg, NULL, 0, 0) != 0)
-	{
-		if (!TranslateAccelerator(msg.hwnd,hAccelTable,&msg))
-		{
+	while(GetMessage(&msg, NULL, 0, 0) != 0){
+		if(!TranslateAccelerator(msg.hwnd,hAccelTable,&msg)){
 		    TranslateMessage(&msg);
 		    DispatchMessage(&msg);
 		}
@@ -157,20 +162,16 @@ BOOL AllServerStart(void){
 		}
 	}
 
-	if ((DevilSquareEventConnect==0) && (IsDevilSquareEventConnected==0))
-	{
-		if (GMRankingServerConnect(Configs.RankingServerIP, WM_GM_RANKING_CLIENT_MSG_PROC) == 0)
-		{
+	if((DevilSquareEventConnect==0) && (IsDevilSquareEventConnected==0)){
+		if(GMRankingServerConnect(Configs.RankingServerIP, WM_GM_RANKING_CLIENT_MSG_PROC) == 0){
 			MsgBox("Ranking Server Connect Fail");
 			return 0;
 		}
 		IsDevilSquareEventConnected=1;
 	}
 
-	if ((EventChipServerConnect!=0) && (IsEventChipServerConnected==0))
-	{
-		if (GMEventChipServerConnect(Configs.EventServerIP, WM_GM_EVENTCHIP_CLIENT_MSG_PROC) == 0)
-		{
+	if((EventChipServerConnect!=0) && (IsEventChipServerConnected==0)){
+		if(GMEventChipServerConnect(Configs.EventServerIP, WM_GM_EVENTCHIP_CLIENT_MSG_PROC) == 0){
 			MsgBox("Event Chip Server Connect Fail");
 			return 0;
 		}
@@ -547,14 +548,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					TMonsterAI::MonsterAIProc();
 					break;
 
-				case WM_FIRST_MSG_PROCESS:
-					{
-						
-					}
-					break;
 				case WM_SECOND_MSG_PROCESS:
 					{
-						for (int n=0; n < MAX_NUMBER_MAP;n++){
+						for(int n=0; n < MAX_NUMBER_MAP;n++){
 							MapC[n].WeatherVariationProcess();
 						}
 

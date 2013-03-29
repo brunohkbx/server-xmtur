@@ -303,6 +303,11 @@ void MedussaBossMonsterItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE 
 void GoldenBoxItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE cY);
 void SilverBoxItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE cY);
 BYTE GamblingSystemItemBagOpen(OBJECTSTRUCT* lpObj, BYTE btMapNumber, BYTE cX, BYTE cY, BYTE btItemType);
+void JerintBossMonsterItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE cY);
+void GaionBossMonsterItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE cY);
+void DoppelgangerSilverChestItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE cY);
+void DoppelgangerGoldenChestItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE cY);
+
 extern LPOBJ pEventObj;
 
 #endif

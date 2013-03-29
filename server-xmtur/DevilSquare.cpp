@@ -1232,11 +1232,6 @@ int CDevilSquare::gObjMonsterExpSingle(LPOBJ lpObj, LPOBJ lpTargetObj, int dmg, 
 		exp = int(exp * Configs.AddExperience);
 	}
 
-	if(g_MasterLevelSystem.CheckIsMasterLevelCharacter(lpObj) == FALSE)//Season 4.5 addon
-	{
-		g_PCBangPointSystem.AddExperience(lpObj,exp);
-	}
-
 	if ( g_CrywolfSync.GetOccupationState() == 1 && Configs.CrywolfApplyMvpPenalty != FALSE)
 	{
 		exp =  (exp * g_CrywolfSync.GetGettingExpPenaltyRate()) / 100;
@@ -1493,11 +1488,6 @@ void CDevilSquare::gObjExpParty(LPOBJ lpObj, LPOBJ lpTargetObj, int AttackDamage
 					if(g_MasterLevelSystem.CheckIsMasterLevelCharacter(lpPartyObj) == FALSE)
 					{
 						exp = int(exp * Configs.AddExperience);
-					}
-
-					if(g_MasterLevelSystem.CheckIsMasterLevelCharacter(lpPartyObj) == FALSE)//Season 4.5 addon
-					{
-						g_PCBangPointSystem.AddExperience(lpPartyObj,exp);
 					}
 
 					if ( g_CrywolfSync.GetOccupationState() == 1 && Configs.CrywolfApplyMvpPenalty != FALSE)

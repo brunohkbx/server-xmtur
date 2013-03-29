@@ -8,6 +8,7 @@
 #include "GameMain.h"
 #include "TMonsterAIUtil.h"
 #include "Winutil.h"
+#include "Event.h"
 
 CDoppelganger Doppelganger;
 
@@ -28,7 +29,6 @@ void CDoppelganger::MoveProc(LPOBJ lpObj)
 	}
 }
 
-
 void Doppelganger_CheckCore(void * lpParam);
 
 void CDoppelganger::StartProcess(BOOL Reload)
@@ -40,19 +40,16 @@ void CDoppelganger::StartProcess(BOOL Reload)
 
 	this->EventMap = 64;
 
-	this->OnlyInParty = GetPrivateProfileIntA("Doppelganger","EnterInParty",0,"..\\Data\\Events\\Doppelganger.dat");
-	this->SilverChest_DropRate = GetPrivateProfileIntA("Doppelganger","SilverChestDropRate",50,"..\\Data\\Events\\Doppelganger.dat");
-	this->StandByTime = GetPrivateProfileIntA("Doppelganger","StandByMinutes",60,"..\\Data\\Events\\Doppelganger.dat");
+	this->OnlyInParty = GetPrivateProfileInt("Doppelganger","EnterInParty",0,CONFIG_FILE);
+	this->SilverChest_DropRate = GetPrivateProfileInt("Doppelganger","SilverChestDropRate",50,CONFIG_FILE);
+	this->StandByTime = GetPrivateProfileInt("Doppelganger","StandByMinutes",60,CONFIG_FILE);
 
-	this->PieceofSpeculumDropRate = GetPrivateProfileIntA("Doppelganger","PieceOfSpeculumDropRate",60,"..\\Data\\Events\\Doppelganger.dat");
+	this->PieceofSpeculumDropRate = GetPrivateProfileInt("Doppelganger","PieceOfSpeculumDropRate",60,CONFIG_FILE);
 
 	memset(this->Player,-1,sizeof(this->Player));
 	memset(this->MonsterBoss,-1,sizeof(this->MonsterBoss));
 	memset(this->Monster,-1,sizeof(this->Monster));
 	memset(this->CurrentMonster,-1,sizeof(this->CurrentMonster));
-
-	//Load All Shit
-	this->LoadItemBag(); //Silver & Golden Chest
 
 	//Set Monsters Codinates
 	this->PosX[0] = 200, this->PosY[0] = 32;
@@ -597,37 +594,8 @@ void CDoppelganger::OpenChest(int aIndex, int X, int Y, int ChestType)
 		gObjDel(this->SiverChestIndex[0]); //Delete Silver 1
 		gObjDel(this->SiverChestIndex[1]); //Delete Silver 2
 
-		int Random = rand() % 100;
-
-		if(Random <= this->SilverChest_DropRate)
-		{
-			int ItemIndex = ITEMGET(this->SilverChest[Index].Type,this->SilverChest[Index].Index);
-			
-			int Excellent, Option;
-			if(this->SilverChest[Index].Excellent == 1){
-				Excellent = GetExcellentOption();
-			}
-
-			if(this->SilverChest[Index].Option == 1){
-				if((rand()%10) <5){ 
-					Option=0;
-				} else {
-					Option=1;
-				}
-			}
-			
-			ItemSerialCreateSend(aIndex,this->EventMap,(BYTE)X,(BYTE)Y,ItemIndex,
-			this->SilverChest[Index].Level,
-			this->SilverChest[Index].Duration,
-			this->SilverChest[Index].Skill,
-			this->SilverChest[Index].Luck,
-			this->SilverChest[Index].Option,aIndex,
-			this->SilverChest[Index].Excellent,0);
-
-			LogAddTD("[Doppelganger][%s][%s] Open Silver Chest [%d,%d,%d,%d,%d,%d,%d]",lpObj->AccountID,lpObj->Name,ItemIndex,
-			this->SilverChest[Index].Level,Option,this->SilverChest[Index].Luck,
-			this->SilverChest[Index].Skill,this->SilverChest[Index].Duration,Excellent);
-
+		if((rand()%10000) < this->SilverChest_DropRate){
+			DoppelgangerSilverChestItemBagOpen(lpObj,lpObj->MapNumber,X,Y);
 		} else {
 			this->Larvas[0] = gObjAddMonster(this->EventMap);
 			this->Larvas[1] = gObjAddMonster(this->EventMap);
@@ -642,37 +610,8 @@ void CDoppelganger::OpenChest(int aIndex, int X, int Y, int ChestType)
 			if(this->Larvas[4] >= 0) this->AddMonster(this->Larvas[4],532,X-1,Y+2);
 		}
 	} else if(ChestType == 1) {
-		int ItemIndex = ITEMGET(this->GoldenChest[Index].Type,this->GoldenChest[Index].Index);
-
-		int Excellent,Option;
-		if(this->GoldenChest[Index].Excellent == 1){
-			Excellent = GetExcellentOption();
-		}
-
-		if(this->GoldenChest[Index].Option == 1){
-			if((rand()%10) <5){ 
-				Option=0;
-			} else {
-				Option=1;
-			}
-		}
-
-		ItemSerialCreateSend(aIndex,this->EventMap,(BYTE)X,(BYTE)Y,ItemIndex,
-			this->GoldenChest[Index].Level,
-			this->GoldenChest[Index].Duration,
-			this->GoldenChest[Index].Skill,
-			this->GoldenChest[Index].Luck,
-			Option,aIndex,Excellent,0);
-
-		LogAddTD("[Doppelganger][%s][%s] Open Golden Chest [%d,%d,%d,%d,%d,%d,%d]",
-			lpObj->AccountID,lpObj->Name,ItemIndex,
-			this->GoldenChest[Index].Level,
-			Option,
-			this->GoldenChest[Index].Luck,
-			this->GoldenChest[Index].Skill,
-			this->GoldenChest[Index].Duration,
-			Excellent);
-
+		
+		DoppelgangerGoldenChestItemBagOpen(lpObj,lpObj->MapNumber,X,Y);
 		gObjDel(this->GoldenChestIndex); //Delete Golden Chest!
 		
 		this->Status = SUCCESS; //Success
@@ -854,87 +793,4 @@ void CDoppelganger::AddMonster(int aIndex, int Class, int X, int Y){
 }
 
 void CDoppelganger::LoadItemBag(){
-
-	SMDFile = fopen("..\\Data\\ItemBags\\Doppelganger_ItemBag.dat","r");
-
-	if(!SMDFile){
-		MsgBox("[Doppelganger] Failed Loading Chest's File");
-		return;
-	}
-	
-	int Token,Chest,Type,Index,Level,Option,Luck,Skill,Duration,Excellent,Count;
-
-	memset(this->TotalItems,0,sizeof(this->TotalItems));
-	memset(this->SilverChest,0,sizeof(this->SilverChest));
-	memset(this->GoldenChest,0,sizeof(this->GoldenChest));
-	Count = 0;
-
-	while(true){
-		
-		Token = GetToken();
-
-		if(Token == 2){ break; }
-		if(!strcmp("end",TokenString)){ break; }
-	
-		Chest = (int)TokenNumber;
-	
-		while(true){ //0: Silver Chest - 1: Golden Chest
-
-			Token = GetToken();
-
-			if(Token == 2){ break; }
-			if(!strcmp("end",TokenString)){ break; }
-
-			Type = (int)TokenNumber;
-
-			Token = GetToken();
-			Index = (int)TokenNumber;
-
-			Token = GetToken();
-			Level = (int)TokenNumber;
-
-			Token = GetToken();
-			Option = (int)TokenNumber;
-
-			Token = GetToken();
-			Luck = (int)TokenNumber;
-
-			Token = GetToken();
-			Skill = (int)TokenNumber;
-
-			Token = GetToken();
-			Duration = (int)TokenNumber;
-
-			Token = GetToken();
-			Excellent = (int)TokenNumber;
-
-					
-			Count = this->TotalItems[Chest];
-
-			if(Type == 0){
-				this->SilverChest[Count].Type = Type;
-				this->SilverChest[Count].Index = Index;
-				this->SilverChest[Count].Level = Level;
-				this->SilverChest[Count].Option = Option;
-				this->SilverChest[Count].Luck = Luck;
-				this->SilverChest[Count].Skill = Skill;
-				this->SilverChest[Count].Duration = Duration;
-				this->SilverChest[Count].Excellent = Excellent;
-			} else {
-				this->GoldenChest[Count].Type = Type;
-				this->GoldenChest[Count].Index = Index;
-				this->GoldenChest[Count].Level = Level;
-				this->GoldenChest[Count].Option = Option;
-				this->GoldenChest[Count].Luck = Luck;
-				this->GoldenChest[Count].Skill = Skill;
-				this->GoldenChest[Count].Duration = Duration;
-				this->GoldenChest[Count].Excellent = Excellent;
-			}
-
-			this->TotalItems[Chest]++;
-		}
-	}
-	
-	LogAddTD("[Doppelganger] Silver and Golden Chest file Loaded");
-	fclose(SMDFile);
 }

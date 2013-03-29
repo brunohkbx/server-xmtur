@@ -222,4 +222,25 @@ struct GC_LEVELUP
 	WORD AddPoint;
 	WORD MaxAddPoint;
 };
+
+struct PWMSG_COUNT
+{
+	PWMSG_HEAD h;
+	BYTE count;
+};
+
+struct PBMSG_COUNT
+{
+	PBMSG_HEAD h;
+	BYTE count;
+};
+
+struct PMSG_EX_SKILL_COUNT
+{
+	PBMSG_HEAD h;
+	BYTE NumberH;
+	BYTE NumberL;
+	BYTE Type;
+	BYTE Count;
+};
 #endif

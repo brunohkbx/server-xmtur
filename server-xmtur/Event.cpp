@@ -56,17 +56,17 @@ void EventChipEventProtocolCore(BYTE protoNum, LPBYTE aRecv, int aLen)
 		case 0x17:
 			EGAnsRegHTOfflineGift((PMSG_ANS_REG_HT_OFFLINE_GIFT *)aRecv);
 			break;
-		case 0x23: //season4.5 add-on start
-			g_PCBangPointSystem.EGAnsPcBangPointInfo((PMSG_ANS_REG_PC_POINT *)aRecv);
+		case 0x23: 
+			//PCBang Removed
 			break;
 		case 0x24:
-			g_PCBangPointSystem.EGAnsUserFirstPcBangUpdatePoint((PMSG_ANS_REG_PC_POINT *)aRecv);
+			//PCBang Removed
 			break;
 		case 0x29:
-			g_PCBangPointSystem.EGAnsUpdatePcBangResetPointInfo((PMSG_ANS_REG_PC_POINT *)aRecv);
+			//PCBang Removed
 			break;
 		case 0x30:
-			g_PCBangPointSystem.EGAnsUserPcBangUpdatePoint((PMSG_ANS_REG_PC_POINT *)aRecv);
+			//PCBang Removed
 			break;
 		case 0x31:
 			EGAnsRegXMasGetPayItemResult((PMSG_XMAS_PAY_ITEM_RESULT *)aRecv);
@@ -1077,7 +1077,6 @@ void MedussaBossMonsterItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE 
 	MedussaItemBag->DropMedussaMonsterReward(lpObj->m_Index, btMapNumber, cX, cY);
 }
 
-
 void GoldenBoxItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE cY)
 {
 	GoldenBoxItemBag->DropGoldenSealedBoxReward(lpObj->m_Index, btMapNumber, cX, cY);
@@ -1088,7 +1087,25 @@ void SilverBoxItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE cY)
 	SilverBoxItemBag->DropSilverSealedBoxReward(lpObj->m_Index, btMapNumber, cX, cY);
 }
 
+void JerintBossMonsterItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE cY)
+{
+	JerintItemBag->DropMedussaMonsterReward(lpObj->m_Index, btMapNumber, cX, cY);
+}
 
+void GaionBossMonsterItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE cY)
+{
+	GaionItemBag->DropMedussaMonsterReward(lpObj->m_Index, btMapNumber, cX, cY);
+}
+
+void DoppelgangerSilverChestItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE cY)
+{
+	DoppelgangerSilverChestItemBag->DropMedussaMonsterReward(lpObj->m_Index, btMapNumber, cX, cY);
+}
+
+void DoppelgangerGoldenChestItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE cY)
+{
+	DoppelgangerGoldenChestItemBag->DropMedussaMonsterReward(lpObj->m_Index, btMapNumber, cX, cY);
+}
 
 //004A0D90  /> \55            PUSH EBP
 void LuckyCoint10ItemBagOpen(LPOBJ lpObj, BYTE btMapNumber, BYTE cX, BYTE cY)
