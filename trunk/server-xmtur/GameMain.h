@@ -152,10 +152,14 @@ extern CProbabilityItemBag * LuckyCoin10; //test
 extern CProbabilityItemBag * LuckyCoin20; //test
 extern CProbabilityItemBag * LuckyCoin30; //test
 
-
-extern CProbabilityItemBag * MedussaItemBag; //test
+extern CProbabilityItemBag * MedussaItemBag;
+extern CProbabilityItemBag * JerintItemBag;
+extern CProbabilityItemBag * GaionItemBag;
 extern CProbabilityItemBag * SilverBoxItemBag;
 extern CProbabilityItemBag * GoldenBoxItemBag;
+extern CProbabilityItemBag * DoppelgangerSilverChestItemBag;
+extern CProbabilityItemBag * DoppelgangerGoldenChestItemBag;
+
 extern CGamblingItemBag	*pGamblingSystemItemBag;
 
 
@@ -902,6 +906,15 @@ public:
 	int Defense_DL;
 	int Defense_Sum;
 	int Defense_DW_MG;
+
+	//New Events
+	int ImperialGuardianJerintDropRate;
+	int ImperialGuardianJerintDropCount;
+	int ImperialGuardianGaionDropRate;
+	int ImperialGuardianGaionDropCount;
+
+	int MedussaItemDropRate;
+	int MedussaItemDropCount;
 };
 
 

@@ -62,7 +62,6 @@
 #include "MasterSkillSystem.h"
 #include "ChaosCard.h"
 #include "Raklion.h"
-#include "PCBangPointSystem.h"
 #include "XmasAttackEvent.h"
 #include "QuestManager.h"
 #include "Doppelganger.h"
@@ -159,12 +158,13 @@ CProbabilityItemBag * XMasEventC;
 CProbabilityItemBag * LuckyCoin10;
 CProbabilityItemBag * LuckyCoin20;
 CProbabilityItemBag * LuckyCoin30;
-
-
 CProbabilityItemBag * MedussaItemBag;
-
+CProbabilityItemBag * JerintItemBag;
+CProbabilityItemBag * GaionItemBag;
 CProbabilityItemBag * SilverBoxItemBag;
 CProbabilityItemBag * GoldenBoxItemBag;
+CProbabilityItemBag * DoppelgangerSilverChestItemBag;
+CProbabilityItemBag * DoppelgangerGoldenChestItemBag;
 
 CGamblingItemBag * pGamblingSystemItemBag=NULL;	
 
@@ -410,6 +410,15 @@ void CConfigs::LoadConfigs(){
 	this->CCItem2 = ITEMGET(this->CCDropGroup2,this->CCDropID2);
 	this->CCItem3 = ITEMGET(this->CCDropGroup2,this->CCDropID3);
 	this->CCItem4 = ITEMGET(this->CCDropGroup4,this->CCDropID4);
+
+	//Season5 New Events
+	this->ImperialGuardianJerintDropRate = GetPrivateProfileInt("ImperialGuardian","JerintBossItemDropRate",9000,CONFIG_FILE);
+	this->ImperialGuardianJerintDropCount = GetPrivateProfileInt("ImperialGuardian","JerintBossItemDropCount",2,CONFIG_FILE);
+	this->ImperialGuardianGaionDropRate = GetPrivateProfileInt("ImperialGuardian","GaionBossItemDropRate",6000,CONFIG_FILE);
+	this->ImperialGuardianGaionDropCount = GetPrivateProfileInt("ImperialGuardian","GaionBossItemDropCount",4,CONFIG_FILE);
+
+	this->MedussaItemDropRate = GetPrivateProfileInt("Medussa","MedussaBossItemDropRate",8000,CONFIG_FILE);
+	this->MedussaItemDropCount = GetPrivateProfileInt("Medussa","MedussaBossItemDropCount",3,CONFIG_FILE);
 
 	//Pets
 	this->DarkHorseMixRate = GetPrivateProfileInt("PetsMix","DarkHorseMix_SuccessRate",50,CONFIG_FILE);
@@ -882,6 +891,11 @@ void GameMonsterAllAdd()
 			{
 				continue;
 			}
+		}
+
+		if ( IMPERIAL_MAP_RANGE(gMSetBase.m_Mp[n].m_MapNumber) != FALSE )
+		{
+			continue;
 		}
 
 		if ( CC_MAP_RANGE(gMSetBase.m_Mp[n].m_MapNumber) != FALSE )
@@ -1442,8 +1456,6 @@ void ReadCommonServerInfo()
 	g_Kanturu.LoadData(gDirPath.GetNewPath("Kanturu.dat"));
 	g_KanturuMonsterMng.LoadData(gDirPath.GetNewPath("KanturuMonsterSetBase.txt"));
 
-	g_PCBangPointSystem.Load(gDirPath.GetNewPath("PCBangPointItemOpt.txt"));
-
 	g_Raklion.LoadData(gDirPath.GetNewPath("Raklion.dat"));
 
 	GetPrivateProfileString("GameServerInfo", "CreateCharacter", "1", szTemp, 5, gDirPath.GetNewPath("commonserver.cfg"));
@@ -1945,8 +1957,7 @@ void GameServerInfoSend()
 {
 	PMSG_SERVERINFO pMsg;
 
-	if ( gDisconnect == TRUE )
-	{
+	if(gDisconnect == TRUE){
 		return;
 	}
 
@@ -2803,6 +2814,47 @@ void LoadItemBag() //0053E2F0
 	}
 
 	GoldenBoxItemBag->Init("eventitembag61.txt");
+
+	//Imperial Guardian
+	if(JerintItemBag != NULL) delete JerintItemBag;
+	JerintItemBag = new CProbabilityItemBag; 
+	if(JerintItemBag == NULL){
+		// Memory allocation error
+		MsgBox("CProbabilityItemBag %s", lMsg.Get(MSGGET(0, 110)));
+		return;
+	}
+
+	JerintItemBag->Init("eventitembag62.txt");
+
+	if(GaionItemBag != NULL) delete GaionItemBag;
+	GaionItemBag = new CProbabilityItemBag; 
+	if(GaionItemBag == NULL){
+		// Memory allocation error
+		MsgBox("CProbabilityItemBag %s", lMsg.Get(MSGGET(0, 110)));
+		return;
+	}
+
+	GaionItemBag->Init("eventitembag63.txt");
+
+	if(DoppelgangerSilverChestItemBag != NULL) delete DoppelgangerSilverChestItemBag;
+	DoppelgangerSilverChestItemBag = new CProbabilityItemBag; 
+	if(DoppelgangerSilverChestItemBag == NULL){
+		// Memory allocation error
+		MsgBox("CProbabilityItemBag %s", lMsg.Get(MSGGET(0, 110)));
+		return;
+	}
+
+	DoppelgangerSilverChestItemBag->Init("eventitembag64.txt");
+
+	if(DoppelgangerGoldenChestItemBag != NULL) delete DoppelgangerGoldenChestItemBag;
+	DoppelgangerGoldenChestItemBag = new CProbabilityItemBag; 
+	if(DoppelgangerGoldenChestItemBag == NULL){
+		// Memory allocation error
+		MsgBox("CProbabilityItemBag %s", lMsg.Get(MSGGET(0,110)));
+		return;
+	}
+
+	DoppelgangerGoldenChestItemBag->Init("eventitembag65.txt");
 
 	//Gambling System
 	if(pGamblingSystemItemBag != NULL) delete pGamblingSystemItemBag;

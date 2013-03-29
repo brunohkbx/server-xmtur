@@ -3,7 +3,7 @@
 
 #if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+#endif 
 
 #include "SkillDelay.h"
 #include "ComboAttack.h"
@@ -20,11 +20,10 @@
 #include "ItemSystemFor380.h"
 #include "BuffEffect.h"
 #include "HackToolPacket.h"
-#include "PCBangPointSystem.h"
 #include "SocketOption.h"
 
-#define OBJMAX 9000
-#define OBJMAXUSER 1000
+#define OBJMAX 8500
+#define OBJMAXUSER 500
 #define OBJ_MAXMONSTER 7400
 #define CRYWOLF_MAP_RANGE(map) ( ( ((map)) == MAP_INDEX_CRYWOLF_FIRSTZONE  )?TRUE:FALSE  )
 
@@ -114,7 +113,6 @@ enum MAP_INDEX
 	MAP_INDEX_RAKLION = 0x39,
 	MAP_INDEX_RAKLION_BOSS = 0x3A,
 	MAP_INDEX_SANTATOWN = 0x3E,
-	
 	MAP_INDEX_VULCANUS = 63,
 	MAP_INDEX_DUELARENA = 64,
 	MAP_INDEX_DOPPELGANGER1 = 65,
@@ -212,6 +210,28 @@ enum STAT_FRUIT_USING_RESULT {
 #define FRIEND_SERVER_STATE_LOGIN_FAIL	0
 #define FRIEND_SERVER_STATE_OFFLINE		1
 #define FRIEND_SERVER_STATE_ONLINE		2
+#define CURRENT_DB_VERSION	3
+#define CHAR_SET_SIZE		18
+#define CS_CLASS			0
+#define CS_WEAPON1_TYPE		1
+#define CS_WEAPON2_TYPE		2
+#define CS_WEAPON1_DATA		12
+#define CS_WEAPON2_DATA		13
+#define CS_HELMET1			13
+#define CS_HELMET2			9
+#define CS_HELMET3			3
+#define CS_ARMOR1			14
+#define CS_ARMOR2			9
+#define CS_ARMOR3			3
+#define CS_PANTS1			14
+#define CS_PANTS2			9
+#define CS_PANTS3			4
+#define CS_GLOVES1			15
+#define CS_GLOVES2			9
+#define CS_GLOVES3			4
+#define CS_BOOTS1			15
+#define CS_BOOTS2			9
+#define CS_BOOTS3			5
 
 #define MAIN_INVENTORY_RANGE(x) (((x)<0)?FALSE:((x)>MAIN_INVENTORY_SIZE-1)?FALSE:TRUE )
 #define INVENTORY_RANGE(x) (((x)<0)?FALSE:((x)>INVENTORY_SIZE-1)?FALSE:TRUE )
@@ -220,38 +240,6 @@ enum STAT_FRUIT_USING_RESULT {
 #define OBJMON_RANGE(x) ( ((x)<0)?FALSE:((x)>OBJ_MAXMONSTER-1)?FALSE:TRUE)
 #define PSHOP_RANGE(x) ( (((x)-MAIN_INVENTORY_SIZE)<0)?FALSE:(((x)-MAIN_INVENTORY_SIZE)>(INVENTORY_SIZE-MAIN_INVENTORY_SIZE-1))?FALSE:TRUE )
 #define ATTRIBUTE_RANGE(x) (((x)<51)?FALSE:((x)>58)?FALSE:TRUE )
-
-#define CURRENT_DB_VERSION	3
-
-#define CHAR_SET_SIZE		18
-
-#define CS_CLASS		0
-
-#define CS_WEAPON1_TYPE	1
-#define CS_WEAPON2_TYPE	2
-
-#define CS_WEAPON1_DATA	12
-#define CS_WEAPON2_DATA	13
-
-#define CS_HELMET1		13
-#define CS_HELMET2		9
-#define CS_HELMET3		3
-
-#define CS_ARMOR1		14
-#define CS_ARMOR2		9
-#define CS_ARMOR3		3
-
-#define CS_PANTS1		14
-#define CS_PANTS2		9
-#define CS_PANTS3		4
-
-#define CS_GLOVES1		15
-#define CS_GLOVES2		9
-#define CS_GLOVES3		4
-
-#define CS_BOOTS1		15
-#define CS_BOOTS2		9
-#define CS_BOOTS3		5
 
 #define CHECK_LIMIT(value, limit) ( ((value)<0)?FALSE:((value)>((limit)-1))?FALSE:TRUE  )
 #define CHECK_CLASS(value, type) ( ((value)!=(type))?FALSE:TRUE )
@@ -284,21 +272,116 @@ enum STAT_FRUIT_USING_RESULT {
 #define CS_SET_BOOTS3(x) ( ((x) & 0x0F ) << 4 )
 
 #define CS_SET_WING1(x)  ( ((x) & 0x03 ) << 2 )
-#define CS_SET_HELPER(x) ( ((x) & 0x03 )      )
+#define CS_SET_HELPER(x) ( ((x) & 0x03 ))
 
-#define CS_SET_SMALLLEVEL_RH(x)		( (x)       )
-#define CS_SET_SMALLLEVEL_LH(x)		( (x) << 3  ) 
-#define CS_SET_SMALLLEVEL_HELMET(x)	( (x) << 6  )
-#define CS_SET_SMALLLEVEL_ARMOR(x)	( (x) << 9  )
-#define CS_SET_SMALLLEVEL_PANTS(x)	( (x) << 12 )
-#define CS_SET_SMALLLEVEL_GLOVES(x)	( (x) << 15 )
-#define CS_SET_SMALLLEVEL_BOOTS(x)	( (x) << 18 )
+#define CS_SET_SMALLLEVEL_RH(x)((x))
+#define CS_SET_SMALLLEVEL_LH(x)((x) << 3) 
+#define CS_SET_SMALLLEVEL_HELMET(x)((x) << 6)
+#define CS_SET_SMALLLEVEL_ARMOR(x)((x) << 9)
+#define CS_SET_SMALLLEVEL_PANTS(x)((x) << 12)
+#define CS_SET_SMALLLEVEL_GLOVES(x)((x) << 15)
+#define CS_SET_SMALLLEVEL_BOOTS(x)((x) << 18)
 
-#define CS_SET_SMALLLEVEL1(x)		( ((x) >> 16) & 0xFF )
-#define CS_SET_SMALLLEVEL2(x)		( ((x) >> 8 ) & 0xFF )
-#define CS_SET_SMALLLEVEL3(x)		((x) & 0xFF )
+#define CS_SET_SMALLLEVEL1(x)(((x) >> 16) & 0xFF)
+#define CS_SET_SMALLLEVEL2(x)(((x) >> 8 ) & 0xFF)
+#define CS_SET_SMALLLEVEL3(x)((x) & 0xFF)
 
 #include "ViewPortGuild.h"
+
+
+struct PMSG_ITEMVIEWPORTCREATE
+{
+	BYTE NumberH;
+	BYTE NumberL;
+	BYTE px;
+	BYTE py;
+	BYTE ItemInfo[MAX_ITEM_INFO];
+};
+
+struct PMSG_VIEWPORTCREATE
+{
+	BYTE NumberH;
+	BYTE NumberL;
+	BYTE X;
+	BYTE Y;
+	BYTE CharSet[18];
+	char Id[10];
+	BYTE TX;
+	BYTE TY;
+	BYTE DirAndPkLevel;
+	BYTE btViewSkillStateCount;
+	BYTE btViewSkillState[MAX_STATE_COUNT];
+};
+
+struct PMSG_VIEWPORTCREATE_CHANGE
+{
+	BYTE NumberH;
+	BYTE NumberL;
+	BYTE X;
+	BYTE Y;
+	BYTE SkinH;
+	BYTE SkinL;
+	char Id[10];
+	BYTE TX;
+	BYTE TY;
+	BYTE DirAndPkLevel;
+	BYTE CharSet[18]; //Season 2.5 add-on
+	BYTE btViewSkillStateCount;
+	BYTE btViewSkillState[MAX_STATE_COUNT];
+};
+
+struct PMSG_VIEWPORTDESTROY
+{
+	BYTE NumberH;
+	BYTE NumberL;
+};
+
+struct PMSG_MONSTER_VIEWPORTCREATE
+{
+	BYTE NumberH;
+	BYTE NumberL;
+	BYTE Type_HI;
+	BYTE Type_LO;
+	BYTE X;
+	BYTE Y;
+	BYTE TX;
+	BYTE TY;
+	BYTE Path;
+	BYTE btViewSkillStateCount;
+	BYTE btViewSkillState[MAX_STATE_COUNT];
+};
+
+struct PMSG_CALLMONSTER_VIEWPORTCREATE
+{
+	BYTE NumberH;
+	BYTE NumberL;
+	BYTE Type_HI;
+	BYTE Type_LO;
+	BYTE X;
+	BYTE Y;
+	BYTE TX;
+	BYTE TY;
+	BYTE Path;
+	BYTE Id[10];
+	BYTE btViewSkillStateCount;
+	BYTE btViewSkillState[MAX_STATE_COUNT];
+};
+
+struct PMSG_GUILDVIEWPORT_USER
+{
+	BYTE NumberH;
+	BYTE NumberL;
+	BYTE GNumberH;
+	BYTE GNumberL;
+};
+
+struct PMSG_GUILDVIEWPORT
+{
+	BYTE NumberH;
+	BYTE NumberL;
+	char GuildName[8];
+	BYTE Mark[32];
+};
 
 typedef union tagPATHTABLE
 {
@@ -325,9 +408,6 @@ typedef struct tagInterfaceState
 
 } INTERFACE_STATE, * LPINTERFACE_STATE;
 
-extern short RoadPathTable[MAX_ROAD_PATH_TABLE];
-extern int  gServerMaxUser;	
-extern BOOL g_EnergyCheckOff;
 
 struct HITDAMAGE_STRUCT
 {
@@ -381,9 +461,6 @@ typedef struct tagSEND_MONSTER_ATTACK_MENSSAGE
 	int iSubCode;	// unkC
 	int iSubCode2;	// unk10
 }SEND_MONSTER_ATTACK_MENSSAGE;
-
-extern ExMessageStateMachine gSMAttackProcMsg[OBJMAX][MAX_MONSTER_SEND_ATTACK_MSG];
-extern MessageStateMachine gSMMsg[OBJMAX][MAX_MONSTER_SEND_MSG];
 
 struct MONSTERKILLINFO
 {
@@ -1057,23 +1134,9 @@ struct OBJECTSTRUCT
 
 	WORD	m_wCashPoint; //0x209C
 
-	//PcBang Variables #START#
-
-	//PcBang EventServer Control
-	int		m_iPcBangConnectionType; // 0x20A0
-
-	//PcBang
-	PCBANG_POINT_SYSTEM	m_PcBangPointSystem; // 0x20A4
-
-	//PcBang Class Timer
-	CPCBangPointTimer	m_PCBangPointTimer; //0x20C4
-
-	//PcBang Variables #END#
-
 	int		m_iIllusionTempleIndex; //20FC
 	BOOL	m_bSkillKeyRecv; //0x2100
 	
-	//int		m_iPeriodItemEffectIndex; //0x2104
 	int		m_iPeriodItemEffectIndex[10]; // Adaptado al Cash shop
 	BYTE	Summoner; //0x2108
 
@@ -1138,24 +1201,24 @@ typedef OBJECTSTRUCT * LPOBJ;
 
 #include "Protocol.h"
 
-extern int gObjCSFlag;
-extern int gItemLoop;
-extern int gItemLoop2;
-extern int gItemLoopMax;
 extern int gObjTotalUser;
 extern int gDisconnect;
 extern int gCurConnectUser; 
-extern int skillSuccess;
 extern int GuildInfoOfs;
 extern int GuildInfoCount;
-extern int GuilUserOfs;
+extern int GuildUserOfs;
 extern int GuildUserCount;
 extern int lOfsChange;
 extern int ChangeCount;
-
 extern int gObjCallMonCount;
 extern int gObjMonCount;
 extern int gObjCount;
+extern short RoadPathTable[MAX_ROAD_PATH_TABLE];
+extern int  gServerMaxUser;	
+extern BOOL g_EnergyCheckOff;
+extern ExMessageStateMachine gSMAttackProcMsg[OBJMAX][MAX_MONSTER_SEND_ATTACK_MSG];
+extern MessageStateMachine gSMMsg[OBJMAX][MAX_MONSTER_SEND_MSG];
+
 
 class OBJECTSTRUCT_CLASS
 {

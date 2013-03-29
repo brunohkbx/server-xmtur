@@ -28,7 +28,6 @@
 #include "Raklion.h"
 #include "RaklionBattleUserMng.h"
 #include "ChaosCard.h"
-#include "PCBangPointSystem.h"
 
 CLogToFile KUNDUN_GM_LOG( "KUNDUN_EVENT_GM_LOG", ".\\KUNDUN_EVENT_GM_LOG", 1);
 CGMMng cManager;
@@ -2646,41 +2645,6 @@ int CGMMng::ManagementProc(LPOBJ lpObj, char* szCmd, int aIndex) //00570A00
 		break;
         case 507:
 			this->CmdSummonChar(lpObj,this->GetTokenString());
-		break;
-			//PCBang Related
-		case 446:
-		{
-			int iAddPoint = this->GetTokenNumber();
-			lpObj->m_PcBangPointSystem.m_dwPcBangPointTick = GetTickCount();
-			lpObj->m_PcBangPointSystem.m_iPcBangAccumulatedPoint += iAddPoint;
-
-			char szTemp[256];
-			wsprintf(szTemp, lMsg.Get(3392), iAddPoint);
-			GCServerMsgStringSend(szTemp, lpObj->m_Index, 1);
-
-			g_PCBangPointSystem.EGReqUpdatePcBangResetPointInfo(lpObj->m_Index);
-
-			LogAddTD("[PCBangPointSystem][Add Point] [%s] %d/Total:%d Rule(%d)", 
-					lpObj->AccountID, lpObj->m_PcBangPointSystem.m_sPcBangGainPoint, 
-					lpObj->m_PcBangPointSystem.m_iPcBangAccumulatedPoint, lpObj->m_PcBangPointSystem.m_bPcBangCommonRule);
-		}
-		break;
-		case 447:
-		{
-			int iAddPoint = 0;
-			lpObj->m_PcBangPointSystem.m_dwPcBangPointTick = GetTickCount();
-			lpObj->m_PcBangPointSystem.m_iPcBangAccumulatedPoint = iAddPoint;
-
-			char szTemp[256];
-			wsprintf(szTemp, lMsg.Get(3392), iAddPoint);
-			GCServerMsgStringSend(szTemp, lpObj->m_Index, 1);
-
-			g_PCBangPointSystem.EGReqUpdatePcBangResetPointInfo(lpObj->m_Index);
-
-			LogAddTD("[PCBangPointSystem][Add Point] [%s] %d/Total:%d Rule(%d)", 
-					lpObj->AccountID, lpObj->m_PcBangPointSystem.m_sPcBangGainPoint, 
-					lpObj->m_PcBangPointSystem.m_iPcBangAccumulatedPoint, lpObj->m_PcBangPointSystem.m_bPcBangCommonRule);
-		}
 		break;
 	}
 	return 0;

@@ -32,9 +32,9 @@ void CImperialGuardian::StartProcess(BOOL Reload){
 
 	this->LoadGaionItemBag();
 
-	this->PieceOfPaperDropRate = GetPrivateProfileInt("ImperialGuardian","PieceOfPaperDropRate",60,"..\\Data\\Events\\ImperialGuardian.dat");
-	this->TrapsDamageBase =  GetPrivateProfileInt("ImperialGuardian","TrapsDamageBase",1000,"..\\Data\\Events\\ImperialGuardian.dat");
-	this->TrapsDamagePlus =  GetPrivateProfileInt("ImperialGuardian","TrapsDamagePlus",500,"..\\Data\\Events\\ImperialGuardian.dat");
+	this->PieceOfPaperDropRate = GetPrivateProfileInt("ImperialGuardian","PieceOfPaperDropRate",60,CONFIG_FILE);
+	this->TrapsDamageBase =  GetPrivateProfileInt("ImperialGuardian","TrapsDamageBase",1000,CONFIG_FILE);
+	this->TrapsDamagePlus =  GetPrivateProfileInt("ImperialGuardian","TrapsDamagePlus",500,CONFIG_FILE);
 
 	memset(this->Player,-1,sizeof(this->Player));
 	
@@ -271,15 +271,16 @@ void CImperialGuardian::SendTimer(){
 	this->CheckPartyStatus();
 
 	int PlayerIndex = 0;
+
 	//Check for Players
 	for(int X=0; X < 5;X++){
 		PlayerIndex = this->Player[X];
-		if(PlayerIndex >= OBJ_STARTUSERINDEX 
-		&& (gObjIsConnected(this->Player[X]) != TRUE 
+		if(PlayerIndex >= OBJ_STARTUSERINDEX && (gObjIsConnected(this->Player[X]) != TRUE 
 		|| gObj[PlayerIndex].MapNumber != this->EventMap)){
 		
 			LogAddTD("[ImperialGuardian] Delete User Index: %d %d",X,PlayerIndex);
 			this->Player[X] = -1;
+
 			if(X == 0){
 				LogAddTD("[ImperialGuardian] Party Leader was Out");
 				this->SetState(IMPERIAL_FAILED);
@@ -394,8 +395,6 @@ void CImperialGuardian::SendStage(){
 
 void CImperialGuardian::SetState(int SetState){
 	
-	this->SetMonsters();
-
 	switch(SetState){
 		case IMPERIAL_START:	
 			this->Timer = 587; //Set Timer en 10 Minutos
@@ -406,7 +405,7 @@ void CImperialGuardian::SetState(int SetState){
 		break;
 
 		case IMPERIAL_STANDBY:
-			this->Timer = 176; //294 = 5 Min
+			this->Timer = 30; //Seconds
 			this->SendStage(); //Zone 1 - Fist After Kill Gate
 
 			this->BattleStatus = IMPERIAL_STANDBY;
@@ -415,9 +414,10 @@ void CImperialGuardian::SetState(int SetState){
 		break;
 
 		case IMPERIAL_GATEKILL:
-
 			//Set Step
 			this->Step++;
+			//Set Monsters
+			this->SetMonsters();
 
 			//Set Timer and Status
 			this->BattleStatus = IMPERIAL_GATEKILL; //Monster Kill
@@ -594,172 +594,129 @@ void CImperialGuardian::CheckGates(){
 
 void CImperialGuardian::SetDoors(){
 
-	if(this->EventDay == 0){ //Domingo
-		this->CreateDoor(525,81,68,3);
-		this->CreateDoor(525,50,69,3);
-		this->CreateDoor(525,32,90,1);
-		this->CreateDoor(524,52,191,3);
-		this->CreateDoor(525,34,176,1);
-		this->CreateDoor(527,69,166,1);
-		this->CreateDoor(528,156,132,3);
-		this->CreateDoor(528,197,132,3);
-		this->CreateDoor(528,225,159,1);
-		this->CreateDoor(528,214,24,3);
-	} else if(EventDay == 1 || EventDay == 4){ //Lunes y Jueves
-		this->CreateDoor(524,234,29,1);
-		this->CreateDoor(524,233,55,1);
-		this->CreateDoor(524,215,80,3);
-		this->CreateDoor(525,194,25,3);
-		this->CreateDoor(524,167,25,3);
-		this->CreateDoor(525,154,53,1);
-		this->CreateDoor(525,180,79,1);
-	} else if(EventDay == 2 || EventDay == 5){ //Martes y Viernes
-		this->CreateDoor(524,50,65,3);
-		this->CreateDoor(525,75,67,3);
-		this->CreateDoor(527,19,65,3);
-		this->CreateDoor(527,37,93,1);
-		this->CreateDoor(524,41,117,1);
-		this->CreateDoor(527,55,154,1);
-		this->CreateDoor(525,107,112,3);
-	} else if(EventDay == 3 || EventDay == 6){ //Miercoles y Sabados
-		this->CreateDoor(525,146,191,3);
-		this->CreateDoor(524,119,192,3);
-		this->CreateDoor(525,89,195,3);
-		this->CreateDoor(525,223,133,1);
-		this->CreateDoor(524,223,159,1);
-		this->CreateDoor(525,223,192,1);
-		this->CreateDoor(525,167,217,1);
+	int Result = -1;
+	LPOBJ lpObj = NULL;
+	memset(this->Door,0,sizeof(this->Door));
+	this->TotalDoors = 0;
+	BYTE X, Y;
+	WORD wMonsterIndex = 0;
+
+	for(int n=0;n<gMSetBase.m_Count;n++)
+	{
+		if(gMSetBase.m_Mp[n].m_MapNumber == this->EventMap)
+		{
+			wMonsterIndex = gMSetBase.m_Mp[n].m_Type;
+				
+			if(wMonsterIndex == 524 || wMonsterIndex == 525 ||
+				wMonsterIndex == 527 || wMonsterIndex == 528){
+
+				BYTE btMapNumber = gMSetBase.m_Mp[n].m_MapNumber;
+				Result = gObjAddMonster(btMapNumber);
+
+				if(Result >= 0)
+				{
+					gObj[Result].m_PosNum = -1;
+					gObj[Result].X = gMSetBase.m_Mp[n].m_X;
+					gObj[Result].Y = gMSetBase.m_Mp[n].m_Y;
+					gObj[Result].MapNumber = gMSetBase.m_Mp[n].m_MapNumber;
+					gObj[Result].TX = gObj[Result].X;
+					gObj[Result].TY = gObj[Result].Y;
+					gObj[Result].m_OldX = gObj[Result].X;
+					gObj[Result].m_OldY = gObj[Result].Y;
+					gObj[Result].StartX = gObj[Result].X;
+					gObj[Result].StartY = gObj[Result].Y;
+					gObj[Result].Dir = gMSetBase.m_Mp[n].m_Dir;
+					gObjSetMonster(Result, wMonsterIndex);
+					gObj[Result].DieRegen = FALSE;
+					gObj[Result].MaxRegenTime = 0;
+					gObj[Result].RegenOk = 0;
+					gObj[Result].Dir = gMSetBase.m_Mp[n].m_Dir;
+
+					this->Door[this->TotalDoors] = Result;
+					this->TotalDoors++;
+
+					X = gMSetBase.m_Mp[n].m_X;
+					Y = gMSetBase.m_Mp[n].m_Y;
+
+					for(int i=(X);i<=(X);i++){
+						for(int j= (Y);j<=(Y);j++){
+							MapC[this->EventMap].m_attrbuf[j * 256 + i] = 0;
+						}
+					}
+				} else {
+					LogAddTD("[ImperialGuardian] Failed to Add Gate %d",n);
+				}
+			}
+		}
 	}
 
-	LogAddTD("[ImperialGuardian] Gates Loaded & Added Successfully");
+	LogAddTD("[ImperialGuardian] Gates Added Successfully");
 }
 
 void CImperialGuardian::CreateDoor(int GateType, int X, int Y, int Direction){
-	
-	int DoorIndex = gObjAddMonster(this->EventMap);
-
-	if(DoorIndex >= 0){
-		LPOBJ lpObj = &gObj[DoorIndex];
-
-		lpObj->X = X; lpObj->TX = X; lpObj->MTX = X; lpObj->m_OldX = X; lpObj->StartX = X;
-		lpObj->Y = Y; lpObj->TY = Y; lpObj->MTY = Y; lpObj->m_OldY = Y; lpObj->StartY = Y;
-		lpObj->Level = 50;
-
-		gObjSetMonster(DoorIndex,GateType);
-
-		lpObj->MapNumber = this->EventMap;	
-		lpObj->MaxRegenTime = 0;
-		lpObj->Dir = Direction;
-
-		this->Door[this->TotalDoors] = DoorIndex;
-		this->TotalDoors++;
-
-		for(int i=(X);i<=(X);i++){
-			for(int j= (Y);j<=(Y);j++){
-				MapC[this->EventMap].m_attrbuf[j * 256 + i] = 0;
-			}
-		}
-
-	} else {
-		LogAddTD("[ImperialGuardian] Failed to Add Door %d",this->TotalDoors+1);
-	}
 }
 
 //Set Monster For Event
 void CImperialGuardian::LoadMonsters()
 {
-	int Token;
-	SMDFile = fopen("..\\Data\\Events\\ImperialGuardian_Monsters.dat","r");
-
-	if(!SMDFile){
-		MsgBox("[ImperialGuardian] Failed Loading Monsters List");
-		return;
-	}
-		
-	memset(this->Monsters,0,sizeof(this->Monsters));
-	memset(this->MonstersCount,0,sizeof(this->MonstersCount));
-
-	int MapGroup = 0;
-	
-	while(TRUE){
-		
-		Token = (SMDToken)GetToken();
-		int MapGroup = (int)TokenNumber;
-		if(Token == END) break;
-
-		if(Token == 1)
-		{
-			int Number = 0;
-
-			while(TRUE){
-				
-				if(MapGroup < 7){
-
-					Token = GetToken();
-					if(!strcmp("end",TokenString)) break; 
-
-					if(Number >= 255) break; 
-
-					this->Monsters[MapGroup][Number].ID = (int)TokenNumber;
-
-					Token = GetToken();
-					this->Monsters[MapGroup][Number].X = (int)TokenNumber;
-
-					Token = GetToken();
-					this->Monsters[MapGroup][Number].Y = (int)TokenNumber;
-
-					Token = GetToken();
-					this->Monsters[MapGroup][Number].Stage = (int)TokenNumber;
-
-					Number++;
-					this->MonstersCount[MapGroup]++;
-				}
-			}
-		}	
-	}
-
-	fclose(SMDFile);
-	LogAddTD("[ImperialGuardian] ..\\Data\\Events\\ImperialGuardian_Monsters.dat file Loaded"); 
 }
 
 void CImperialGuardian::SetMonsters(){
 
-	int MonsterIndex = -1;
-
+	int Result = -1;
+	LPOBJ lpObj = NULL;
 	if(this->CurrentMonsters > 0) return;
-
 	memset(this->SetedMonsters,0,sizeof(this->SetedMonsters));
 	this->TotalMonsters = 0;
 	this->CurrentMonsters = 0;
-	int Day = this->EventDay;
+	WORD wMonsterIndex = 0;
 
-	for(int i=0; i < this->MonstersCount[Day];i++){
+	for(int n=0;n<gMSetBase.m_Count;n++)
+	{
+		if(gMSetBase.m_Mp[n].m_MapNumber == this->EventMap)
+		{
+			wMonsterIndex = gMSetBase.m_Mp[n].m_Type;
+				
+			if(wMonsterIndex == 524 || wMonsterIndex == 525 || wMonsterIndex == 527 || wMonsterIndex == 528) continue;
 
-		if(this->Monsters[Day][i].Stage == this->Step){
+			if(this->EventDay == 1 && wMonsterIndex == 511) continue;
+			if(this->EventDay == 2 && wMonsterIndex == 512) continue;
+			if(this->EventDay == 3 && wMonsterIndex == 506) continue;
+			if(this->EventDay == 4 && wMonsterIndex == 508) continue;
+			if(this->EventDay == 5 && wMonsterIndex == 509) continue;
+			if(this->EventDay == 6 && wMonsterIndex == 510) continue;
 
-			MonsterIndex = gObjAddMonster(this->EventMap);
+			if(gMSetBase.m_Mp[n].m_Dir == this->Step){
 
-			if(MonsterIndex != -1 && MonsterIndex < OBJ_STARTUSERINDEX){
-	
-				LPOBJ lpObj = &gObj[MonsterIndex];
+		
+				BYTE btMapNumber = gMSetBase.m_Mp[n].m_MapNumber;
+				Result = gObjAddMonster(btMapNumber);
 
-				lpObj->Level = 70;
-				gObjSetMonster(MonsterIndex,this->Monsters[Day][i].ID);
+				if(Result >= 0)
+				{
+					gObj[Result].m_PosNum = n;
+					gObj[Result].X = gMSetBase.m_Mp[n].m_X;
+					gObj[Result].Y = gMSetBase.m_Mp[n].m_Y;
+					gObj[Result].MapNumber = gMSetBase.m_Mp[n].m_MapNumber;
+					gObj[Result].TX = gObj[Result].X;
+					gObj[Result].TY = gObj[Result].Y;
+					gObj[Result].m_OldX = gObj[Result].X;
+					gObj[Result].m_OldY = gObj[Result].Y;
+					gObj[Result].Dir = gMSetBase.m_Mp[n].m_Dir;
+					gObj[Result].StartX = gObj[Result].X;
+					gObj[Result].StartY = gObj[Result].Y;
+					gObjSetMonster(Result, wMonsterIndex);
+					gObj[Result].DieRegen = FALSE;
+					gObj[Result].MaxRegenTime = 0;
+					gObj[Result].RegenOk = 0;
+					gObj[Result].Dir = rand() % 8;
 
-				lpObj->X = this->Monsters[Day][i].X; lpObj->TX = lpObj->X; lpObj->MTX = lpObj->X; lpObj->m_OldX = lpObj->X; lpObj->StartX = lpObj->X;
-				lpObj->Y = this->Monsters[Day][i].Y; lpObj->TY = lpObj->Y; lpObj->MTY = lpObj->Y; lpObj->m_OldY = lpObj->Y; lpObj->StartY = lpObj->Y;
-				lpObj->MapNumber = this->EventMap;
-				lpObj->DieRegen = FALSE;
-				lpObj->MaxRegenTime = 0;
-				lpObj->RegenOk = 0;
-				lpObj->m_MoveRange = 15;
-				lpObj->TargetNumber = -1;
-
-				this->SetedMonsters[this->TotalMonsters] = MonsterIndex;
-				this->TotalMonsters++;
-				this->CurrentMonsters++;
-			} else {
-				LogAddTD("[ImperialGuardian] Failed to Add Monster %d",i);
+					this->SetedMonsters[this->TotalMonsters] = Result;
+					this->TotalMonsters++;
+					this->CurrentMonsters++;
+				} else {
+					LogAddTD("[ImperialGuardian] Failed to Add Monster %d",n);
+				}
 			}
 		}
 	}
@@ -768,22 +725,9 @@ void CImperialGuardian::SetMonsters(){
 
 void CImperialGuardian::ClearMonsters(){
 
-	int DeletedCount = 0;
-
-	for(int X=0; X < this->TotalMonsters;X++){
-		if(this->SetedMonsters[X] > 0){
-			if(gObj[this->SetedMonsters[X]].MapNumber == this->EventMap){
-				gObjDel(this->SetedMonsters[X]);
-				DeletedCount++;
-			}
-		}
-	}
-	
-	for(int X=0; X < 10;X++){
-		if(this->Door[X] > 0){
-			if(gObj[this->Door[X]].MapNumber == this->EventMap){
-				gObjDel(this->Door[X]);
-			}
+	for(int X=0; X < OBJ_MAXMONSTER;X++){
+		if(IMPERIAL_MAP_RANGE(gObj[X].MapNumber)){
+			gObjDel(X);
 		}
 	}
 
@@ -792,7 +736,7 @@ void CImperialGuardian::ClearMonsters(){
 	this->TotalMonsters = 0;
 	this->CurrentMonsters = 0;
 			
-	LogAddTD("[ImperialGuardian][%d] All Monsters Cleared (%d)",this->EventMap,DeletedCount);
+	LogAddTD("[ImperialGuardian][%d] All Monsters Cleared",this->EventMap);
 }
 
 void CImperialGuardian::DropSemicronPiece(int aIndex, int Class, int X, int Y){

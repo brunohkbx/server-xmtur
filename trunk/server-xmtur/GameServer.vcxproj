@@ -939,7 +939,6 @@
     <ClCompile Include="TSync.cpp" />
     <ClCompile Include="WarpSystem.cpp" />
     <ClCompile Include="CastleDeepEvent.cpp" />
-    <ClCompile Include="PCBangPointSystem.cpp" />
     <ClCompile Include="GamblingSystem.cpp" />
     <ClCompile Include="Winutil.cpp" />
     <ClCompile Include="WzMemScript.cpp" />
@@ -1042,7 +1041,6 @@
     <ClCompile Include="Gate.cpp" />
     <ClCompile Include="BloodCastle.cpp" />
     <ClCompile Include="ChaosCastle.cpp" />
-    <ClCompile Include="ChaosCastleSetItemDrop.cpp" />
     <ClCompile Include="CannonTower.cpp" />
     <ClCompile Include="CastleCrown.cpp" />
     <ClCompile Include="CastleCrownSwitch.cpp" />
@@ -1173,7 +1171,6 @@
     <ClInclude Include="CastleSiegeSync.h" />
     <ClInclude Include="MixSystem.h" />
     <ClInclude Include="ChaosCastle.h" />
-    <ClInclude Include="ChaosCastleSetItemDrop.h" />
     <ClInclude Include="CLoginCount.h" />
     <ClInclude Include="ClosePlayer.h" />
     <ClInclude Include="ComboAttack.h" />
@@ -1234,7 +1231,6 @@
     <ClInclude Include="KanturuUtil.h" />
     <ClInclude Include="IllusionTempleEvent.h" />
     <ClInclude Include="IllusionTempleProcess.h" />
-    <ClInclude Include="PCBangPointSystem.h" />
     <ClInclude Include="GamblingSystem.h" />
     <ClInclude Include="WarpSystem.h" />
     <ClInclude Include="Winutil.h" />

@@ -261,21 +261,22 @@ void CKalimaGate::KalimaGateAct(int iIndex)
 
 	int tObjNum=-1;
 
-	for ( int i=0;i<MAX_VIEWPORT_MONSTER;i++)
+	for(int i=0;i<MAX_VIEWPORT_MONSTER;i++)
 	{
 		tObjNum = lpObj->VpPlayer[i].number;
 
-		if ( tObjNum >= 0 )
+		if(tObjNum >= 0)
 		{
-			if ( gObj[tObjNum].Type == OBJ_USER )
+			if (gObj[tObjNum].Type == OBJ_USER)
 			{
-				if ( gObj[tObjNum].Live != FALSE )
+				if (gObj[tObjNum].Live != FALSE)
 				{
-					if ( abs(lpObj->Y - gObj[tObjNum].Y) < 2 )
+					if(abs(lpObj->Y - gObj[tObjNum].Y) < 2)
 					{
-						if ( abs(lpObj->X - gObj[tObjNum].X) < 2 )
+						LogAddTD("DEBUG : Cords OK");
+						if(abs(lpObj->X - gObj[tObjNum].X) < 2)
 						{
-							if ( lpObj->m_RecallMon == tObjNum || (gObj[tObjNum].PartyNumber != -1 && lpObjCallOwner->PartyNumber == gObj[tObjNum].PartyNumber ))
+							if(lpObj->m_RecallMon == tObjNum || (gObj[tObjNum].PartyNumber != -1 && lpObjCallOwner->PartyNumber == gObj[tObjNum].PartyNumber))
 							{
 								int iMoveMapLevel = lpObj->m_Attribute -51;
 								int iMapNumber = iMoveMapLevel + 24;
@@ -286,7 +287,7 @@ void CKalimaGate::KalimaGateAct(int iIndex)
 								{
 									if ( gObjMoveGate(tObjNum, iGateNumber) == FALSE )
 									{
-										LogAddTD("[Kalima] [%s][%s] - [%s][%s] move fail (MapNumber:%d)", 
+										LogAddTD("[Kalima] [%s][%s] - [%s][%s] Move Fail (MapNumber:%d)", 
 											lpObjCallOwner->AccountID, lpObjCallOwner->Name,
 											gObj[tObjNum].AccountID, gObj[tObjNum].Name, iMapNumber);
 									}
@@ -580,14 +581,18 @@ void CKalimaGate::KalimaGateAct2(int iIndex)
 {
 	LPOBJ lpObj = NULL;
 	LPOBJ lpObjCallOwner = NULL;
+	
+	LogAddTD("DEBUG : %d",iIndex);
 
-	if ( OBJMAX_RANGE(iIndex) == FALSE )
-		return;
+	if(OBJMAX_RANGE(iIndex) == FALSE) return;
+	
+	LogAddTD("1");
 
-	if ( gObj[iIndex].Live == 0 )
-		return;
+	if(gObj[iIndex].Live == 0) return;
+	
+	LogAddTD("2");
 
-	if ( !gObjIsConnected(gObj[iIndex].m_RecallMon ) )
+	if(!gObjIsConnected(gObj[iIndex].m_RecallMon))
 	{
 		LogAddTD("[Kalima] Kalima Gate Vanished (NextMap) - Summoner Vanished (SummonIndex:%d, EnterCount:%d)",
 			iIndex, gObj[iIndex].m_cKalimaGateEnterCount);
@@ -595,7 +600,6 @@ void CKalimaGate::KalimaGateAct2(int iIndex)
 		GCDiePlayerSend(&gObj[iIndex], iIndex, 0, 0);
 		gObjDel(iIndex);
 		gObjCharZeroSet(iIndex);
-
 		return;
 	}
 
@@ -630,11 +634,13 @@ void CKalimaGate::KalimaGateAct2(int iIndex)
 		return;
 	}
 
-	if ( lpObj->VPCount < 1 )
-		return;
+	if(lpObj->VPCount < 1) return;
 
-	if ( lpObj->MapNumber < MAP_INDEX_KALIMA1 || lpObj->MapNumber > MAP_INDEX_KALIMA6-1 )
-		return;
+	LogAddTD("3");
+
+	if(lpObj->MapNumber < MAP_INDEX_KALIMA1 || lpObj->MapNumber > MAP_INDEX_KALIMA6-1) return;
+
+	LogAddTD("4");
 
 	int tObjNum = -1;
 
@@ -659,7 +665,7 @@ void CKalimaGate::KalimaGateAct2(int iIndex)
 
 								if ( !gObjMoveGate(tObjNum, iGateNumber))
 								{
-									LogAddTD("[Kalima] [%s][%s] - [%s][%s] move fail (MapNumber:%d)",
+									LogAddTD("[Kalima] [%s][%s] - [%s][%s] Move Fail (MapNumber:%d)",
 										lpObjCallOwner->AccountID, lpObjCallOwner->Name,
 										gObj[tObjNum].AccountID, gObj[tObjNum].Name,
 										lpObj->MapNumber);

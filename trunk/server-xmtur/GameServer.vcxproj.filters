@@ -148,9 +148,6 @@
     <Filter Include="AntiHack">
       <UniqueIdentifier>{d78a5c31-36f2-4374-b8f3-0b1fd66aa6b3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ItemBags">
-      <UniqueIdentifier>{bd66d2e3-b150-45d6-b3fc-e18d3d3cc4b6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameServer\Move System">
       <UniqueIdentifier>{a0342944-9b36-416c-b5f5-ece3afd01382}</UniqueIdentifier>
     </Filter>
@@ -168,9 +165,6 @@
     </Filter>
     <Filter Include="GameServer\Shops">
       <UniqueIdentifier>{0eeab713-91c7-4c61-928a-e3969077a957}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameServer\PCBang">
-      <UniqueIdentifier>{a27898c5-2da9-4447-925e-52f6899892ab}</UniqueIdentifier>
     </Filter>
     <Filter Include="GameServer\Gate">
       <UniqueIdentifier>{22f45ef8-c85c-4168-95dc-84199046f654}</UniqueIdentifier>
@@ -216,6 +210,9 @@
     </Filter>
     <Filter Include="Party System">
       <UniqueIdentifier>{601be08a-0dd8-4562-b92d-ff0a4181f494}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ItemBags">
+      <UniqueIdentifier>{bd66d2e3-b150-45d6-b3fc-e18d3d3cc4b6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -349,9 +346,6 @@
       <Filter>Events\Blood Castle</Filter>
     </ClCompile>
     <ClCompile Include="CCastleEventItemList.cpp">
-      <Filter>Events\Chaos Castle</Filter>
-    </ClCompile>
-    <ClCompile Include="ChaosCastleSetItemDrop.cpp">
       <Filter>Events\Chaos Castle</Filter>
     </ClCompile>
     <ClCompile Include="ChaosCastle.cpp">
@@ -681,9 +675,6 @@
     <ClCompile Include="Shop.cpp">
       <Filter>GameServer\Shops</Filter>
     </ClCompile>
-    <ClCompile Include="PCBangPointSystem.cpp">
-      <Filter>GameServer\PCBang</Filter>
-    </ClCompile>
     <ClCompile Include="Gate.cpp">
       <Filter>GameServer\Gate</Filter>
     </ClCompile>
@@ -962,9 +953,6 @@
       <Filter>Events\Blood Castle</Filter>
     </ClInclude>
     <ClInclude Include="CCastleEventItemList.h">
-      <Filter>Events\Chaos Castle</Filter>
-    </ClInclude>
-    <ClInclude Include="ChaosCastleSetItemDrop.h">
       <Filter>Events\Chaos Castle</Filter>
     </ClInclude>
     <ClInclude Include="ChaosCastle.h">
@@ -1278,9 +1266,6 @@
     </ClInclude>
     <ClInclude Include="Shop.h">
       <Filter>GameServer\Shops</Filter>
-    </ClInclude>
-    <ClInclude Include="PCBangPointSystem.h">
-      <Filter>GameServer\PCBang</Filter>
     </ClInclude>
     <ClInclude Include="Gate.h">
       <Filter>GameServer\Gate</Filter>

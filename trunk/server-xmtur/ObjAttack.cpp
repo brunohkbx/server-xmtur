@@ -41,10 +41,8 @@ BOOL CObjAttack::Attack(LPOBJ lpObj, LPOBJ lpTargetObj, CMagicInf* lpMagic, int 
 		return FALSE;
 	}
 	
-	if ( (lpObj->Authority&32) == 32 || (lpTargetObj->Authority&32) == 32) //s4 add-on
-	{
-		if(gObjSearchActiveEffect(lpObj, AT_INVISIBILITY) == 1)
-		{
+	if((lpObj->Authority&32) == 32 || (lpTargetObj->Authority&32) == 32){
+		if(gObjSearchActiveEffect(lpObj, AT_INVISIBILITY) == 1){
 			return FALSE;
 		}
 	}

@@ -1176,10 +1176,10 @@ void gObjMonsterProcess(LPOBJ lpObj)
 		}
 	}
 
-	if ( ((lpObj->m_Attribute < 51)?FALSE:(lpObj->m_Attribute > 58)?FALSE:TRUE) != FALSE )
-	{
-		if ( lpObj->m_Attribute == 58 )
-		{
+	if(((lpObj->m_Attribute < 51)?FALSE:(lpObj->m_Attribute > 58)?FALSE:TRUE) != FALSE){
+
+		
+		if(lpObj->m_Attribute == 58 ){
 			g_KalimaGate.KalimaGateAct2(lpObj->m_Index);
 			return;
 		}
@@ -2820,7 +2820,6 @@ void gObjMonsterDieGiveItem(LPOBJ lpObj, LPOBJ lpTargetObj)
 
 	if(DOPPELGANGER_MAP_RANGE(lpObj->MapNumber)){
 		
-		int MaxHitUser = gObjMonsterTopHitDamageUser(lpObj);
 
 		if(lpObj->Class == 529){
 			Doppelganger.InterimRewardChest(lpObj->X,lpObj->Y);
@@ -2843,20 +2842,14 @@ void gObjMonsterDieGiveItem(LPOBJ lpObj, LPOBJ lpTargetObj)
 		}
 	}
 
-	if(lpObj->Class == 505) return;
-
-	if(lpObj->Class == 504){
-		int MaxHitUser = gObjMonsterTopHitDamageUser(lpObj);
-		ImperialGuardian.GaionItemDrop(MaxHitUser,lpObj->X,lpObj->Y);
-		ImperialGuardian.SetState(IMPERIAL_FINISHED);
-		return;
-	}
-
+	//Imperial Guardian Event
 	if(lpObj->Class >= 506 && lpObj->Class <= 511){
-		int MaxHitUser = gObjMonsterTopHitDamageUser(lpObj);
-		ImperialGuardian.DropSemicronPiece(MaxHitUser,lpObj->Class,lpObj->X,lpObj->Y);
+		ImperialGuardian.DropSemicronPiece(lpTargetObj->m_Index,lpObj->Class,lpObj->X,lpObj->Y);
 		return;
 	}
+
+	//Imperial Guardian Doors
+	if(lpObj->Class == 524 || lpObj->Class == 525 || lpObj->Class == 527 || lpObj->Class == 528) return;
 
 	//Inferno Event ItemBag
 	if(lpObj->Class == 67 && (lpObj->MapNumber == 0 || lpObj->MapNumber == 8 || lpObj->MapNumber == 38)){
@@ -3047,35 +3040,97 @@ void gObjMonsterDieGiveItem(LPOBJ lpObj, LPOBJ lpTargetObj)
 
 	if ( lpObj->Class == 561 && lpObj->Connected == 3 )	// Season 4.5 addon
 	{
-		//if (Configs.MedussaItemDrop != 0)
-		//{
-			int ItemDropRate = rand()%10000;
+		
+		int ItemDropRate = rand()%10000;
 
-			if ( ItemDropRate <= Configs.RaklionSelupanItemDropRate )
+		if ( ItemDropRate <= Configs.MedussaItemDropRate )
+		{
+			int iMaxHitUser = gObjMonsterTopHitDamageUser(lpObj);
+
+			LogAddTD("[ MEDUSSA ][ Reward ] SwampOfPeace ItemDrop MaxHitUser [%s][%s]",
+				lpTargetObj->AccountID, lpTargetObj->Name);
+
+			BYTE cDropX = lpObj->X;
+			BYTE cDropY = lpObj->Y;
+
+			for(int i = 0; i < Configs.MedussaItemDropCount; i++)
 			{
-				int iMaxHitUser = gObjMonsterTopHitDamageUser(lpObj);
-
-				LogAddTD("[ MEDUSSA ][ Reward ] SwampOfPeace ItemDrop MaxHitUser [%s][%s]",
-					lpTargetObj->AccountID, lpTargetObj->Name);
-
-				BYTE cDropX = lpObj->X;
-				BYTE cDropY = lpObj->Y;
-
-				for(int i = 0; i < Configs.SelupanItemDrop; i++)
+				if ( !gObjGetRandomItemDropLocation(lpObj->MapNumber, cDropX, cDropY, 2, 2, 10))
 				{
-					if ( !gObjGetRandomItemDropLocation(lpObj->MapNumber, cDropX, cDropY, 2, 2, 10))
-					{
-						cDropX = lpObj->X;
-						cDropY = lpObj->Y;
-					}
-
-					MedussaBossMonsterItemBagOpen(lpTargetObj, lpObj->MapNumber, cDropX, cDropY);
+					cDropX = lpObj->X;
+					cDropY = lpObj->Y;
 				}
-				
+
+				MedussaBossMonsterItemBagOpen(lpTargetObj, lpObj->MapNumber, cDropX, cDropY);
 			}
-		//}
+				
+		}
+
 		return;
 	}	
+
+	if ( lpObj->Class == 505 && lpObj->Connected == 3 )	// Season 4.5 addon
+	{
+		
+		int ItemDropRate = rand()%10000;
+
+		if ( ItemDropRate <= Configs.ImperialGuardianJerintDropRate )
+		{
+			int iMaxHitUser = gObjMonsterTopHitDamageUser(lpObj);
+
+			LogAddTD("[ IMPERIALGUARDIAN ][ Reward ] Jerint ItemDrop MaxHitUser [%s][%s]",
+				lpTargetObj->AccountID, lpTargetObj->Name);
+
+			BYTE cDropX = lpObj->X;
+			BYTE cDropY = lpObj->Y;
+
+			for(int i = 0; i < Configs.ImperialGuardianJerintDropCount; i++)
+			{
+				if ( !gObjGetRandomItemDropLocation(lpObj->MapNumber, cDropX, cDropY, 2, 2, 10))
+				{
+					cDropX = lpObj->X;
+					cDropY = lpObj->Y;
+				}
+
+				JerintBossMonsterItemBagOpen(lpTargetObj, lpObj->MapNumber, cDropX, cDropY);
+			}
+				
+		}
+		return;
+	}	
+	
+
+	if ( lpObj->Class == 504 && lpObj->Connected == 3 )	// Season 4.5 addon
+	{
+		
+		int ItemDropRate = rand()%10000;
+
+		if ( ItemDropRate <= Configs.ImperialGuardianGaionDropRate )
+		{
+			int iMaxHitUser = gObjMonsterTopHitDamageUser(lpObj);
+
+			LogAddTD("[ IMPERIALGUARDIAN ][ Reward ] Gaion ItemDrop MaxHitUser [%s][%s]",
+				lpTargetObj->AccountID, lpTargetObj->Name);
+
+			BYTE cDropX = lpObj->X;
+			BYTE cDropY = lpObj->Y;
+
+			for(int i = 0; i < Configs.ImperialGuardianGaionDropCount; i++)
+			{
+				if ( !gObjGetRandomItemDropLocation(lpObj->MapNumber, cDropX, cDropY, 2, 2, 10))
+				{
+					cDropX = lpObj->X;
+					cDropY = lpObj->Y;
+				}
+
+				GaionBossMonsterItemBagOpen(lpTargetObj, lpObj->MapNumber, cDropX, cDropY);
+				ImperialGuardian.SetState(IMPERIAL_FINISHED);
+			}
+				
+		}
+		return;
+	}	
+	
 
 	if ( lpObj->m_btCsNpcType )
 		return;

@@ -56,13 +56,7 @@ static struct _KALIMAGATE_LEVEL
 	0x15E, MAX_CHAR_LEVEL // MG, DL
 };
 
-static int g_iKalimaGateGateIndex[KALIMA_FLOORS] =
-{
-	0x58, 0x59,
-	0x5A, 0x5B,
-	0x5C, 0x5D,
-	0x74
-};
+static int g_iKalimaGateGateIndex[KALIMA_FLOORS] = { 88, 9,90,91,92,93,116 };
 
 class CKalimaGate
 {
