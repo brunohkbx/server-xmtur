@@ -2819,7 +2819,6 @@ void gObjMonsterDieGiveItem(LPOBJ lpObj, LPOBJ lpTargetObj)
 	}
 
 	if(DOPPELGANGER_MAP_RANGE(lpObj->MapNumber)){
-		
 
 		if(lpObj->Class == 529){
 			Doppelganger.InterimRewardChest(lpObj->X,lpObj->Y);
@@ -2842,14 +2841,17 @@ void gObjMonsterDieGiveItem(LPOBJ lpObj, LPOBJ lpTargetObj)
 		}
 	}
 
-	//Imperial Guardian Event
-	if(lpObj->Class >= 506 && lpObj->Class <= 511){
-		ImperialGuardian.DropSemicronPiece(lpTargetObj->m_Index,lpObj->Class,lpObj->X,lpObj->Y);
-		return;
-	}
+	if(IMPERIAL_MAP_RANGE(lpObj->MapNumber)){
 
-	//Imperial Guardian Doors
-	if(lpObj->Class == 524 || lpObj->Class == 525 || lpObj->Class == 527 || lpObj->Class == 528) return;
+		//Imperial Guardian Event
+		if(lpObj->Class >= 506 && lpObj->Class <= 511){
+			ImperialGuardian.DropSemicronPiece(lpTargetObj->m_Index,lpObj->Class,lpObj->X,lpObj->Y);
+			return;
+		}
+
+		//Imperial Guardian Doors
+		if(lpObj->Class == 524 || lpObj->Class == 525 || lpObj->Class == 527 || lpObj->Class == 528) return;
+	}
 
 	//Inferno Event ItemBag
 	if(lpObj->Class == 67 && (lpObj->MapNumber == 0 || lpObj->MapNumber == 8 || lpObj->MapNumber == 38)){
@@ -3038,7 +3040,7 @@ void gObjMonsterDieGiveItem(LPOBJ lpObj, LPOBJ lpTargetObj)
 		return;
 	}	
 
-	if ( lpObj->Class == 561 && lpObj->Connected == 3 )	// Season 4.5 addon
+	if (lpObj->Class == 561)	// Season 4.5 addon
 	{
 		
 		int ItemDropRate = rand()%10000;
@@ -3069,7 +3071,7 @@ void gObjMonsterDieGiveItem(LPOBJ lpObj, LPOBJ lpTargetObj)
 		return;
 	}	
 
-	if ( lpObj->Class == 505 && lpObj->Connected == 3 )	// Season 4.5 addon
+	if ( lpObj->Class == 505)	// Season 4.5 addon
 	{
 		
 		int ItemDropRate = rand()%10000;
@@ -3100,7 +3102,7 @@ void gObjMonsterDieGiveItem(LPOBJ lpObj, LPOBJ lpTargetObj)
 	}	
 	
 
-	if ( lpObj->Class == 504 && lpObj->Connected == 3 )	// Season 4.5 addon
+	if ( lpObj->Class == 504)	// Season 4.5 addon
 	{
 		
 		int ItemDropRate = rand()%10000;
@@ -3124,10 +3126,11 @@ void gObjMonsterDieGiveItem(LPOBJ lpObj, LPOBJ lpTargetObj)
 				}
 
 				GaionBossMonsterItemBagOpen(lpTargetObj, lpObj->MapNumber, cDropX, cDropY);
-				ImperialGuardian.SetState(IMPERIAL_FINISHED);
 			}
 				
 		}
+
+		ImperialGuardian.SetState(IMPERIAL_FINISHED);
 		return;
 	}	
 	
