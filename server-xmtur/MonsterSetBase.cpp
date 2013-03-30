@@ -243,9 +243,6 @@ void CMonsterSetBase::LoadSetBase(char * filename)
 					{
 						for ( int k = 0; k<rcount-1 ; k++ )
 						{
-							if ( g_MapServerManager.CheckMapCanMove(this->m_Mp[copycount].m_MapNumber) == FALSE )
-								break;
-						
 							this->m_Count++;
 
 							if ( this->m_Count > OBJ_MAXMONSTER-1 )
@@ -272,8 +269,6 @@ void CMonsterSetBase::LoadSetBase(char * filename)
 					}
 				}
 
-				if ( g_MapServerManager.CheckMapCanMove(this->m_Mp[this->m_Count].m_MapNumber) == FALSE )
-					continue;
 
 				this->m_Count++;
 
@@ -383,9 +378,6 @@ void CMonsterSetBase::LoadSetBase(char* Buffer, int iSize)
 					{
 						for ( int k = 0; k<rcount-1 ; k++ )
 						{
-							if ( g_MapServerManager.CheckMapCanMove(this->m_Mp[copycount].m_MapNumber) == FALSE )
-								break;
-						
 							this->m_Count++;
 
 							if ( this->m_Count > OBJ_MAXMONSTER-1 )
@@ -410,9 +402,6 @@ void CMonsterSetBase::LoadSetBase(char* Buffer, int iSize)
 						}
 					}
 				}
-
-				if ( g_MapServerManager.CheckMapCanMove(this->m_Mp[this->m_Count].m_MapNumber) == FALSE )
-					continue;
 
 				this->m_Count++;
 

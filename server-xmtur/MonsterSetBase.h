@@ -20,16 +20,6 @@ typedef struct MONSTER_POSITION
 	BYTE m_W;	// 9
 	BYTE m_H;	// A
 
-/*	BYTE btType;	// unk0
-	WORD wMonsterIndex; // unk2
-	BYTE btMapNumber;	// unk4
-	BYTE btDistance;	// unk5
-	BYTE btStartX;	// unk6
-	BYTE btStartY;	// unk7
-	BYTE btDirection;	// unk8
-	BYTE btEndX;	// unk9
-	BYTE btEndY;	// unkA*/
-
 } MONSTER_POSITION, * LPMONSTER_POSITION;
 class CMonsterSetBase
 {
